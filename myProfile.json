@@ -243,6 +243,10 @@
                 "active": false
             },
             {
+                "path": "src/modules/sensors/EnergyMon485",
+                "active": true
+            },
+            {
                 "path": "src/modules/sensors/ExampleModule",
                 "active": false
             },
