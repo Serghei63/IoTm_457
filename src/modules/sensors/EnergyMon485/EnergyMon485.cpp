@@ -68,6 +68,7 @@ namespace _Electro485
         if (!_myUART_Gran)
             return 3;
         unsigned short int param_hex;
+        mass_to_send[1] = 0x03;
         mass_to_send[4] = 0x00;
         if (param == "v")
             param_hex = 0x0A00;
@@ -82,6 +83,7 @@ namespace _Electro485
         else if (param == "k")
         {
             param_hex = 0x0100;
+            mass_to_send[1] = 0x04;
             mass_to_send[4] = 0x01;
         }
         else if (param == "p")
@@ -90,7 +92,7 @@ namespace _Electro485
         }
         SerialPrint("i", "Gran", "param: " + param + ", param_hex: " + String(param_hex, HEX));
         mass_to_send[0] = addr;
-        mass_to_send[1] = 0x03;
+        // mass_to_send[1] = 0x03;
         mass_to_send[2] = param_hex >> 8;
         mass_to_send[3] = param_hex;
 
@@ -106,7 +108,7 @@ namespace _Electro485
         // Serial.println("Count read byte: " + String(s));
 
         // Если вернулся правильный адрес и команда
-        if (mass_read[0] == addr && mass_read[1] == 0x03)
+        if (mass_read[0] == addr && mass_read[1] == mass_to_send[1])
         {
             // Проверяем контрольную сумму
             checkSum = 0;
