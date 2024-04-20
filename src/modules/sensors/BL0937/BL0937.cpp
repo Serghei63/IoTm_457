@@ -157,9 +157,12 @@ private:
     int BL0937_CF_GPIO = 4;                  // 8266 12                            //Нужна возможность задавать пин из веб, это по умолчанию
     int BL0937_CF1_GPIO = 5;                 // 8266 13                            //Нужна возможность задавать пин из веб, это по умолчанию
     int BL0937_SEL_GPIO_INV = 12;            // 8266 15 // inverted    //Нужна возможность задавать пин из веб, это по умолчанию
-    float _expV = 0;
-    float _expA = 0;
-    float _expW = 0;
+    float _kfV = 0;
+    float _kfA = 0;
+    float _kfW = 0;
+    float expV = 0;
+    float expA = 0;
+    float expW = 0;
 
 public:
     BL0937cmd(String parameters) : IoTItem(parameters)
@@ -170,24 +173,64 @@ public:
         jsonRead(parameters, "CF_GPIO", BL0937_CF_GPIO);
         jsonRead(parameters, "CF1_GPIO", BL0937_CF1_GPIO);
         jsonRead(parameters, "SEL_GPIO", BL0937_SEL_GPIO_INV);
-        jsonRead(parameters, "expV", _expV);
-        jsonRead(parameters, "expA", _expA);
-        jsonRead(parameters, "expW", _expW);
+        jsonRead(parameters, "kfV", _kfV);
+        jsonRead(parameters, "kfA", _kfA);
+        jsonRead(parameters, "kfW", _kfW);
         bl0937 = new BL0937;
         bl0937->begin(BL0937_CF_GPIO, BL0937_CF1_GPIO, BL0937_SEL_GPIO_INV, LOW, true);
         bl0937->setResistors(CURRENT_RESISTOR, VOLTAGE_RESISTOR_UPSTREAM, VOLTAGE_RESISTOR_DOWNSTREAM);
         attachInterrupt(BL0937_CF1_GPIO, bl0937_cf1_interrupt, FALLING);
         attachInterrupt(BL0937_CF_GPIO, bl0937_cf_interrupt, FALLING);
-        if (_expV)
-            bl0937->expectedVoltage(_expV); // для калибровки вольтаж нужно вводить из веб интерфейса
-        if (_expV)
-            bl0937->expectedCurrent(_expA); // для калибровки можно так, а лучше ток вводить из веб интерфейса
-        if (_expV)
-            bl0937->expectedActivePower(_expW); // для калибровки потребляемую мощность нужно вводить из веб интерфейса
+        if (_kfV)
+            bl0937->setVoltageMultiplier(_kfV);
+        if (_kfA)
+            bl0937->setCurrentMultiplier(_kfA);
+        if (_kfW)
+            bl0937->setPowerMultiplier(_kfW);
     }
 
     void doByInterval()
     {
+        static bool startCalbr = false;
+        if (expV && expA && expW)
+        {
+            startCalbr = true;
+            SerialPrint("i", "BL0937", "Start calibration ...");
+        }
+
+        if (startCalbr)
+        {
+            if (expV && bl0937->getVoltage())
+            {
+                bl0937->expectedVoltage(expV); // для калибровки вольтаж нужно вводить из веб интерфейса
+                _kfV = bl0937->getVoltageMultiplier();
+                expV = 0;
+            }
+            if (expA && bl0937->getCurrent())
+            {
+                bl0937->expectedCurrent(expA); // для калибровки можно так, а лучше ток вводить из веб интерфейса
+                _kfA = bl0937->getCurrentMultiplier();
+                expA = 0;
+            }
+            if (expW && bl0937->getActivePower())
+            {
+                bl0937->expectedActivePower(expW); // для калибровки потребляемую мощность нужно вводить из веб интерфейса
+                _kfW = bl0937->getPowerMultiplier();
+                expW = 0;
+            }
+            if (!expV && !expA && !expW)
+            {
+                String str = "Calibration done: kfV=";
+                str += _kfV;
+                str += ", kfA=";
+                str += _kfA;
+                str += ", kfW=";
+                str += _kfW;
+                SerialPrint("i", "BL0937", str);
+                SerialPrint("i", "BL0937", "Enter multiplier to configuration!");
+                startCalbr = false;
+            }
+        }
     }
 
     void onModuleOrder(String &key, String &value)
@@ -201,27 +244,24 @@ public:
             }
         }
     }
-    /*
-        IoTValue execute(String command, std::vector<IoTValue> &param)
-        {
-            if (!bl0937)
-                return {};
-            if (command == "calibration")
-            {
-                if (param.size() == 3)
-                {
-                    float v = param[0].valD;
-                    float a = param[1].valD;
-                    float p = param[2].valD;
-                    bl0937->expectedVoltage(v);     // для калибровки вольтаж нужно вводить из веб интерфейса
-                    bl0937->expectedCurrent(a);     // для калибровки можно так, а лучше ток вводить из веб интерфейса
-                    bl0937->expectedActivePower(p); // для калибровки потребляемую мощность нужно вводить из веб интерфейса
-                    return {};
-                }
-            }
+
+    IoTValue execute(String command, std::vector<IoTValue> &param)
+    {
+        if (!bl0937)
             return {};
+        if (command == "calibration")
+        {
+            if (param.size() == 3)
+            {
+                expV = param[0].valD;
+                expA = param[1].valD;
+                expW = param[2].valD;
+                return {};
+            }
         }
-    */
+        return {};
+    }
+
     ~BL0937cmd()
     {
         if (bl0937)
