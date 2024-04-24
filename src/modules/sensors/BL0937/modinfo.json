@@ -90,9 +90,9 @@
             "CF_GPIO": 4,
             "CF1_GPIO": 5,
             "SEL_GPIO": 12,
-            "expV": 0,
-            "expA": 0,
-            "expW": 0
+            "kfV": 0,
+            "kfA": 0,
+            "kfW": 0
         }
     ],
     "about": {
