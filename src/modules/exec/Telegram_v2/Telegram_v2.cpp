@@ -30,6 +30,7 @@ bool _autos;
 bool _initSD;
 bool _resolveOTA;
 bool fl_rollback;
+bool fl_reboot;
 int8_t _OTAstate = -1;
 struct ButtonMenu
 {
@@ -69,6 +70,7 @@ public:
         jsonRead(parameters, "chatID", _chatID);
         _textMode = jsonReadInt(parameters, "textMode");
         fl_rollback = false;
+        fl_reboot = false;
         instanceBot();
         _myBot->setTextMode(_textMode);
         _myBot->attach(telegramMsgParse);
@@ -118,6 +120,11 @@ public:
                 if (_OTAstate == 2)
                     ESP.restart();
                 _OTAstate = -1;
+            }
+            if (fl_reboot)
+            {
+                _myBot->tickManual();
+                ESP.restart();
             }
         }
         // Далее вызов doByInterval для обработки комманд
@@ -668,7 +675,20 @@ public:
             {
                 _myBot->sendMessage("ID: " + chipId, _chatID);
                 _myBot->sendMessage("chatID: " + _chatID, _chatID);
-                _myBot->sendMessage("Command: /help - this text \n /all - inline menu get all values \n /allMenu - bottom menu get all values \n /menu - bottom USER menu from scenario \n /get_id - get value by ID \n /set_id_value - set value in ID \n /file_name_type - take file from esp \n /file_type - support file type \n send file and write download - \"download\" file to esp \n send tft file and write \"nextion\" - flash file.tft to Nextion", _chatID);
+                _myBot->sendMessage("Command: /help - this text \n /all - inline menu get all values \n /allMenu - bottom menu get all values \n /menu - bottom USER menu from scenario \n /get_id - get value by ID \n /set_id_value - set value in ID \n /file_name_type - take file from esp \n /file_type - support file type \n /reboot - reboot esp \n\n send file and write download - \"download\" file to esp \n\n send *.tft file - flash Nextion \n\n send firmware.bin or littltfs.bin - firmware ESP ", _chatID);
+            }
+        }
+        else if (msg.text.indexOf("/reboot") != -1)
+        {
+            _myBot->inlineMenu("Перезагрузить esp " + jsonReadStr(settingsFlashJson, F("name")) + "\n esp_reboot", F("Reboot \t Cancel"));
+        }
+        else if (msg.text.indexOf("esp_reboot") != -1)
+        {
+            // удаляем последнее сообщение от бота
+            _myBot->deleteMessage(_myBot->lastBotMsg());
+            if (msg.data.indexOf("Reboot") != -1)
+            {
+                fl_reboot = true;
             }
         }
         else if (msg.text.indexOf("/") != -1)
