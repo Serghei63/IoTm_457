@@ -74,6 +74,7 @@ double BL0937::getCurrent() {
     // so we first check if power is 0 to set _current to 0 too
     if (_power == 0) {
         _current_pulse_width = 0;
+        getActivePower();
 
     } else if (_use_interrupts) {
         _checkCF1Signal();
