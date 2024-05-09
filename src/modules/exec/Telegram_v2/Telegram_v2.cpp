@@ -445,22 +445,22 @@ public:
             {
                 downloadFile(msg);
             }
-            else if (msg.text.indexOf("Next_firmware") != -1)
+        }
+        else if (msg.text.indexOf("Next_firmware") != -1)
+        {
+            // удаляем последнее сообщение от бота
+            _myBot->deleteMessage(_myBot->lastBotMsg());
+            if (msg.data.indexOf("Firmware") != -1 && OTAfilepath != "")
             {
-                // удаляем последнее сообщение от бота
-                _myBot->deleteMessage(_myBot->lastBotMsg());
-                if (msg.data.indexOf("Firmware") != -1)
+                for (std::list<IoTItem *>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it)
                 {
-                    for (std::list<IoTItem *>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it)
+                    if ((*it)->getSubtype() == "NextionUpload" || (*it)->getSubtype() == "Nextion")
                     {
-                        if ((*it)->getSubtype() == "NextionUpload" || (*it)->getSubtype() == "Nextion")
-                        {
-                            _myBot->sendMessage("Nextion firmware ...", _chatID);
-                            (*it)->uploadNextionTlgrm(OTAfilepath);
-                        }
+                        _myBot->sendMessage("Nextion firmware ...", _chatID);
+                        (*it)->uploadNextionTlgrm(OTAfilepath);
                     }
-                    OTAfilepath = "";
-                } 
+                }
+                OTAfilepath = "";
             }
         }
         // -------------- Обработка кнопок меню созданного в сценарии --------------
