@@ -256,7 +256,7 @@
             },
             {
                 "path": "src/modules/sensors/Emon",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/EnergyMon485",
@@ -340,7 +340,7 @@
             },
             {
                 "path": "src/modules/sensors/RTC",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/sensors/S8",
@@ -478,7 +478,7 @@
             },
             {
                 "path": "src/modules/exec/Telegram_v2",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/exec/Thermostat",
@@ -493,6 +493,10 @@
             {
                 "path": "src/modules/display/DwinI",
                 "active": false
+            },
+            {
+                "path": "src/modules/display/Gc9A",
+                "active": true
             },
             {
                 "path": "src/modules/display/Lcd2004",

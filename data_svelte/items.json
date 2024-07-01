@@ -161,39 +161,7 @@
     },
     {
         "global": 0,
-        "name": "11. EMON Ток",
-        "type": "Reading",
-        "subtype": "I",
-        "id": "current",
-        "widget": "anydataAmp",
-        "page": "Сенсоры",
-        "descr": "Датчик тока",
-        "int": 10,
-        "pin_I": 34,
-        "calib_I": 111.1,
-        "plus": 0,
-        "multiply": 1,
-        "num": 11
-    },
-    {
-        "global": 0,
-        "name": "12. EMON Напряжение",
-        "type": "Reading",
-        "subtype": "U",
-        "id": "voltage",
-        "widget": "anydataVlt",
-        "page": "Сенсоры",
-        "descr": "Датчик напряжения",
-        "int": 10,
-        "pin_U": 35,
-        "calib_U": 223.1,
-        "plus": 0,
-        "multiply": 1,
-        "num": 12
-    },
-    {
-        "global": 0,
-        "name": "13. Аналоговый счетчик импульсов",
+        "name": "11. Аналоговый счетчик импульсов",
         "type": "Writing",
         "subtype": "Impulse",
         "id": "impulse",
@@ -208,14 +176,34 @@
         "multiply": 1,
         "count": 0,
         "timeORcount": 0,
-        "num": 13
+        "num": 11
+    },
+    {
+        "global": 0,
+        "name": "12. Часы реального времени",
+        "type": "Reading",
+        "subtype": "RTC",
+        "id": "rtc",
+        "widget": "anydataDef",
+        "page": "Таймеры",
+        "descr": "Время RTC",
+        "chipCode": 1,
+        "timeFormat": "d-m-Y H:i:s",
+        "RST": -1,
+        "CLK": -1,
+        "DAT": -1,
+        "ticker": 0,
+        "int": 5,
+        "btn-setUTime": "0",
+        "btn-setSysTime": "nil",
+        "num": 12
     },
     {
         "header": "executive_devices"
     },
     {
         "global": 0,
-        "name": "14. Кнопка подключенная к пину",
+        "name": "13. Кнопка подключенная к пину",
         "type": "Writing",
         "subtype": "ButtonIn",
         "id": "btn",
@@ -230,11 +218,11 @@
         "debounceDelay": 50,
         "fixState": 0,
         "inv": 0,
-        "num": 14
+        "num": 13
     },
     {
         "global": 0,
-        "name": "15. Управление пином",
+        "name": "14. Управление пином",
         "type": "Writing",
         "subtype": "ButtonOut",
         "needSave": 0,
@@ -245,9 +233,46 @@
         "int": 0,
         "inv": 0,
         "pin": 2,
+        "num": 14
+    },
+    {
+        "global": 0,
+        "name": "15. Телеграм-Бот v2",
+        "type": "Writing",
+        "subtype": "Telegram_v2",
+        "id": "tg",
+        "widget": "",
+        "page": "",
+        "descr": "",
+        "int": 10,
+        "token": "",
+        "chatID": "",
+        "autos": 1,
+        "receiveMsg": 1,
+        "textMode": "0",
+        "OTA": 0,
         "num": 15
     },
     {
         "header": "screens"
+    },
+    {
+        "name": "16. TFT экран GC9A",
+        "type": "Reading",
+        "subtype": "Gc9A",
+        "id": "Gc9A",
+        "widget": "",
+        "page": "",
+        "descr": "T",
+        "descr1": "C",
+        "int": 5,
+        "coord": "90,200",
+        "id2show": "id датчика",
+        "shrift": "2",
+        "colour": "BLUE",
+        "fon": "BLACK",
+        "rotation": "1",
+        "fon_screen": "BLACK",
+        "num": 16
     }
 ]
