@@ -127,16 +127,6 @@
         }
     },
     "modules": {
-        "Виртуальные элементы": [
-            {
-                "path": "src/modules/virtual/Loging2",
-                "active": true
-            },
-            {
-                "path": "src/modules/virtual/Loging3",
-                "active": true
-            }
-        ],
         "virtual_elments": [
             {
                 "path": "src/modules/virtual/Benchmark",
@@ -155,20 +145,28 @@
                 "active": true
             },
             {
+                "path": "src/modules/virtual/Loging2",
+                "active": false
+            },
+            {
+                "path": "src/modules/virtual/Loging3",
+                "active": false
+            },
+            {
                 "path": "src/modules/virtual/LogingDaily",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/virtual/Math",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/virtual/owmWeather",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/virtual/Ping",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/virtual/Timer",
@@ -376,7 +374,7 @@
         "executive_devices": [
             {
                 "path": "src/modules/exec/AnalogBtn",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/BrokerMQTT",
@@ -392,11 +390,11 @@
             },
             {
                 "path": "src/modules/exec/Buzzer",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Enconder",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/EspCam",
@@ -412,7 +410,7 @@
             },
             {
                 "path": "src/modules/exec/IoTServo",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/IRremote",
@@ -424,15 +422,15 @@
             },
             {
                 "path": "src/modules/exec/Mcp23017",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Mp3",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Multitouch",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/MySensors",
@@ -440,15 +438,15 @@
             },
             {
                 "path": "src/modules/exec/Pcf8574",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Pwm32",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Pwm8266",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/SDcard",
@@ -472,7 +470,7 @@
             },
             {
                 "path": "src/modules/exec/TelegramLT",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Telegram_v2",
@@ -490,11 +488,11 @@
         "screens": [
             {
                 "path": "src/modules/display/DwinI",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/display/Lcd2004",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/display/Nextion",
@@ -510,11 +508,11 @@
             },
             {
                 "path": "src/modules/display/Oled64",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/display/Smi2_m",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/display/TM16XX",
