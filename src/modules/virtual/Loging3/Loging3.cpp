@@ -84,12 +84,13 @@ class Loging3 : public IoTItem {
 
         regEvent(value, F("Loging3"));
 
-        String logData2;
+        //String logData2;
+        String logData3;
 
-        jsonWriteInt(logData2, "x", unixTime, false);
-        jsonWriteFloat(logData2, "y1", value.toFloat(), false);
-        jsonWriteFloat(logData2, "y2", value2.toFloat(), false);
-        jsonWriteFloat(logData2, "y3", value3.toFloat(), false);
+        jsonWriteInt(logData3, "x", unixTime, false);
+        jsonWriteFloat(logData3, "y1", value.toFloat(), false);
+        jsonWriteFloat(logData3, "y2", value2.toFloat(), false);
+        jsonWriteFloat(logData3, "y3", value3.toFloat(), false);
 
         // прочитаем путь к файлу последнего сохранения
         String filePath = readDataDB(id);
@@ -97,13 +98,13 @@ class Loging3 : public IoTItem {
         // если данные о файле отсутствуют, создадим новый
         if (filePath == "failed" || filePath == "") {
             SerialPrint("E", F("Loging3"), "'" + id + "' file path not found, start create new file");
-            createNewFileWithData(logData2);
+            createNewFileWithData(logData3);
             return;
         } else {
             // если файл все же есть но был создан не сегодня, то создаем сегодняшний
             if (getTodayDateDotFormated() != getDateDotFormatedFromUnix(getFileUnixLocalTime(filePath))) {
                 SerialPrint("E", F("Loging3"), "'" + id + "' file too old, start create new file");
-                createNewFileWithData(logData2);
+                createNewFileWithData(logData3);
                 return;
             }
         }
@@ -116,10 +117,10 @@ class Loging3 : public IoTItem {
         // если количество строк до заданной величины и дата не менялась
         if (lines <= points && !hasDayChanged()) {
             // просто добавим в существующий файл новые данные
-            addNewDataToExistingFile(filePath, logData2);
+            addNewDataToExistingFile(filePath, logData3);
             // если больше или поменялась дата то создадим следующий файл
         } else {
-            createNewFileWithData(logData2);
+            createNewFileWithData(logData3);
         }
         // запускаем процедуру удаления старых файлов если память переполняется
         deleteLastFile();
@@ -138,24 +139,24 @@ class Loging3 : public IoTItem {
             return;
         }
         regEvent(value, F("Loging3Event"));
-        String logData2;
-        jsonWriteInt(logData2, "x", unixTime, false);
-        jsonWriteFloat(logData2, "y1", value.toFloat(), false);
-        jsonWriteFloat(logData2, "y2", value.toFloat(), false);
-        jsonWriteFloat(logData2, "y3", value.toFloat(), false);
+        String logData3;
+        jsonWriteInt(logData3, "x", unixTime, false);
+        jsonWriteFloat(logData3, "y1", value.toFloat(), false);
+        jsonWriteFloat(logData3, "y2", value.toFloat(), false);
+        jsonWriteFloat(logData3, "y3", value.toFloat(), false);
         // прочитаем путь к файлу последнего сохранения
         String filePath = readDataDB(id);
 
         // если данные о файле отсутствуют, создадим новый
         if (filePath == "failed" || filePath == "") {
             SerialPrint("E", F("Loging3Event"), "'" + id + "' file path not found, start create new file");
-            createNewFileWithData(logData2);
+            createNewFileWithData(logData3);
             return;
         } else {
             // если файл все же есть но был создан не сегодня, то создаем сегодняшний
             if (getTodayDateDotFormated() != getDateDotFormatedFromUnix(getFileUnixLocalTime(filePath))) {
                 SerialPrint("E", F("Loging3Event"), "'" + id + "' file too old, start create new file");
-                createNewFileWithData(logData2);
+                createNewFileWithData(logData3);
                 return;
             }
         }
@@ -168,10 +169,10 @@ class Loging3 : public IoTItem {
         // если количество строк до заданной величины и дата не менялась
         if (lines <= points && !hasDayChanged()) {
             // просто добавим в существующий файл новые данные
-            addNewDataToExistingFile(filePath, logData2);
+            addNewDataToExistingFile(filePath, logData3);
             // если больше или поменялась дата то создадим следующий файл
         } else {
-            createNewFileWithData(logData2);
+            createNewFileWithData(logData3);
         }
         // запускаем процедуру удаления старых файлов если память переполняется
         deleteLastFile();
