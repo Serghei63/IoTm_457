@@ -1,10 +1,20 @@
 {
     "projectProp": {
         "platformio": {
-            "default_envs": "esp8266_4mb"
+            "default_envs": "esp32_4mb3f"
         }
     },
     "modules": {
+        "Виртуальные элементы": [
+            {
+                "path": "src/modules/virtual/Loging2",
+                "active": true
+            },
+            {
+                "path": "src/modules/virtual/Loging3",
+                "active": true
+            }
+        ],
         "virtual_elments": [
             {
                 "path": "src/modules/virtual/Benchmark",
@@ -281,6 +291,10 @@
             {
                 "path": "src/modules/exec/IoTServo",
                 "active": true
+            },
+            {
+                "path": "src/modules/exec/IRremote",
+                "active": false
             },
             {
                 "path": "src/modules/exec/Mcp23008",

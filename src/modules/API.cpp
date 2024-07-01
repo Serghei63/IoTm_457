@@ -1,5 +1,7 @@
 #include "ESPConfiguration.h"
 
+void* getAPI_Loging2(String subtype, String params);
+void* getAPI_Loging3(String subtype, String params);
 void* getAPI_Cron(String subtype, String params);
 void* getAPI_Loging(String subtype, String params);
 void* getAPI_LogingDaily(String subtype, String params);
@@ -37,14 +39,17 @@ void* getAPI_Mcp23017(String subtype, String params);
 void* getAPI_Mp3(String subtype, String params);
 void* getAPI_Multitouch(String subtype, String params);
 void* getAPI_Pcf8574(String subtype, String params);
-void* getAPI_Pwm8266(String subtype, String params);
+void* getAPI_Pwm32(String subtype, String params);
 void* getAPI_TelegramLT(String subtype, String params);
 void* getAPI_DwinI(String subtype, String params);
 void* getAPI_Lcd2004(String subtype, String params);
 void* getAPI_Oled64(String subtype, String params);
+void* getAPI_Smi2_m(String subtype, String params);
 
 void* getAPI(String subtype, String params) {
 void* tmpAPI;
+if ((tmpAPI = getAPI_Loging2(subtype, params)) != nullptr) return tmpAPI;
+if ((tmpAPI = getAPI_Loging3(subtype, params)) != nullptr) return tmpAPI;
 if ((tmpAPI = getAPI_Cron(subtype, params)) != nullptr) return tmpAPI;
 if ((tmpAPI = getAPI_Loging(subtype, params)) != nullptr) return tmpAPI;
 if ((tmpAPI = getAPI_LogingDaily(subtype, params)) != nullptr) return tmpAPI;
@@ -82,10 +87,11 @@ if ((tmpAPI = getAPI_Mcp23017(subtype, params)) != nullptr) return tmpAPI;
 if ((tmpAPI = getAPI_Mp3(subtype, params)) != nullptr) return tmpAPI;
 if ((tmpAPI = getAPI_Multitouch(subtype, params)) != nullptr) return tmpAPI;
 if ((tmpAPI = getAPI_Pcf8574(subtype, params)) != nullptr) return tmpAPI;
-if ((tmpAPI = getAPI_Pwm8266(subtype, params)) != nullptr) return tmpAPI;
+if ((tmpAPI = getAPI_Pwm32(subtype, params)) != nullptr) return tmpAPI;
 if ((tmpAPI = getAPI_TelegramLT(subtype, params)) != nullptr) return tmpAPI;
 if ((tmpAPI = getAPI_DwinI(subtype, params)) != nullptr) return tmpAPI;
 if ((tmpAPI = getAPI_Lcd2004(subtype, params)) != nullptr) return tmpAPI;
 if ((tmpAPI = getAPI_Oled64(subtype, params)) != nullptr) return tmpAPI;
+if ((tmpAPI = getAPI_Smi2_m(subtype, params)) != nullptr) return tmpAPI;
 return nullptr;
 }
