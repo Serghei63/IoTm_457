@@ -1,30 +1,30 @@
 {
     "iotmSettings": {
-        "name": "IoTmanagerVer4",
+        "name": "457_ir",
         "apssid": "IoTmanager",
         "appass": "",
-        "routerssid": "iot",
-        "routerpass": "hostel3333",
-        "timezone": 2,
+        "routerssid": "",
+        "routerpass": "",
+        "timezone": 3,
         "ntp": "pool.ntp.org",
         "weblogin": "admin",
         "webpass": "admin",
         "mqttServer": "",
-        "mqttPort": 8021,
-        "mqttPrefix": "/risenew",
-        "mqttUser": "rise",
-        "mqttPass": "3hostel3",
+        "mqttPort": 1883,
+        "mqttPrefix": "/ver407",
+        "mqttUser": "",
+        "mqttPass": "",
         "serverip": "http://iotmanager.org",
         "log": 0,
         "mqttin": 0,
         "pinSCL": 0,
         "pinSDA": 0,
         "i2cFreq": 100000,
-        "wg": "group1"
+        "wg": "group2"
     },
     "projectProp": {
         "platformio": {
-            "default_envs": "esp8266_4mb",
+            "default_envs": "esp32_4mb3f",
             "comments_default_envs": "choose from: esp8266_4mb or esp32_4mb or esp32cam_4mb or esp32s2_4mb or esp32_4mb3f or esp32s3_16mb or esp32c3m_4mb or esp8266_1mb or esp8266_1mb_ota or esp8285_1mb or esp8285_1mb_ota",
             "envs": [
                 {
