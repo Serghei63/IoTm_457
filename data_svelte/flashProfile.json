@@ -24,15 +24,19 @@
             },
             {
                 "path": "src/modules/virtual/Loging2",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/virtual/Loging3",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/virtual/LogingDaily",
-                "active": true
+                "active": false
+            },
+            {
+                "path": "src/modules/virtual/LogingHourly",
+                "active": false
             },
             {
                 "path": "src/modules/virtual/Math",
@@ -130,7 +134,7 @@
             },
             {
                 "path": "src/modules/sensors/Emon",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/sensors/EnergyMon485",
@@ -166,7 +170,7 @@
             },
             {
                 "path": "src/modules/sensors/Impulse",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/sensors/Ina219",
@@ -292,7 +296,7 @@
             },
             {
                 "path": "src/modules/exec/IRremote",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Mcp23008",
@@ -352,7 +356,7 @@
             },
             {
                 "path": "src/modules/exec/Telegram_v2",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Thermostat",

@@ -50,56 +50,7 @@
     },
     {
         "global": 0,
-        "name": "4. Двойной график",
-        "type": "Writing",
-        "subtype": "Loging2",
-        "id": "log2",
-        "widget": "chart5",
-        "page": "Графики",
-        "descr": "Датчик",
-        "num": 4,
-        "int": 5,
-        "logid1": "t",
-        "logid2": "h",
-        "points": 300
-    },
-    {
-        "global": 0,
-        "name": "5. Тройной график",
-        "type": "Writing",
-        "subtype": "Loging3",
-        "id": "log3",
-        "widget": "chart6",
-        "page": "Графики",
-        "descr": "Датчик",
-        "num": 5,
-        "int": 5,
-        "logid1": "t",
-        "logid2": "h",
-        "logid3": "p",
-        "points": 300
-    },
-    {
-        "global": 0,
-        "name": "6. График дневного расхода",
-        "type": "Writing",
-        "subtype": "LogingDaily",
-        "id": "log",
-        "widget": "chart3",
-        "page": "Графики",
-        "descr": "Температура",
-        "num": 6,
-        "int": 1,
-        "logid": "t",
-        "points": 200,
-        "telegram": 0,
-        "test": 0,
-        "btn-defvalue": 0,
-        "btn-reset": "nil"
-    },
-    {
-        "global": 0,
-        "name": "7. Таймер",
+        "name": "4. Таймер",
         "type": "Writing",
         "subtype": "Timer",
         "id": "timer",
@@ -111,11 +62,11 @@
         "ticker": 1,
         "repeat": 1,
         "needSave": 0,
-        "num": 7
+        "num": 4
     },
     {
         "global": 0,
-        "name": "8. Окно ввода числа (переменная)",
+        "name": "5. Окно ввода числа (переменная)",
         "type": "Reading",
         "subtype": "Variable",
         "id": "value",
@@ -129,11 +80,11 @@
         "plus": 0,
         "multiply": 1,
         "round": 0,
-        "num": 8
+        "num": 5
     },
     {
         "global": 0,
-        "name": "9. Окно ввода времени",
+        "name": "6. Окно ввода времени",
         "type": "Reading",
         "subtype": "Variable",
         "id": "time",
@@ -143,11 +94,11 @@
         "descr": "Введите время",
         "int": "0",
         "val": "02:00",
-        "num": 9
+        "num": 6
     },
     {
         "global": 0,
-        "name": "10. Окно ввода даты",
+        "name": "7. Окно ввода даты",
         "type": "Reading",
         "subtype": "Variable",
         "id": "time",
@@ -157,11 +108,11 @@
         "descr": "Введите дату",
         "int": "0",
         "val": "24.05.2022",
-        "num": 10
+        "num": 7
     },
     {
         "global": 0,
-        "name": "11. Окно ввода текста",
+        "name": "8. Окно ввода текста",
         "type": "Reading",
         "subtype": "Variable",
         "id": "txt",
@@ -171,11 +122,11 @@
         "descr": "Введите текст",
         "int": "0",
         "val": "текст",
-        "num": 11
+        "num": 8
     },
     {
         "global": 0,
-        "name": "12. Вывод значения",
+        "name": "9. Вывод значения",
         "type": "Reading",
         "subtype": "Variable",
         "id": "vout",
@@ -189,11 +140,11 @@
         "plus": 0,
         "multiply": 1,
         "round": 0,
-        "num": 12
+        "num": 9
     },
     {
         "global": 0,
-        "name": "13. Виртуальная кнопка",
+        "name": "10. Виртуальная кнопка",
         "type": "Reading",
         "subtype": "VButton",
         "id": "vbtn",
@@ -203,10 +154,61 @@
         "descr": "Кнопка",
         "int": "0",
         "val": "0",
-        "num": 13
+        "num": 10
     },
     {
         "header": "sensors"
+    },
+    {
+        "global": 0,
+        "name": "11. EMON Ток",
+        "type": "Reading",
+        "subtype": "I",
+        "id": "current",
+        "widget": "anydataAmp",
+        "page": "Сенсоры",
+        "descr": "Датчик тока",
+        "int": 10,
+        "pin_I": 34,
+        "calib_I": 111.1,
+        "plus": 0,
+        "multiply": 1,
+        "num": 11
+    },
+    {
+        "global": 0,
+        "name": "12. EMON Напряжение",
+        "type": "Reading",
+        "subtype": "U",
+        "id": "voltage",
+        "widget": "anydataVlt",
+        "page": "Сенсоры",
+        "descr": "Датчик напряжения",
+        "int": 10,
+        "pin_U": 35,
+        "calib_U": 223.1,
+        "plus": 0,
+        "multiply": 1,
+        "num": 12
+    },
+    {
+        "global": 0,
+        "name": "13. Аналоговый счетчик импульсов",
+        "type": "Writing",
+        "subtype": "Impulse",
+        "id": "impulse",
+        "widget": "anydataDef",
+        "page": "Счетчики",
+        "descr": "Импульсов",
+        "needSave": 0,
+        "int": 1,
+        "pin": 16,
+        "pinMode": "INPUT",
+        "debounceDelay": 3,
+        "multiply": 1,
+        "count": 0,
+        "timeORcount": 0,
+        "num": 13
     },
     {
         "header": "executive_devices"
@@ -244,36 +246,6 @@
         "inv": 0,
         "pin": 2,
         "num": 15
-    },
-    {
-        "global": 0,
-        "name": "16. Управление кондиционером",
-        "type": "Reading",
-        "subtype": "IRremote",
-        "id": "ir",
-        "pinTx": 4,
-        "set_id": "",
-        "int": 1,
-        "prot": 15,
-        "num": 16
-    },
-    {
-        "global": 0,
-        "name": "17. Телеграм-Бот v2",
-        "type": "Writing",
-        "subtype": "Telegram_v2",
-        "id": "tg",
-        "widget": "",
-        "page": "",
-        "descr": "",
-        "int": 10,
-        "token": "",
-        "chatID": "",
-        "autos": 1,
-        "receiveMsg": 1,
-        "textMode": "0",
-        "OTA": 0,
-        "num": 17
     },
     {
         "header": "screens"

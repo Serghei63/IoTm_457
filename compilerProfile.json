@@ -157,6 +157,10 @@
                 "active": false
             },
             {
+                "path": "src/modules/virtual/LogingHourly",
+                "active": false
+            },
+            {
                 "path": "src/modules/virtual/Math",
                 "active": false
             },
