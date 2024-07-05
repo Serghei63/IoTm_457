@@ -59,25 +59,35 @@
                "params": []
             },
             {
-               "name": "speed1",
+               "name": "speedmin",
+               "descr": "Минимальная скорость вентилятора",
+               "params": []
+            },
+            {
+               "name": "speedlow",
                "descr": "Медленная скорость вентилятора",
                "params": []
             },
             {
-               "name": "speed2",
+               "name": "speedmed",
                "descr": "Средняя скорость вентилятора",
                "params": []
             },
             {
-               "name": "speed3",
-               "descr": "Максимальная скорость вентилятора",
-               "params": []
-            },
-            {
+                "name": "speedhigh",
+                "descr": "Высокая скорость вентилятора",
+                "params": []
+             },
+             {
+                "name": "speedmax",
+                "descr": "Максимальная скорость вентилятора",
+                "params": []
+             },
+             {
                "name": "setTemp",
                "descr": "Установленная температура",
                "params": []
-            }
+             }
         ]
     },
 
