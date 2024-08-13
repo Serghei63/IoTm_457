@@ -6,8 +6,12 @@ class UpdateServer : public IoTItem {
     UpdateServer(String parameters) : IoTItem(parameters) {}
 
     void onModuleOrder(String &key, String &value) {
-        if (key == "startUpdate") {
+        if (key == "startUpdateAll") {
             upgrade_firmware(3, value);
+        } else if (key == "startUpdateFS") {
+            upgrade_firmware(2, value);
+        } else if (key == "startUpdateFW") {
+            upgrade_firmware(1, value);
         }
     }
 
