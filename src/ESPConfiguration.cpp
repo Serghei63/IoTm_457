@@ -8,6 +8,10 @@ void* getAPI(String subtype, String params);
 
 void configure(String path) {
     File file = seekFile(path);
+    if (!file) {
+        SerialPrint(F("E"), F("FS"), F("configure file open error"));
+        return;
+    }
     file.find("[");
     while (file.available()) {
         String jsonArrayElement = file.readStringUntil('}') + "}";
@@ -36,6 +40,9 @@ void configure(String path) {
                     // пробуем спросить драйвер Benchmark
                     if (driver = myIoTItem->getBenchmarkTask()) benchTaskItem = ((IoTBench*)driver);
                     if (driver = myIoTItem->getBenchmarkLoad()) benchLoadItem = ((IoTBench*)driver);
+                    // пробуем спросить драйвер для интеграций
+                    if (driver = myIoTItem->getHOMEdDiscovery()) HOMEdDiscovery = ((IoTDiscovery*)driver);
+                    if (driver = myIoTItem->getHADiscovery()) HADiscovery = ((IoTDiscovery*)driver);
                     // пробуем спросить драйвер Telegram_v2
                     if (driver = myIoTItem->getTlgrmDriver()) tlgrmItem = (IoTItem*)driver;
                     IoTItems.push_back(myIoTItem);
@@ -59,8 +66,13 @@ void clearConfigure() {
         if (*it) delete *it;
     }
     IoTItems.clear();
-
+#ifdef libretiny
+    valuesFlashJson.remove(0, valuesFlashJson.length());
+#else
     valuesFlashJson.clear();
+#endif
     benchTaskItem = nullptr; 
     benchLoadItem = nullptr; 
+    HOMEdDiscovery = nullptr;
+    HADiscovery = nullptr;
 }

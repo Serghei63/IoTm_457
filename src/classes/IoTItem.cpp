@@ -258,6 +258,14 @@ IoTBench *IoTItem::getBenchmarkLoad()
 {
     return nullptr;
 }
+IoTBench *IoTItem::getHOMEdDiscovery()
+{
+    return nullptr;
+}
+IoTBench *IoTItem::getHADiscovery()
+{
+    return nullptr;
+}
 unsigned long IoTItem::getRtcUnixTime()
 {
     return 0;

@@ -59,6 +59,8 @@ class IoTItem {
     //virtual IoTBench* getBenchmark();
     virtual IoTBench*getBenchmarkTask();
     virtual IoTBench*getBenchmarkLoad();
+    virtual IoTBench*getHADiscovery();
+    virtual IoTBench*getHOMEdDiscovery();
     virtual unsigned long getRtcUnixTime();
 
         // делаем доступным модулям отправку сообщений в телеграм

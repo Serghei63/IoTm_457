@@ -20,6 +20,9 @@ ESP8266WebServer HTTP(80);
 #ifdef ESP32
 WebServer HTTP(80);
 #endif
+#ifdef libretiny
+WebServer HTTP(80);
+#endif
 #endif
 
 #ifdef STANDARD_WEB_SOCKETS
@@ -35,6 +38,8 @@ IoTItem* rtcItem = nullptr;
 IoTItem* tlgrmItem = nullptr;
 IoTBench* benchTaskItem = nullptr;
 IoTBench* benchLoadItem = nullptr;
+IoTDiscovery* HOMEdDiscovery = nullptr;
+IoTDiscovery* HADiscovery = nullptr;
 String settingsFlashJson = "{}";  // переменная в которой хранятся все настройки, находится в оперативной памяти и синхронизированна с flash памятью
 String valuesFlashJson = "{}";    // переменная в которой хранятся все значения элементов, которые необходимо сохранить на flash. Находится в оперативной памяти и синхронизированна с flash памятью
 String errorsHeapJson = "{}";     // переменная в которой хранятся все ошибки, находится в оперативной памяти только
