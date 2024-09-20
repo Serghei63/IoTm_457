@@ -62,6 +62,7 @@ extern "C" void __wrap_esp_panic_handler(void *info)
 
   debugHeapUpdate();
   debugBacktraceUpdate();
+  bootloop_panic_count += 1;
   // Call the original panic handler function to finish processing this error (creating a core dump for example...)
   __real_esp_panic_handler(info);
 }
@@ -273,6 +274,7 @@ void sendDebugTraceAndFreeMemory( bool postMsg)
       free(msg);
     }
   };*/
+
 }
 
 #else
@@ -285,3 +287,34 @@ extern "C" void __wrap_esp_panic_handler(void *info)
   __real_esp_panic_handler(info);
 }
 #endif // RESTART_DEBUG_INFO
+
+
+  extern "C" bool verifyRollbackLater(){
+      Serial.printf("verifyRollbackLater OVERRIDDEN FUNCTION!");
+      return true;
+  }
+
+  void verifyFirmware(){
+      Serial.printf("[SYSTEM] - Checking firmware...\n");
+      const esp_partition_t *running = esp_ota_get_running_partition();
+      esp_ota_img_states_t ota_state;
+      if (esp_ota_get_state_partition(running, &ota_state) == ESP_OK) {
+          const char* otaState = ota_state == ESP_OTA_IMG_NEW ? "ESP_OTA_IMG_NEW"
+              : ota_state == ESP_OTA_IMG_PENDING_VERIFY ? "ESP_OTA_IMG_PENDING_VERIFY"
+              : ota_state == ESP_OTA_IMG_VALID ? "ESP_OTA_IMG_VALID"
+              : ota_state == ESP_OTA_IMG_INVALID ? "ESP_OTA_IMG_INVALID"
+              : ota_state == ESP_OTA_IMG_ABORTED ? "ESP_OTA_IMG_ABORTED"
+              : "ESP_OTA_IMG_UNDEFINED";
+          Serial.printf( "[System] - Ota state: %s\n",otaState);
+
+          if (ota_state == ESP_OTA_IMG_PENDING_VERIFY) {
+              if (esp_ota_mark_app_valid_cancel_rollback() == ESP_OK) {
+                  Serial.printf( "[System] - App is valid, rollback cancelled successfully\n");
+              } else {
+                  Serial.printf("[System] - Failed to cancel rollback\n");
+              }
+          }
+      }else{
+          Serial.printf("[System] - OTA partition has no record in OTA data\n");
+      }
+  }

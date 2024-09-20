@@ -21,6 +21,7 @@
     "pinSDA": 0,
     "i2cFreq": 100000,
     "wg": "group1",
+    "debugTrace": 1,
     "udps": 1,
     "settings_": ""
 }

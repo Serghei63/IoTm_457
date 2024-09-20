@@ -11,6 +11,7 @@
 #ifdef ESP8266
 #define FB_DYNAMIC
 #endif
+
 #include <FastBot.h>
 #include <map>
 
@@ -94,8 +95,8 @@ public:
             _myBot->tick();
             if (fl_rollback)
             {
-                _myBot->tickManual(); // Чтобы отметить сообщение прочитанным
 #ifdef ESP32
+                _myBot->tickManual(); // Чтобы отметить сообщение прочитанным
                 if (Update.rollBack())
                 {
                     SerialPrint("I", F("Update"), F("Откат OTA успешно выполнен"));
@@ -107,6 +108,9 @@ public:
                     SerialPrint("E", F("Update"), F("Откат OTA не выполнен!"));
                     _myBot->sendMessage("Откат OTA не выполнен!", _chatID);
                 }
+#else
+                SerialPrint("I", F("Update"), F("Откат OTA только в ESP32"));
+                _myBot->sendMessage("Откат OTA поддерживается только в ESP32", _chatID);
 #endif
             }
             // была попытка OTA обновления. Обновляемся после ответа серверу!

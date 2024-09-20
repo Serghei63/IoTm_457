@@ -114,7 +114,7 @@ public: /* methods */
      *
      * @return true if success, false for failure.
      */
-	bool prepareUpload(uint32_t file_size, bool prot);
+	bool prepareUpload(uint32_t file_size, bool oldProt);
     
     /**
      * start update tft file to nextion. 
@@ -300,7 +300,7 @@ private: /* methods */
     void uartFlushTxOnly();
 
 private: /* data */ 
-    bool protv2;
+    bool _oldProtv11;
     uint32_t _baudrate; 	            /* nextion serail baudrate */
     uint32_t _undownloadByte; 	        /* undownload byte of tft file */
     uart_port_t _upload_uart_num;       /* upload uart port number */

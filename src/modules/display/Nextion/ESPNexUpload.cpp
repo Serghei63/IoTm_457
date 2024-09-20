@@ -22,12 +22,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
+/*
 #ifdef CORE_DEBUG_LEVEL
 #undef CORE_DEBUG_LEVEL
 #endif
 
 #define CORE_DEBUG_LEVEL 3
 #define LOG_LOCAL_LEVEL ESP_LOG_DEBUG
+*/
 
 #include "ESPNexUpload.h"
 
@@ -77,9 +79,9 @@ bool ESPNexUpload::connect()
 	return true;
 }
 
-bool ESPNexUpload::prepareUpload(uint32_t file_size, bool prot)
+bool ESPNexUpload::prepareUpload(uint32_t file_size, bool oldProt)
 {
-	protv2 = prot;
+	_oldProtv11 = oldProt;
 	_undownloadByte = file_size;
 	ESP_LOGD(TAG, "prepareUpload: %" PRIu32, file_size);
 	vTaskDelay(5 / portTICK_PERIOD_MS);
@@ -206,8 +208,8 @@ uint16_t ESPNexUpload::recvRetString(std::string &response, uint32_t timeout, bo
 	bool exit_flag = false;
 	bool ff_flag = false;
 	response = "";
-	if (timeout != 500)
-		ESP_LOGD(TAG, "timeout setting serial read: %" PRIu32, timeout);
+	// if (timeout != 500)
+	ESP_LOGD(TAG, "timeout setting serial read: %" PRIu32, timeout);
 
 	start = (unsigned long)(esp_timer_get_time() / 1000ULL);
 
@@ -238,7 +240,11 @@ uint16_t ESPNexUpload::recvRetString(std::string &response, uint32_t timeout, bo
 
 			if (recv_flag)
 			{
-				if (response.find(0x05) != -1)
+				if (response.find(0x05) != -1 && response.length() == 1)
+				{
+					exit_flag = true;
+				}
+				else if (response.find(0x08) != -1 && response.length() == 5)
 				{
 					exit_flag = true;
 				}
@@ -273,10 +279,10 @@ bool ESPNexUpload::_setPrepareForFirmwareUpdate(uint32_t upload_baudrate)
 	vTaskDelay(10 / portTICK_PERIOD_MS);
 	this->recvRetString(response, 800, true); // normal response time is 400ms
 	ESP_LOGD(TAG, "response (00): %s", response.c_str());
-	if (protv2)
-		cmd = "whmi-wris " + std::to_string(_undownloadByte) + "," + std::to_string(upload_baudrate) + ",1";
-	else
+	if (_oldProtv11)
 		cmd = "whmi-wri " + std::to_string(_undownloadByte) + "," + std::to_string(upload_baudrate) + ",0";
+	else
+		cmd = "whmi-wris " + std::to_string(_undownloadByte) + "," + std::to_string(upload_baudrate) + ",1";
 	ESP_LOGI(TAG, "cmd: %s", cmd.c_str());
 
 	this->sendCommand(cmd.c_str());
@@ -305,6 +311,7 @@ bool ESPNexUpload::_setPrepareForFirmwareUpdate(uint32_t upload_baudrate)
 	}
 }
 
+// НЕ ПРОВЕРЯЛОСЬ !!!!!!!!!!!!!!!!!!
 bool ESPNexUpload::upload(const uint8_t *file_buf, size_t file_size)
 {
 
@@ -327,9 +334,12 @@ bool ESPNexUpload::upload(const uint8_t *file_buf, size_t file_size)
 		{
 			blockSize = file_size - offset;
 		}
-		uartWriteBuf((char*)file_buf[offset], blockSize);
+		uartWriteBuf((char *)file_buf[offset], blockSize);
 		// wait for the Nextion to return its 0x05 byte confirming reception and readiness to receive the next packets
 		this->recvRetString(response, 2000, true);
+
+		ESP_LOGE(TAG, "response [%s]",
+				 format_hex_pretty(reinterpret_cast<const uint8_t *>(response.data()), response.size()).c_str());
 
 		if (response[0] == 0x08 && response.size() == 5)
 		{ // handle partial upload request
@@ -341,8 +351,8 @@ bool ESPNexUpload::upload(const uint8_t *file_buf, size_t file_size)
 				ESP_LOGI(TAG, "bulk: %i, total bytes %" PRIu32 ", response: %s", sent_bulk_counter, _sent_packets_total, response.c_str());
 			}
 
-			ESP_LOGE(TAG, "response [%s]",
-					 format_hex_pretty(reinterpret_cast<const uint8_t *>(response.data()), response.size()).c_str());
+			// ESP_LOGE(TAG, "response [%s]",
+			//		 format_hex_pretty(reinterpret_cast<const uint8_t *>(response.data()), response.size()).c_str());
 
 			for (int j = 0; j < 4; ++j)
 			{
@@ -362,8 +372,8 @@ bool ESPNexUpload::upload(const uint8_t *file_buf, size_t file_size)
 				ESP_LOGI(TAG, "bulk: %i, total bytes %" PRIu32 ", response: %s", sent_bulk_counter, _sent_packets_total, response.c_str());
 			}
 
-			ESP_LOGE(TAG, "response [%s]",
-					 format_hex_pretty(reinterpret_cast<const uint8_t *>(response.data()), response.size()).c_str());
+			// ESP_LOGE(TAG, "response [%s]",
+			//		 format_hex_pretty(reinterpret_cast<const uint8_t *>(response.data()), response.size()).c_str());
 			offset += 4096;
 		}
 
@@ -399,22 +409,23 @@ bool ESPNexUpload::upload(Stream &myFile)
 	uint32_t _seekByte = 0;
 	uint32_t _packets_total_byte = 0;
 	// get available data size
-	size_t file_size = myFile.available();
+	size_t file_size = _undownloadByte; // myFile.available();
 	if (file_size)
 	{
-		int remainingBlocks = ceil(file_size / 4096);
+		int remainingBlocks = ceil(file_size / 4096.);
 		int blockSize = 4096;
-
+		ESP_LOGI(TAG, "Remaining Blocks ALL: %" PRIu32, remainingBlocks);
 		while (remainingBlocks > 0)
 		{
-			file_size = myFile.available();
-			// read up to 4096 byte into the buffer
+			// myFile.available();
+			//  read up to 4096 byte into the buffer
 			if (_seekByte > 0)
 			{
 				if (file_size > _seekByte)
 				{
 					blockSize = myFile.readBytes(file_buf, _seekByte);
-					file_size = myFile.available();
+					// file_size = myFile.available();
+					file_size -= _seekByte;
 					ESP_LOGI(TAG, "Seek file: %" PRIu32 ", left bytes %" PRIu32, _seekByte, file_size);
 				}
 				else
@@ -423,59 +434,71 @@ bool ESPNexUpload::upload(Stream &myFile)
 					return false;
 				}
 				blockSize = myFile.readBytes(file_buf, ((file_size > sizeof(file_buf)) ? sizeof(file_buf) : file_size));
+				file_size -= blockSize; // осталось байт
 			}
 			else
+			{
 				blockSize = myFile.readBytes(file_buf, ((file_size > sizeof(file_buf)) ? sizeof(file_buf) : file_size));
-
-			uartWriteBuf((char*)file_buf, blockSize);
+				file_size -= blockSize; // осталось байт
+			}
+			uartWriteBuf((char *)file_buf, blockSize);
 			// wait for the Nextion to return its 0x05 byte confirming reception and readiness to receive the next packets
-			this->recvRetString(response, 2000, true);
+			if (response[0] == 0x08 || timeout >= 4)
+				this->recvRetString(response, 2000, true);
+			else
+				this->recvRetString(response, 500, true);
 
+			ESP_LOGE(TAG, "upload response byte [%s]",
+					 format_hex_pretty(reinterpret_cast<const uint8_t *>(response.data()), response.size()).c_str());
+			ESP_LOG_BUFFER_HEX(TAG, response.data(), response.size());
 			if (response[0] == 0x08 && response.size() == 5)
 			{ // handle partial upload request
 				remainingBlocks -= 1;
-				_sent_packets_total += blockSize;
-				_packets_total_byte += blockSize;
+				_sent_packets_total += blockSize; // отправлено байт
+				_packets_total_byte += blockSize; // всего байт отправлено или пропущено
 				sent_bulk_counter++;
 				if (sent_bulk_counter % 10 == 0)
 				{
-					ESP_LOGI(TAG, "bulk: %i, total bytes %" PRIu32 ", response: %s", sent_bulk_counter, _sent_packets_total, response.c_str());
+					//		ESP_LOGI(TAG, "bulk: %i, total bytes %" PRIu32 ", response: %s", sent_bulk_counter, _sent_packets_total, response.c_str());
 				}
-
-				ESP_LOGE(TAG, "response [%s]",
+				ESP_LOGE(TAG, "upload response [%s]",
 						 format_hex_pretty(reinterpret_cast<const uint8_t *>(response.data()), response.size()).c_str());
-
 				for (int j = 0; j < 4; ++j)
 				{
 					offset += static_cast<uint8_t>(response[j + 1]) << (8 * j);
-					ESP_LOGI(TAG, "Offset : %" PRIu32, offset);
 				}
+				ESP_LOGI(TAG, "Offset : %" PRIu32, offset);
 				if (offset)
 				{
 					remainingBlocks = ceil((file_size - offset) / blockSize);
 					_seekByte = offset - _packets_total_byte;
 					_packets_total_byte += _seekByte;
+					ESP_LOGI(TAG, "Seek Byte : %" PRIu32, _seekByte);
+					ESP_LOGI(TAG, "Remaining Blocks : %" PRIu32, remainingBlocks);
 				}
 			}
-			else if (response[0] == 0x05)
+			else if ((response[0] == 0x08 || response[0] == 0x05) && response.size() == 1)
 			{
 				remainingBlocks -= 1;
 				_sent_packets_total += blockSize;
 				_packets_total_byte += blockSize;
+				file_size -= blockSize;
 				sent_bulk_counter++;
 				if (sent_bulk_counter % 10 == 0)
 				{
-					ESP_LOGI(TAG, "bulk: %i, total bytes %" PRIu32 ", response: %s", sent_bulk_counter, _sent_packets_total, response.c_str());
+					//		ESP_LOGI(TAG, "bulk: %i, total bytes %" PRIu32 ", response: %s", sent_bulk_counter, _sent_packets_total, response.c_str());
 				}
 
-				ESP_LOGE(TAG, "response [%s]",
+				ESP_LOGE(TAG, "upload response [%s]",
 						 format_hex_pretty(reinterpret_cast<const uint8_t *>(response.data()), response.size()).c_str());
 				offset += 4096;
 			}
 
 			else
 			{
-				if (timeout >= 2)
+				ESP_LOGE(TAG, "Fail response [%s]",
+						 format_hex_pretty(reinterpret_cast<const uint8_t *>(response.data()), response.size()).c_str());
+				if (timeout >= 9)
 				{
 					ESP_LOGE(TAG, "upload failed, no valid response from display, total bytes send : %" PRIu32, _sent_packets_total);
 					sent_bulk_counter = 0;
@@ -483,9 +506,23 @@ bool ESPNexUpload::upload(Stream &myFile)
 				}
 				timeout++;
 			}
+			ESP_LOGI(TAG, "bulk: %i, total bytes %" PRIu32 ", response: %s", sent_bulk_counter, _sent_packets_total, response.c_str());
 		}
-		ESP_LOGI(TAG, "upload send last bytes %" PRIu32 ", response: %s", _sent_packets_total, response.c_str());
-		// ESP_LOGI(TAG,"upload finished, total bytes send : %"PRIu32, _sent_packets_total);
+		this->recvRetString(response, 3000, true);
+		if (response[0] == 0x88)
+		{
+			ESP_LOGI(TAG, "upload finished (Response 0x88), total bytes send : %" PRIu32, _sent_packets_total);
+			this->end();
+		}
+		else
+		{
+			ESP_LOGE(TAG, "upload response [%s]",
+					 format_hex_pretty(reinterpret_cast<const uint8_t *>(response.data()), response.size()).c_str());
+			ESP_LOGI(TAG, "upload finished (TimeOut 0x88), total bytes send : %" PRIu32, _sent_packets_total);
+			this->end();
+		}
+		// ESP_LOGI(TAG, "upload send last bytes %" PRIu32 ", response: %s", _sent_packets_total, response.c_str());
+		//  ESP_LOGI(TAG,"upload finished, total bytes send : %"PRIu32, _sent_packets_total);
 		sent_bulk_counter = 0;
 		return true;
 	}
@@ -511,15 +548,15 @@ void ESPNexUpload::end()
 	}
 
 	// wait for the nextion to finish internal processes
-	vTaskDelay(1600 / portTICK_PERIOD_MS);
+	// vTaskDelay(1600 / portTICK_PERIOD_MS);
 
 	// soft reset the nextion
 	this->softReset();
 
 	// end Serial connection
-	uart_mutex_lock();
-	ESP_ERROR_CHECK(uart_driver_delete(_upload_uart_num));
-	uart_mutex_unlock();
+	// uart_mutex_lock();
+	// ESP_ERROR_CHECK(uart_driver_delete(_upload_uart_num));
+	// uart_mutex_unlock();
 
 	// reset sent packets counter
 	//_sent_packets = 0;
@@ -779,43 +816,48 @@ void ESPNexUpload::setBaudrate(uart_port_t uart_num, uint32_t baud_rate, gpio_nu
 	}
 
 	ESP_ERROR_CHECK(uart_set_pin(uart_num, tx_io_num, rx_io_num, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE));
-	ESP_ERROR_CHECK(uart_driver_install(uart_num,
-										CONFIG_NEX_UART_RECV_BUFFER_SIZE, // Receive buffer size.
-										0,								  // Transmit buffer size.
-										10,								  // Queue size.
-										NULL,							  // Queue pointer.
-										0));							  // Allocation flags.
+	/*
+		ESP_ERROR_CHECK(uart_driver_install(uart_num,
+											CONFIG_NEX_UART_RECV_BUFFER_SIZE, // Receive buffer size.
+											0,								  // Transmit buffer size.
+											10,								  // Queue size.
+											NULL,							  // Queue pointer.
+											0));							  // Allocation flags.
+		*/
 	ESP_LOGD(TAG, "driver installed");
 	_uart_diver_installed = true;
 }
 
-std::string ESPNexUpload::str_snprintf(const char *fmt, size_t len, ...) {
-  std::string str;
-  va_list args;
+std::string ESPNexUpload::str_snprintf(const char *fmt, size_t len, ...)
+{
+	std::string str;
+	va_list args;
 
-  str.resize(len);
-  va_start(args, len);
-  size_t out_length = vsnprintf(&str[0], len + 1, fmt, args);
-  va_end(args);
+	str.resize(len);
+	va_start(args, len);
+	size_t out_length = vsnprintf(&str[0], len + 1, fmt, args);
+	va_end(args);
 
-  if (out_length < len)
-    str.resize(out_length);
+	if (out_length < len)
+		str.resize(out_length);
 
-  return str;
+	return str;
 }
 char ESPNexUpload::format_hex_pretty_char(uint8_t v) { return v >= 10 ? 'A' + (v - 10) : '0' + v; }
-std::string ESPNexUpload::format_hex_pretty(const uint8_t *data, size_t length) {
-  if (length == 0)
-    return "";
-  std::string ret;
-  ret.resize(3 * length - 1);
-  for (size_t i = 0; i < length; i++) {
-    ret[3 * i] = format_hex_pretty_char((data[i] & 0xF0) >> 4);
-    ret[3 * i + 1] = format_hex_pretty_char(data[i] & 0x0F);
-    if (i != length - 1)
-      ret[3 * i + 2] = '.';
-  }
-  if (length > 4)
-    return ret + " (" + str_snprintf("%u", 32, length) + ")";
-  return ret;
+std::string ESPNexUpload::format_hex_pretty(const uint8_t *data, size_t length)
+{
+	if (length == 0)
+		return "";
+	std::string ret;
+	ret.resize(3 * length - 1);
+	for (size_t i = 0; i < length; i++)
+	{
+		ret[3 * i] = format_hex_pretty_char((data[i] & 0xF0) >> 4);
+		ret[3 * i + 1] = format_hex_pretty_char(data[i] & 0x0F);
+		if (i != length - 1)
+			ret[3 * i + 2] = '.';
+	}
+	if (length > 4)
+		return ret + " (" + str_snprintf("%u", 32, length) + ")";
+	return ret;
 }

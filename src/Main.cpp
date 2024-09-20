@@ -124,6 +124,8 @@ void setup() {
     // получение chip id
     setChipId();
 
+    verifyFirmware();
+
     // синхронизация глобальных переменных с flash
     globalVarsSync();
 
@@ -147,6 +149,14 @@ void setup() {
 #endif
         SerialPrint("i", "i2c", F("i2c pins overriding done"));
     }
+
+    if (bootloop_panic_count >= 3)
+    {
+        resetSettingsFlashByPanic();
+        bootloop_panic_count = -1;
+    } 
+    if (bootloop_panic_count == -1)
+        SerialPrint("E", "CORE", F("CONFIG and SCENARIO reset !!!"));
 
     // настраиваем микроконтроллер
     configure("/config.json");
@@ -232,6 +242,7 @@ void setup() {
     Serial.println("--------test end---------");
 
     stopErrorMarker(SETUPLAST_ERRORMARKER);
+    bootloop_panic_count = 0;
 }
 
 void loop() {

@@ -18,3 +18,6 @@ extern "C" void __real_esp_panic_handler(void*);
 void printDebugTrace();
 void sendDebugTraceAndFreeMemory(bool);
 void IRAM_ATTR debugUpdate();
+
+extern "C" bool verifyRollbackLater();
+void verifyFirmware();

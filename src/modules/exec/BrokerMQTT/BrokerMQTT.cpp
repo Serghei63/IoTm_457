@@ -125,8 +125,6 @@ namespace _Broker
         }
     }
 
-    bool _debug;
-
     class BrokerMQTT : public IoTItem
     {
     private:
@@ -134,7 +132,7 @@ namespace _Broker
         int _port = 0;
         String _user;
         String _pass;
-        //bool _debug;
+        bool _debug;
         bool _brige;
         String _server;
         String _srvUser;

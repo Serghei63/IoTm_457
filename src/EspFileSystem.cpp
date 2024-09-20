@@ -35,6 +35,26 @@ void syncSettingsFlashJson()
     writeFile(F("settings.json"), settingsFlashJson);
 }
 
+void resetSettingsFlashByPanic()
+{
+    FileFS.rename("/config.json", "/config_bak.json");
+    /*
+    update.configJson = readFile("config.json", 4096 * 4);
+    update.layoutJson = readFile("layout.json", 4096 * 4);
+    update.scenarioTxt = readFile("scenario.txt", 4096 * 4);
+    writeFile(F("/config_bak.json"), update.configJson);
+    writeFile(F("/scenario_bak.txt"), update.scenarioTxt);
+    writeFile(F("/layout_bak.json"), update.layoutJson);
+    */
+    update.configJson = "[]";
+    update.scenarioTxt = "";
+    update.layoutJson = "[]";
+    writeFile(F("/config.json"), update.configJson);
+    writeFile(F("/scenario.txt"), update.scenarioTxt);
+    writeFile(F("/layout.json"), update.layoutJson);
+    ESP.reset();
+}
+
 void syncValuesFlashJson()
 {
     writeFile(F("values.json"), valuesFlashJson);
