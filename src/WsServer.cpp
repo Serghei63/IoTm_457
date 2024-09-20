@@ -378,6 +378,7 @@ void sendFileToWsByFrames(const String& filename, const String& header, const St
 
     auto path = filepath(filename);
     auto file = FileFS.open(path, "r");
+    //SerialPrint("I", "sendFileToWsByFrames", ("reed file: ")+ path);
     if (!file) {
         SerialPrint("E", "FS", F("reed file error"));
         return;
@@ -425,16 +426,25 @@ void sendFileToWsByFrames(const String& filename, const String& header, const St
                 continuation = true;
             }
 
-            // Serial.println(String(i) + ") " + "ws: " + String(client_id) + " fr sz:
-            // " + String(size) + " fin: " + String(fin) + " cnt: " +
-            // String(continuation));
-
+             Serial.println(String(i) + ") " + "ws: " + String(client_id) + " fr sz: " 
+             + String(size) + " fin: " + String(fin) + " cnt: " +
+             String(continuation));
+#ifdef ASYNC_WEB_SOCKETS
+            if (client_id == -1) {
+                //ws.broadcastBIN(frameBuf, size, fin, continuation);
+                ws.binaryAll(frameBuf, size);
+            } else {
+                //ws.sendBIN(client_id, frameBuf, size, fin, continuation);
+                ws.binary(client_id,frameBuf, size);
+            }
+#elif defined (STANDARD_WEB_SOCKETS)
             if (client_id == -1) {
                 standWebSocket.broadcastBIN(frameBuf, size, fin, continuation);
 
             } else {
                 standWebSocket.sendBIN(client_id, frameBuf, size, fin, continuation);
             }
+#endif
         }
         i++;
     }
@@ -444,7 +454,12 @@ void sendFileToWsByFrames(const String& filename, const String& header, const St
 }
 
 void sendStringToWs(const String& header, String& payload, int client_id) {
-    if ((!getNumAPClients() && !isNetworkActive()) || !getNumWSClients()) {
+#ifdef LIBRETINY    
+    if (/* (!getNumAPClients() && !isNetworkActive())  || */ !getNumWSClients()) {
+#else
+    if ( (!getNumAPClients() && !isNetworkActive())  ||  !getNumWSClients()) {
+#endif        
+      //  SerialPrint("E", "sendStringToWs", "getNumAPClients: " + String(getNumAPClients()) + "isNetworkActive: " + String(isNetworkActive() + "getNumWSClients: " + String(getNumWSClients())));
         // standWebSocket.disconnect(); // это и ниже надо сделать при -
         // standWebSocket.close();      // - отключении AP И WiFi(STA), надо менять ядро WiFi. Сейчас не закрывается сессия клиента при пропаже AP И WiFi(STA)
         return;
@@ -457,14 +472,22 @@ void sendStringToWs(const String& header, String& payload, int client_id) {
 
     String msg = header + "|0012|" + payload;
     size_t totalSize = msg.length();
-
+   // SerialPrint("E", "sendStringToWs", msg);
     char dataArray[totalSize];
     msg.toCharArray(dataArray, totalSize + 1);
+#ifdef ASYNC_WEB_SOCKETS
+    if (client_id == -1) {
+        ws.binaryAll((uint8_t*)dataArray, totalSize);
+    } else {
+        ws.binary(client_id, (uint8_t*)dataArray, totalSize);
+    }
+#elif defined (STANDARD_WEB_SOCKETS)
     if (client_id == -1) {
         standWebSocket.broadcastBIN((uint8_t*)dataArray, totalSize);
     } else {
         standWebSocket.sendBIN(client_id, (uint8_t*)dataArray, totalSize);
     }
+#endif
 }
 
 void sendDeviceList(uint8_t num) {
@@ -478,5 +501,8 @@ void sendDeviceList(uint8_t num) {
         SerialPrint("i", "FS", "flash list");
     }
 }
-
+#ifdef ASYNC_WEB_SOCKETS
+int getNumWSClients() { return ws.count(); }
+#elif defined (STANDARD_WEB_SOCKETS)
 int getNumWSClients() { return standWebSocket.connectedClients(false); }
+#endif

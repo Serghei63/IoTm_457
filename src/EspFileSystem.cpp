@@ -18,14 +18,17 @@ void globalVarsSync()
 
     valuesFlashJson = readFile(F("values.json"), 4096);
     valuesFlashJson.replace("\r\n", "");
-
+    if (settingsFlashJson  ==  "failed")
+        return;
     mqttPrefix = jsonReadStr(settingsFlashJson, F("mqttPrefix"));
     jsonWriteStr_(settingsFlashJson, "id", chipId);
 
     mqttRootDevice = mqttPrefix + "/" + chipId;
-
+#ifdef LIBRETINY
+    jsonWriteStr_(settingsFlashJson, "ip", ipToString(WiFi.localIP()));
+#else
     jsonWriteStr_(settingsFlashJson, "ip", WiFi.localIP().toString());
-
+#endif
     // это не используется - удалить в последствии
     jsonWriteStr_(settingsFlashJson, "root", mqttRootDevice);
 }
@@ -134,7 +137,7 @@ uint32_t getFlashChipIdNew()
         }
 
         //    esp_flash_read_id(nullptr, &flashChipId);
-#elif defined(ESP8266)
+#elif defined(ESP8266) || defined(LIBRETINY)  
         flashChipId = ESP.getFlashChipId();
 #endif // ifdef ESP32
     }
@@ -148,9 +151,12 @@ const String getMacAddress()
 #if defined(ESP8266)
     WiFi.macAddress(mac);
     sprintf(buf, MACSTR, MAC2STR(mac));
-#else
+#elif defined(ESP32)
     esp_read_mac(mac, ESP_MAC_WIFI_STA);
     sprintf(buf, MACSTR, mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+#elif defined(LIBRETINY)
+   uint32_t macid = lt_cpu_get_mac_id ();
+   memcpy(buf, &macid, sizeof(macid));
 #endif
     return String(buf);
 }
