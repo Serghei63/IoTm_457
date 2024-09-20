@@ -4,6 +4,7 @@
 #include "utils/Statistic.h"
 #include "classes/IoTBench.h"
 #include <Wire.h>
+#include "DebugTrace.h"
 #if defined(esp32s2_4mb) || defined(esp32s3_16mb)
 #include <USB.h>
 #endif
@@ -97,6 +98,12 @@ void setup() {
 
     Serial.begin(115200);
     Serial.flush();
+    //----------- Отладка EXCEPTION (функции с заглушками для отключения) ---------
+    //Привязка коллбэк функции для вызова при перезагрузке
+    esp_register_shutdown_handler(debugUpdate);
+    // Печать или оправка отладочной информации
+    printDebugTrace();
+
     Serial.println();
     Serial.println(F("--------------started----------------"));
 
@@ -179,6 +186,10 @@ void setup() {
 
     stopErrorMarker(SETUPINET_ERRORMARKER);
 
+    bool postMsgTelegram;
+    if (!jsonRead(settingsFlashJson, "debugTrace", postMsgTelegram, false)) postMsgTelegram = 1;
+    sendDebugTraceAndFreeMemory(postMsgTelegram);
+    
     initErrorMarker(SETUPLAST_ERRORMARKER);
 
     elementsLoop();

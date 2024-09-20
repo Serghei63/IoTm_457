@@ -79,7 +79,7 @@ uint32_t ESP_getChipId(void)
 #endif
 }
 
-// устарела используем новую функцию ниже
+/*// устарела используем новую функцию ниже
 #if !defined(esp32s2_4mb) && !defined(esp32c3m_4mb) && !defined(esp32s3_16mb)
 //#ifndef esp32s2_4mb
 uint32_t ESP_getFlashChipId(void)
@@ -93,6 +93,7 @@ uint32_t ESP_getFlashChipId(void)
 #endif
 }
 #endif
+*/
 
 // https://github.com/espressif/arduino-esp32/issues/6945#issuecomment-1199900892
 // получение flash ch id из проекта esp easy

@@ -14,6 +14,7 @@ private:
     bool _UpTelegram;
     char _inc;
     String _inStr = "";     // буфер приема строк в режимах 0, 1, 2
+    bool _protv2;
 
     // Выводим русские буквы на экран Nextion (преобразуем в кодировку ISO-8859-5)
     String convertRUS(String text)
@@ -65,6 +66,7 @@ public:
         jsonRead(parameters,  "speed", _speed);
         jsonRead(parameters,  "line", _line);
         jsonRead(parameters, "uploadTelegram", _UpTelegram);
+        jsonRead(parameters, "protv2", _protv2);
     }
 
     IoTValue execute(String command, std::vector<IoTValue> &param)
@@ -211,10 +213,9 @@ public:
             if (!updated)
             {
                 SerialPrint("I", F("NextionUpdate"), "connecting to  " + (String)_host);
-                HTTPClient http; 
+                HTTPClient http;
 #if defined ESP8266
-                WiFiClient client;
-                if (!http.begin(client, _host, 80, _url))
+                if (!http.begin(_host, 80, _url))
                     SerialPrint("I", F("NextionUpdate"), "connection failed  ");
 #elif defined ESP32
                 if (!http.begin(String("http://") + _host + _url))
@@ -269,29 +270,31 @@ public:
         int contentLength = http.getSize();
         SerialPrint("I", F("NextionUpdate"), "File received. Update Nextion...   ");
         bool result;
-        ESPNexUpload nexUp(_speed, _line, _rx, _tx);
-        nexUp.setUpdateProgressCallback([]()
-                                          { SerialPrint("I", F("NextionUpdate"), "...   "); });
+        ESPNexUpload nexUp(_line, _speed, (gpio_num_t)_tx, (gpio_num_t)_rx);
+  //      nexUp.setUpdateProgressCallback([]()
+  //                                        { SerialPrint("I", F("NextionUpdate"), "...   "); });
 
-        result = nexUp.prepareUpload(contentLength);
+        result = nexUp.prepareUpload(contentLength, _protv2);
         if (!result)
         {
-            SerialPrint("I", F("NextionUpdate"), "Error:    " + (String)nexUp.statusMessage);
+            SerialPrint("I", F("NextionUpdate"), "Error Connect in prepare upload");
         }
         else
         {
+            updated = true;
             SerialPrint("I", F("NextionUpdate"), "Start upload. File size is:     " + (String)contentLength);
             result = nexUp.upload(*http.getStreamPtr());
             if (result)
             {
-                updated = true;
+
                 SerialPrint("I", F("NextionUpdate"), "Succesfully updated Nextion!     ");
             }
             else
             {
-                SerialPrint("I", F("NextionUpdate"), "Error updating Nextion:      " + (String)nexUp.statusMessage);
+                SerialPrint("I", F("NextionUpdate"), "Error updating Nextion" );
             }
             nexUp.end();
+            updated = false;
         }
     }
 //---------------------NEXTION-UPDATE---END------------------------

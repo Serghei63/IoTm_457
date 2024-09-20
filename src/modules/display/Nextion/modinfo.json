@@ -17,6 +17,7 @@
       "rx": 16,
       "line": 2,
       "speed": 9600,
+      "protv2": 1,
       "uploadTelegram": 1
     }
   ],
@@ -28,8 +29,8 @@
     "moduleName": "Nextion",
     "moduleVersion": "2.0",
     "usedRam": {
-      "esp32_4mb": 15,
-      "esp8266_4mb": 15
+      "esp32_4mb": 152,
+      "esp8266_4mb": 152
     },
     "title": "Nextion",
     "moduleDesc": "загрузка прошивки в дисплей Nextion. Команда для запуска обновления дисплея: Nextion.Update(); ",
@@ -40,6 +41,7 @@
       "line": "Актуально только для ESP32: номер линии hardUART. =2 rx=16 tx=17, для SoftwarwSerial в ESP32 line = -1",
       "host": "Сервер обновления. Можно использовать LiveServer из VisualCode, указывать ip адрес",
       "url": "файл прошивки экрана, указывать с расширением, например nextion.tft или iotm/test.tft",
+      "protv2": "1-использует быстрый протоколо прошивки v1.2, 0-использует оффициальный протокол прошивки",
       "uploadTelegram": "1 - разрешает прошивать экран через модуль Telegram_v2",
       "btn-uploadServer": "Кнопка загрузки прошивки с сервера LiveServer или другого по ip"
     },
@@ -87,7 +89,12 @@
   },
   "defActive": false,
   "usedLibs": {
-    "esp32*": [],
-    "esp82*": []
+    "esp32_4mb": [],
+    "esp32_4mb3f": [],
+    "esp8266_4mb": [],
+    "esp8266_1mb": [],
+    "esp8266_1mb_ota": [],
+    "esp8285_1mb": [],
+    "esp8285_1mb_ota": []
   }
 }
