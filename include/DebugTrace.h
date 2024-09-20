@@ -1,5 +1,10 @@
 #pragma once
-//
+
+// В папке toolchchain с которым собирались 
+// (Для esp32 например %%USERPROFILE%/.platformio/packages/toolchain-xtensa-esp32@8.4.0+2021r2-patch5/bin)
+// из командной строки Windows (cmd) запустить файл c параметрами:
+// xtensa-esp32-elf-addr2line.exe -pfiaC -e Путь_к_файлу/firmware.elf Стэк_адресов_из_сообщения
+// %%USERPROFILE%/.platformio/packages/toolchain-xtensa-esp32@8.4.0+2021r2-patch5/bin xtensa-esp32-elf-addr2line.exe -pfiaC -e .pio/build/esp32_4mb3f/firmware.elf Стэк_адресов
 #include "Global.h"
 
 #define RESTART_DEBUG_INFO

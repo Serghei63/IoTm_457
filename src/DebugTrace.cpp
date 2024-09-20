@@ -89,6 +89,8 @@ re_restart_debug_t debugGet()
 #define CONFIG_MESSAGE_TG_VERSION_HEAP "! Устройство аварийно перезапущено !\n\nИмя устройства:     %s\nПричина перезапуска: %s\nCPU0: %s\nCPU1: %s\nHEAP: %s"
 #define CONFIG_MESSAGE_TG_VERSION_TRACE "! Устройство  аварийно перезапущено !\n\nИмя устройства:     %s\nПричина перезапуска: %s\nCPU0:  %s\nCPU1:  %s\nHEAP:  %s\nTRACE: %s"
 
+#define INFO_MESSAGE_DEBUG "By used -> USERPROFILE/.platformio/packages/toolchain-xtensa-esp32@8.4.0+2021r2-patch5/bin xtensa-esp32-elf-addr2line.exe -pfiaC -e .pio/build/esp32_4mb3f/firmware.elf Стэк_адресов"
+
 char *malloc_stringf(const char *format, ...)
 {
   char *ret = nullptr;
@@ -211,6 +213,8 @@ void printDebugTrace()
                   jsonReadStr(settingsFlashJson, F("name")), ESP_getResetReason().c_str(), ESP32GetResetReason(0).c_str(), ESP32GetResetReason(1).c_str());
   }
   
+  Serial.println(INFO_MESSAGE_DEBUG);
+
 }
 
 void sendDebugTraceAndFreeMemory( bool postMsg)
