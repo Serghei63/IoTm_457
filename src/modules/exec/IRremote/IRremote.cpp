@@ -15,10 +15,6 @@ class IRremote : public IoTItem {
 
     String _set_id;                                             // заданная температура
 
-    //float pv_last = 0;                                          // предыдущая температура
-   
-    //float sp, pv, pv2;
-    //String interim;
     int enable = 1;
     float _tmp;
 
@@ -31,9 +27,6 @@ class IRremote : public IoTItem {
         jsonRead(parameters, "prot", _prot);                    // используемый протокол
         jsonRead(parameters, "set_id", _set_id);                // id установленной температуры
     
-
-
-
             if (_pinTx >= 0) {
                 IoTgpio.pinMode(_pinTx, OUTPUT);
                 IoTgpio.digitalWrite(_pinTx, false); }
@@ -66,12 +59,7 @@ class IRremote : public IoTItem {
 }   
 
 
-    void doByInterval() {
-
-
-
-       // pv_last = pv;
-    }
+    void doByInterval() {}
 
         IoTValue execute(String command, std::vector<IoTValue> &param) {
 
@@ -86,7 +74,7 @@ class IRremote : public IoTItem {
           if (command == "off") { 
 
             ac->next.power = false;
-            ac->sendAc();               // Send the message.
+            ac->sendAc();
                 
               SerialPrint("i", F("IRremote"), "Ballu AC off ");              
             }
@@ -94,7 +82,7 @@ class IRremote : public IoTItem {
           if (command == "cool") { 
 
             ac->next.mode = stdAc::opmode_t::kCool;
-            ac->sendAc();               // Send the message.
+            ac->sendAc();
                 
               SerialPrint("i", F("IRremote"), "Ballu AC cool ");              
             }
@@ -102,7 +90,7 @@ class IRremote : public IoTItem {
           if (command == "heat") { 
 
             ac->next.mode = stdAc::opmode_t::kHeat;
-            ac->sendAc();               // Send the message.
+            ac->sendAc();
                 
               SerialPrint("i", F("IRremote"), "Ballu AC heat ");              
             }
@@ -110,62 +98,60 @@ class IRremote : public IoTItem {
           if (command == "dry") { 
 
             ac->next.mode = stdAc::opmode_t::kDry;
-            ac->sendAc();               // Send the message.
+            ac->sendAc();
                 
               SerialPrint("i", F("IRremote"), "Ballu AC dry ");              
             }
           if (command == "auto") { 
 
             ac->next.fanspeed = stdAc::fanspeed_t::kAuto;
-            ac->sendAc();               // Send the message.
+            ac->sendAc();
                 
               SerialPrint("i", F("IRremote"), "Ballu AC speed1 ");              
             }
           if (command == "speedmin") { 
 
             ac->next.fanspeed = stdAc::fanspeed_t::kMin;
-            ac->sendAc();               // Send the message.
+            ac->sendAc();
                 
               SerialPrint("i", F("IRremote"), "Ballu AC speed min ");              
             }
           if (command == "speedlow") { 
 
             ac->next.fanspeed = stdAc::fanspeed_t::kLow;
-            ac->sendAc();               // Send the message.
+            ac->sendAc();
                 
               SerialPrint("i", F("IRremote"), "Ballu AC speed low ");              
             }
           if (command == "speedmed") { 
 
             ac->next.fanspeed = stdAc::fanspeed_t::kMedium; // Надо выбрать под конкретный кондиционер из 6-ти вариантов
-            ac->sendAc();                                       // Send the message.
+            ac->sendAc();
                 
               SerialPrint("i", F("IRremote"), "Ballu AC speed medium ");              
             }
             if (command == "speedhigh") { 
 
             ac->next.fanspeed = stdAc::fanspeed_t::kHigh; // Надо выбрать под конкретный кондиционер из 6-ти вариантов
-            ac->sendAc();                                       // Send the message.
+            ac->sendAc();
                 
               SerialPrint("i", F("IRremote"), "Ballu AC speed high");              
             }
           if (command == "speedmax") { 
 
             ac->next.fanspeed = stdAc::fanspeed_t::kMax; // Надо выбрать под конкретный кондиционер из 6-ти вариантов
-            ac->sendAc();                                       // Send the message.
+            ac->sendAc(); 
                 
               SerialPrint("i", F("IRremote"), "Ballu AC speed max");              
             }
 
           if (command == "speedmh") { 
 
-            ac->next.fanspeed = stdAc::fanspeed_t::kMediumHigh; // Надо выбрать под конкретный кондиционер из 6-ти вариантов
-            ac->sendAc();                                       // Send the message.
+            ac->next.fanspeed = stdAc::fanspeed_t::kMediumHigh;
+            ac->sendAc();
                 
-              SerialPrint("i", F("IRremote"), "Ballu AC speed mh");              
+              SerialPrint("i", F("IRremote"), "Ballu AC speed max");              
             }
-
-            //setTemp  acc.setTemp(val)
 
           if (command == "setTemp") { 
 
@@ -173,7 +159,6 @@ class IRremote : public IoTItem {
 			IoTItem *tmp = findIoTItem(_set_id);
 			if (tmp)
 			{
-				//interim = tmp->getValue();
 				_tmp = ::atof(tmp->getValue().c_str());
 				ac->next.degrees = _tmp;    // set Temp 17 C - 30 C.
 				ac->sendAc();               // Send the message.
@@ -185,16 +170,11 @@ class IRremote : public IoTItem {
 				setValue("ошибка настройки кондиционера");
 			}
 		
-            //ac->next.degrees = _tmp;    // set Temp 17 C - 30 C.
-            //ac->sendAc();               // Send the message.
-                
-         
-            }
-            //ac->next.swingv = stdAc::swingv_t::kOff; 
-
+    }
+          
           if (command == "swing") { 
 
-            ac->next.swingv = stdAc::swingv_t::kMiddle;; // Надо выбрать под конкретный кондиционер из 6-ти вариантов
+            ac->next.swingv = stdAc::swingv_t::kMiddle;;        // Надо выбрать под конкретный кондиционер из 6-ти вариантов
             ac->sendAc();                                       // Send the message.
                 
               SerialPrint("i", F("IRremote"), "Ballu AC swing middle");              
