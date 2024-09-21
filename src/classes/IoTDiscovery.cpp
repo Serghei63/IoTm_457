@@ -1,6 +1,5 @@
 #include "Global.h"
 #include "classes/IoTDiscovery.h"
-#include "IoTDiscovery.h"
 
 IoTDiscovery::IoTDiscovery(const String &parameters) : IoTItem(parameters)
 {

@@ -19,6 +19,9 @@ typedef struct {
 } re_restart_debug_t;
 
 #endif // RESTART_DEBUG_INFO
+
+__NOINIT_ATTR static int8_t bootloop_panic_count;
+
 extern "C" void __real_esp_panic_handler(void*);
 void printDebugTrace();
 void sendDebugTraceAndFreeMemory(bool);

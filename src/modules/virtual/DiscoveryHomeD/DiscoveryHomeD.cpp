@@ -31,7 +31,7 @@ public:
         if (!HOMEd)
             return;
 
-        if (msg.indexOf("HELLO") == -1)
+        if (payloadStr.indexOf("HELLO") == -1)
         {
 /*             String dev = selectToMarkerLast(topic, "/");
             dev.toUpperCase();
@@ -254,7 +254,7 @@ public:
             }
         }
     }
-    IoTBench *getBenchmarkTask()
+    IoTDiscovery *getHOMEdDiscovery()
     {
         if (HOMEd)
             return this;

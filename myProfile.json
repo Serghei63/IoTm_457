@@ -138,12 +138,20 @@
                 "active": false
             },
             {
+                "path": "src/modules/virtual/DiscoveryHA",
+                "active": true
+            },
+            {
+                "path": "src/modules/virtual/DiscoveryHomeD",
+                "active": true
+            },
+            {
                 "path": "src/modules/virtual/GoogleSheet",
                 "active": false
             },
             {
                 "path": "src/modules/virtual/Loging",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/virtual/LogingDaily",
@@ -167,7 +175,7 @@
             },
             {
                 "path": "src/modules/virtual/Variable",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/virtual/VButton",
@@ -447,7 +455,7 @@
             },
             {
                 "path": "src/modules/exec/SIM800",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/SmartBoiler",

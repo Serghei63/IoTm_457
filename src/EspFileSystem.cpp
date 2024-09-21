@@ -49,13 +49,13 @@ void resetSettingsFlashByPanic()
     writeFile(F("/scenario_bak.txt"), update.scenarioTxt);
     writeFile(F("/layout_bak.json"), update.layoutJson);
     */
-    update.configJson = "[]";
-    update.scenarioTxt = "";
-    update.layoutJson = "[]";
-    writeFile(F("/config.json"), update.configJson);
-    writeFile(F("/scenario.txt"), update.scenarioTxt);
-    writeFile(F("/layout.json"), update.layoutJson);
-    ESP.reset();
+    //update.configJson = "[]";
+    //update.scenarioTxt = "";
+    //update.layoutJson = "[]";
+    writeFile(F("/config.json"), "[]");
+    writeFile(F("/scenario.txt"), "");
+    writeFile(F("/layout.json"), "[]");
+    ESP.restart();
 }
 
 void syncValuesFlashJson()

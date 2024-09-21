@@ -219,7 +219,7 @@ public:
         }
     }
 
-    IoTDiscovery *getBenchmarkTask()
+    IoTDiscovery *getHADiscovery()
     {
         if (HA)
             return this;

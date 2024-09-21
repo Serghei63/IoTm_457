@@ -258,11 +258,11 @@ IoTBench *IoTItem::getBenchmarkLoad()
 {
     return nullptr;
 }
-IoTBench *IoTItem::getHOMEdDiscovery()
+IoTDiscovery *IoTItem::getHOMEdDiscovery()
 {
     return nullptr;
 }
-IoTBench *IoTItem::getHADiscovery()
+IoTDiscovery *IoTItem::getHADiscovery()
 {
     return nullptr;
 }

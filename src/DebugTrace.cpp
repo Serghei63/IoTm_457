@@ -9,6 +9,7 @@ __NOINIT_ATTR static re_restart_debug_t _debug_info;
 #include "esp_err.h"
 #include "soc/soc_memory_layout.h"
 #include "soc/cpu.h"
+#include "esp_ota_ops.h"
 
 // RU: Размер буфера для конвертации даты и времeни в строку
 #define CONFIG_FORMAT_STRFTIME_BUFFER_SIZE 32

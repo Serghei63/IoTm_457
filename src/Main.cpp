@@ -158,7 +158,10 @@ void setup() {
         bootloop_panic_count = -1;
     } 
     if (bootloop_panic_count == -1)
+    {
         SerialPrint("E", "CORE", F("CONFIG and SCENARIO reset !!!"));
+        bootloop_panic_count = 0;
+    }
 
     // настраиваем микроконтроллер
     configure("/config.json");

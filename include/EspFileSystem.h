@@ -51,6 +51,7 @@ extern void globalVarsSync();
 // extern String getParamsJson();
 
 extern void syncSettingsFlashJson();
+void resetSettingsFlashByPanic();
 extern void syncValuesFlashJson();
 
 extern const String getChipId();

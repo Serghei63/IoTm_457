@@ -1,5 +1,5 @@
 {
-    "menuSection": "sensors",
+    "menuSection": "executive_devices",
     "configItem": [
         {
             "global": 0,
@@ -37,7 +37,7 @@
         "title": "EctoControlAdapter",
         "moduleDesc": "Управление отопительным котлом через адаптер EctoControl по протоколам OpenTherm, eBUS, Navien. Посредством Modbus RTU. Разъем 4P4C: 1-Желтый(красный)+12V; 2-Белый-GND; 3-Зелёный-A; 4-Коричневый(Синий)-B",
         "propInfo": {
-            "addr": "Адрес slav",
+            "addr": "Адрес slave",
             "int": "Количество секунд между опросами датчика.",
             "RX": "Пин RX",
             "TX": "Пин TX",

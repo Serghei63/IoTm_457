@@ -3,6 +3,7 @@
 //#include "classes/IoTBench.h"
 
 class IoTBench;
+class IoTDiscovery;
 
 struct IoTValue {
     float valD = 0;
@@ -57,10 +58,10 @@ class IoTItem {
     //virtual IoTItem* getCAMDriver();
     virtual IoTItem* getTlgrmDriver();
     //virtual IoTBench* getBenchmark();
-    virtual IoTBench*getBenchmarkTask();
-    virtual IoTBench*getBenchmarkLoad();
-    virtual IoTBench*getHADiscovery();
-    virtual IoTBench*getHOMEdDiscovery();
+    virtual IoTBench* getBenchmarkTask();
+    virtual IoTBench* getBenchmarkLoad();
+    virtual IoTDiscovery* getHADiscovery();
+    virtual IoTDiscovery* getHOMEdDiscovery();
     virtual unsigned long getRtcUnixTime();
 
         // делаем доступным модулям отправку сообщений в телеграм
