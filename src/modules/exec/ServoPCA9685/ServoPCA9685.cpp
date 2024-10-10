@@ -23,8 +23,7 @@ private:
     String _addr;
     int _oldValue;
     ServoDriverSmooth *servo;
-    // Pca9685Driver* _driver;
-
+   
 public:
     ServoPCA9685(String parameters) : IoTItem(parameters)
     {
@@ -34,7 +33,6 @@ public:
         jsonRead(parameters, "pin", pin);
         jsonRead(parameters, "minPulseWidth", minPulseWidth);
         jsonRead(parameters, "maxPulseWidth", maxPulseWidth);
-        // jsonRead(parameters, "minAngle", minAngle);
         jsonRead(parameters, "maxAngle", maxAngle);
         jsonRead(parameters, "speed", speed);
         jsonRead(parameters, "accel", accel);
@@ -46,14 +44,12 @@ public:
             return;
         }
 
-        //servo = new ServoDriverSmooth(_addr, (int)maxAngle);// Тут обругало
         servo = new ServoDriverSmooth();
 
         servo->attach(pin, minPulseWidth, maxPulseWidth);
         servo->setSpeed(speed);
         servo->setAccel(accel);
 
-        // _driver = new Pca9685Driver(index, _pwm);
     }
 
     void loop()
