@@ -1,0 +1,65 @@
+{
+    "menuSection": "executive_devices",
+    "configItem": [
+        {
+            "global": 0,
+            "name": "ServoSmooth",
+            "type": "Reading",
+            "subtype": "ServoSmooth",
+            "id": "ServoSmooth",
+            "widget": "rangeServo",
+            "page": "ServoSmooth",
+            "descr": "угол",
+            "pin": 0,
+            "minPulseWidth": 600,
+            "maxPulseWidth": 2400,
+            "maxAngle": 180,
+			"speed": 120,
+			"accel": 0.5
+        }
+    ],
+    "about": {
+        "authorName": "Bubnov Mikhail",
+        "authorContact": "https://t.me/Mit4bmw",
+        "authorGit": "https://github.com/Mit4el",
+        "specialThanks": "",
+        "moduleName": "ServoSmooth",
+        "moduleVersion": "1.0",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "title": "Плавное управление сервой",
+        "moduleDesc": "Плавное управление сервоприводом",
+        "propInfo": {
+			"pin": "Номер пина от 0 до 15",
+            "index": "Значения от 1 до 4, где при выборе 1 будет нумерация pin 100-115, при выборе 2 200-215 и т.д.",
+            "speed": "Максимальная скорость (градусы в секунду)",
+            "accel": "Установка ускорения (0.05 - 1.0). При значении 1 ускорение максимальное. 0 - отключено",
+            "maxAngle": "Установка максимального угла привода. 180 , 270 , 360 градусов. Зависит от конструкции сервопривода",
+            "minPulseWidth": "длины импульсов, при которых серво поворачивается максимально в одну и другую сторону, зависят от самой серво. Для драйвера диапазон в районе 150-600! Не как у обычной серво"
+
+        },
+        "retInfo": "Содержит текущее значение поворота",
+        "funcInfo": [
+            {
+                "name": "rotate",
+                "descr": "Повернуть привод на угол",
+                "params": [
+                    "Угол поворота"
+                ]
+            }
+        ]		
+    },
+    "defActive": false,
+    "usedLibs": {
+        "esp32*": [
+            "https://github.com/madhephaestus/ESP32Servo",
+            "https://github.com/GyverLibs/ServoSmooth"
+            
+        ],
+        "esp82*": [
+            "https://github.com/GyverLibs/ServoSmooth"
+        ]
+    }
+}
