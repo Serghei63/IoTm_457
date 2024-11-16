@@ -1,6 +1,6 @@
 #include "DebugTrace.h"
 #if defined(RESTART_DEBUG_INFO) && defined(ESP32) && !defined(esp32c3m_4mb)
-//#ifdef RESTART_DEBUG_INFO
+// #ifdef RESTART_DEBUG_INFO
 __NOINIT_ATTR static re_restart_debug_t _debug_info;
 
 #include "esp_debug_helpers.h"
@@ -9,7 +9,6 @@ __NOINIT_ATTR static re_restart_debug_t _debug_info;
 #include "esp_err.h"
 #include "soc/soc_memory_layout.h"
 #include "soc/cpu.h"
-#include "esp_ota_ops.h"
 
 // RU: Размер буфера для конвертации даты и времeни в строку
 #define CONFIG_FORMAT_STRFTIME_BUFFER_SIZE 32
@@ -213,12 +212,11 @@ void printDebugTrace()
     Serial.printf(CONFIG_MESSAGE_TG_VERSION_DEF,
                   jsonReadStr(settingsFlashJson, F("name")), ESP_getResetReason().c_str(), ESP32GetResetReason(0).c_str(), ESP32GetResetReason(1).c_str());
   }
-  
-  Serial.println(INFO_MESSAGE_DEBUG);
 
+  Serial.println(INFO_MESSAGE_DEBUG);
 }
 
-void sendDebugTraceAndFreeMemory( bool postMsg)
+void sendDebugTraceAndFreeMemory(bool postMsg)
 {
   // esp_register_shutdown_handler(debugUpdate);
   re_restart_debug_t debug = debugGet();
@@ -265,27 +263,25 @@ void sendDebugTraceAndFreeMemory( bool postMsg)
     }
     free(debug_heap);
   }
-/*  else
-  {
-    //            Serial.println("DEVICE START");
-    //  Serial.printf(CONFIG_MESSAGE_TG_VERSION_DEF,
-    //               FIRMWARE_VERSION, ESP_getResetReason().c_str(), ESP32GetResetReason(0).c_str(), ESP32GetResetReason(1).c_str());
-    if (tlgrmItem && isNetworkActive())
+  /*  else
     {
-      char *msg;
-      msg = malloc_stringf(CONFIG_MESSAGE_TG_VERSION_DEF,
-                            WiFi.localIP().toString(), FIRMWARE_VERSION, ESP_getResetReason().c_str(), ESP32GetResetReason(0).c_str(), ESP32GetResetReason(1).c_str());
-      tlgrmItem->sendTelegramMsg(false, String(msg));
-      free(msg);
-    }
-  };*/
-
+      //            Serial.println("DEVICE START");
+      //  Serial.printf(CONFIG_MESSAGE_TG_VERSION_DEF,
+      //               FIRMWARE_VERSION, ESP_getResetReason().c_str(), ESP32GetResetReason(0).c_str(), ESP32GetResetReason(1).c_str());
+      if (tlgrmItem && isNetworkActive())
+      {
+        char *msg;
+        msg = malloc_stringf(CONFIG_MESSAGE_TG_VERSION_DEF,
+                              WiFi.localIP().toString(), FIRMWARE_VERSION, ESP_getResetReason().c_str(), ESP32GetResetReason(0).c_str(), ESP32GetResetReason(1).c_str());
+        tlgrmItem->sendTelegramMsg(false, String(msg));
+        free(msg);
+      }
+    };*/
 }
-
-#else
+#else // RESTART_DEBUG_INFO
 void printDebugTrace() {}
 void sendDebugTraceAndFreeMemory(bool) {}
-void IRAM_ATTR debugUpdate() {}
+//void IRAM_ATTR debugUpdate() {}
 extern "C" void __wrap_esp_panic_handler(void *info)
 {
   // Call the original panic handler function to finish processing this error (creating a core dump for example...)
@@ -293,33 +289,60 @@ extern "C" void __wrap_esp_panic_handler(void *info)
 }
 #endif // RESTART_DEBUG_INFO
 
+#if defined(ESP32)
 
-  extern "C" bool verifyRollbackLater(){
-      Serial.printf("verifyRollbackLater OVERRIDDEN FUNCTION!");
-      return true;
-  }
+#include "esp_ota_ops.h"
 
-  void verifyFirmware(){
-      Serial.printf("[SYSTEM] - Checking firmware...\n");
-      const esp_partition_t *running = esp_ota_get_running_partition();
-      esp_ota_img_states_t ota_state;
-      if (esp_ota_get_state_partition(running, &ota_state) == ESP_OK) {
-          const char* otaState = ota_state == ESP_OTA_IMG_NEW ? "ESP_OTA_IMG_NEW"
-              : ota_state == ESP_OTA_IMG_PENDING_VERIFY ? "ESP_OTA_IMG_PENDING_VERIFY"
-              : ota_state == ESP_OTA_IMG_VALID ? "ESP_OTA_IMG_VALID"
-              : ota_state == ESP_OTA_IMG_INVALID ? "ESP_OTA_IMG_INVALID"
-              : ota_state == ESP_OTA_IMG_ABORTED ? "ESP_OTA_IMG_ABORTED"
-              : "ESP_OTA_IMG_UNDEFINED";
-          Serial.printf( "[System] - Ota state: %s\n",otaState);
+#include <esp_task_wdt.h>
+// 3 seconds WDT, reset in 1 seconds
+#define WDT_TIMEOUT 10
 
-          if (ota_state == ESP_OTA_IMG_PENDING_VERIFY) {
-              if (esp_ota_mark_app_valid_cancel_rollback() == ESP_OK) {
-                  Serial.printf( "[System] - App is valid, rollback cancelled successfully\n");
-              } else {
-                  Serial.printf("[System] - Failed to cancel rollback\n");
-              }
-          }
-      }else{
-          Serial.printf("[System] - OTA partition has no record in OTA data\n");
+void startWatchDog()
+{
+  esp_task_wdt_init(WDT_TIMEOUT, true); // enable panic so ESP32 restarts
+  esp_task_wdt_add(NULL);               // add current thread to WDT watch
+}
+
+extern "C" bool verifyRollbackLater()
+{
+  Serial.printf("verifyRollbackLater OVERRIDDEN FUNCTION!");
+  return true;
+}
+
+void verifyFirmware()
+{
+  Serial.printf("[SYSTEM] - Checking firmware...\n");
+  const esp_partition_t *running = esp_ota_get_running_partition();
+  esp_ota_img_states_t ota_state;
+  if (esp_ota_get_state_partition(running, &ota_state) == ESP_OK)
+  {
+    const char *otaState = ota_state == ESP_OTA_IMG_NEW              ? "ESP_OTA_IMG_NEW"
+                           : ota_state == ESP_OTA_IMG_PENDING_VERIFY ? "ESP_OTA_IMG_PENDING_VERIFY"
+                           : ota_state == ESP_OTA_IMG_VALID          ? "ESP_OTA_IMG_VALID"
+                           : ota_state == ESP_OTA_IMG_INVALID        ? "ESP_OTA_IMG_INVALID"
+                           : ota_state == ESP_OTA_IMG_ABORTED        ? "ESP_OTA_IMG_ABORTED"
+                                                                     : "ESP_OTA_IMG_UNDEFINED";
+    Serial.printf("[System] - Ota state: %s\n", otaState);
+
+    if (ota_state == ESP_OTA_IMG_PENDING_VERIFY)
+    {
+      if (esp_ota_mark_app_valid_cancel_rollback() == ESP_OK)
+      {
+        Serial.printf("[System] - App is valid, rollback cancelled successfully\n");
       }
+      else
+      {
+        Serial.printf("[System] - Failed to cancel rollback\n");
+      }
+    }
   }
+  else
+  {
+    Serial.printf("[System] - OTA partition has no record in OTA data\n");
+  }
+}
+#else //ESP32
+void startWatchDog() {}
+//extern "C" bool verifyRollbackLater() {}
+void verifyFirmware() {}
+#endif

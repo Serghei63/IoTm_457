@@ -17,15 +17,17 @@ typedef struct {
   time_t heap_min_time;
   uint32_t backtrace[CONFIG_RESTART_DEBUG_STACK_DEPTH];
 } re_restart_debug_t;
+__NOINIT_ATTR static int8_t bootloop_panic_count;
 
+void IRAM_ATTR debugUpdate();
 #endif // RESTART_DEBUG_INFO
 
-__NOINIT_ATTR static int8_t bootloop_panic_count;
+
 
 extern "C" void __real_esp_panic_handler(void*);
 void printDebugTrace();
 void sendDebugTraceAndFreeMemory(bool);
-void IRAM_ATTR debugUpdate();
 
+void startWatchDog();
 extern "C" bool verifyRollbackLater();
 void verifyFirmware();

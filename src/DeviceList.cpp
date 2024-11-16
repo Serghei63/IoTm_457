@@ -38,7 +38,7 @@ AsyncUDP asyncUdp;
 
 void udpListningInit() {
 #if defined(LIBRETINY)
-    if (asyncUdp.listenMulticast(IPAddress(239, 255, 255, 255), 4210/* , WiFi.localIP() */))  {
+    if (asyncUdp.listenMulticast(IPAddress(239, 255, 255, 255), 4210 , WiFi.localIP() ))  {
 #else
     if (asyncUdp.listenMulticast(IPAddress(239, 255, 255, 255), 4210))  {
 #endif

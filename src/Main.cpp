@@ -7,6 +7,9 @@
 #include <Wire.h>
 #endif
 #include "DebugTrace.h"
+#if defined(ESP32)
+#include <esp_task_wdt.h>
+#endif
 #if defined(esp32s2_4mb) || defined(esp32s3_16mb)
 #include <USB.h>
 #endif
@@ -101,11 +104,13 @@ void setup() {
     Serial.begin(115200);
     Serial.flush();
     //----------- Отладка EXCEPTION (функции с заглушками для отключения) ---------
+#if defined(RESTART_DEBUG_INFO) && defined(ESP32) && !defined(esp32c3m_4mb)   
     //Привязка коллбэк функции для вызова при перезагрузке
     esp_register_shutdown_handler(debugUpdate);
+#endif // RESTART_DEBUG_INFO
     // Печать или оправка отладочной информации
     printDebugTrace();
-
+    startWatchDog();
     Serial.println();
     Serial.println(F("--------------started----------------"));
 
@@ -151,7 +156,7 @@ void setup() {
 #endif
         SerialPrint("i", "i2c", F("i2c pins overriding done"));
     }
-
+#if defined(RESTART_DEBUG_INFO) && defined(ESP32) && !defined(esp32c3m_4mb)
     if (bootloop_panic_count >= 3)
     {
         resetSettingsFlashByPanic();
@@ -162,7 +167,7 @@ void setup() {
         SerialPrint("E", "CORE", F("CONFIG and SCENARIO reset !!!"));
         bootloop_panic_count = 0;
     }
-
+#endif // RESTART_DEBUG_INFO
     // настраиваем микроконтроллер
     configure("/config.json");
 
@@ -228,6 +233,11 @@ void setup() {
     // настраиваем секундные обслуживания системы
     ts.add(
         TIMES, 1000, [&](void *) {
+            // сброс WDT
+#if defined(ESP32)
+            SerialPrint("i", "Task", "Resetting WDT...");
+            esp_task_wdt_reset();
+#endif
             // сохраняем значения IoTItems в файл каждую секунду, если были изменения (установлены маркеры на сохранение)
             if (needSaveValues) {
                 syncValuesFlashJson();
@@ -248,7 +258,9 @@ void setup() {
     Serial.println("--------test end---------");
 
     stopErrorMarker(SETUPLAST_ERRORMARKER);
+#if defined(RESTART_DEBUG_INFO) && defined(ESP32) && !defined(esp32c3m_4mb)    
     bootloop_panic_count = 0;
+#endif // RESTART_DEBUG_INFO
 }
 
 void loop() {

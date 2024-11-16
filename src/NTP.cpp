@@ -8,7 +8,7 @@
 #include "utils/SerialPrint.h"
 
 void ntpInit() {
-#if  defined(USE_LIBRETINY)
+#if  defined(LIBRETINY)
     if (sntp_enabled()) {
         sntp_stop();
     }
@@ -23,6 +23,7 @@ void ntpInit() {
     ts.add(
         TIME, 1000, [&](void*) {
             unixTime = getSystemTime();
+            //SerialPrint("I", F("NTP"), "TIME " + String(unixTime));
             if (unixTime < MIN_DATETIME) {
                 isTimeSynch = false;
                 // SerialPrint("E", "NTP", "Time not synched");
@@ -62,8 +63,9 @@ void synchTime() {
   // force resync
   if (sntp_enabled()) {
     sntp_stop();
+    }
     sntp_init();
-  }
+
 #else
     configTime(0, 0, "pool.ntp.org", "ru.pool.ntp.org", jsonReadStr(settingsFlashJson, F("ntp")).c_str());
 #endif

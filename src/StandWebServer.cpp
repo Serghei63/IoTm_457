@@ -599,57 +599,52 @@ void handleFileList() {
     if (path != "/" && !FileFS.exists(path)) {
         return replyBadRequest("BAD PATH");
     }
-
-lfs_dir_t dir;
-struct lfs_info info;
-int err = lfs_dir_open(&lfs, &dir, path);
-if (err) {
-    HTTP.send(500, "text/plain", "FAIL OPEN DIR");
-    return;
-}
-String output = "[";
-while (true) {
-    int res = lfs_dir_read(&lfs, &dir, &info);
-    if (res < 0) {
-        lfs_dir_close(&lfs, &dir);
-        return err;
+FileFS.open(path.c_str());
+    lfs_dir_t dir;
+    struct lfs_info info;
+    int err = lfs_dir_open(FileFS.getFS(), &dir, path.c_str());
+    if (err) {
+        HTTP.send(500, "text/plain", "FAIL OPEN DIR");
+        return;
     }
-    
-    if (!res) {
-        break;
+    String output = "[";
+    while (true) {
+        int res = lfs_dir_read(FileFS.getFS(), &dir, &info);
+        if (res < 0) {
+            lfs_dir_close(FileFS.getFS(), &dir);
+            return ;
+        }
+        
+        if (!res) {
+            break;
+        }
+        
+        Serial.printf("%s %d", info.name, info.type);
+
+        if (output != "[") {
+            output += ',';
+        }
+            output += "{\"type\":\"";
+            //         output += (file.isDirectory()) ? "dir" : "file";
+        if (info.type == LFS_TYPE_DIR) {
+            output += "dir";
+        } else {
+            output += F("file\",\"size\":\"");
+            output += info.size;
+        }
+
+        output += "\",\"name\":\"";
+        output += String(info.name);
+        output += "\"}";
+        //file = root.openNextFile();
+
     }
-    
-    Serial.printf("%s %d", info.name, info.type);
 
-    if (output != "[") {
-        output += ',';
+    err = lfs_dir_close(FileFS.getFS(), &dir);
+    if (err) {
+        HTTP.send(500, "text/plain", "FAIL CLOSE DIR");
+        return;
     }
-        output += "{\"type\":\"";
-        //         output += (file.isDirectory()) ? "dir" : "file";
-    if (info.type == LFS_TYPE_DIR) {
-        output += "dir";
-    } else {
-        output += F("file\",\"size\":\"");
-        output += info.size;
-    }
-
-    output += "\",\"name\":\"";
-    output += String(info.name);
-    output += "\"}";
-    //file = root.openNextFile();
-
-}
-
-err = lfs_dir_close(&lfs, &dir);
-if (err) {
-    HTTP.send(500, "text/plain", "FAIL CLOSE DIR");
-    return;
-}
-
-
-                  
-
-
 
     output += "]";
     HTTP.send(200, "text/json", output);
