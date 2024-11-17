@@ -166,6 +166,7 @@ void setup() {
     {
         SerialPrint("E", "CORE", F("CONFIG and SCENARIO reset !!!"));
         bootloop_panic_count = 0;
+        ESP.restart();
     }
 #endif // RESTART_DEBUG_INFO
     // настраиваем микроконтроллер
