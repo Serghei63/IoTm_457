@@ -1,5 +1,8 @@
 #include "utils/WiFiUtils.h"
 #include <vector>
+#if defined(ESP32)
+#include <esp_task_wdt.h>
+#endif
 #define TRIESONE 25 // количество попыток подключения к одной сети из несколких
 #define TRIES 40    // количество попыток подключения сети если она одна
 /* 
@@ -87,6 +90,10 @@ void routerConnect()
         jsonWriteInt(errorsHeapJson, "passer", 1);
         break;
       }
+#if defined(ESP32)
+      //SerialPrint("i", "Task", "Resetting WDT...");
+      esp_task_wdt_reset();
+#endif
       Serial.print(".");
       delay(1000);
     }

@@ -236,7 +236,7 @@ void setup() {
         TIMES, 1000, [&](void *) {
             // сброс WDT
 #if defined(ESP32)
-            SerialPrint("i", "Task", "Resetting WDT...");
+            SerialPrint("i", "Task", "reset wdt");
             esp_task_wdt_reset();
 #endif
             // сохраняем значения IoTItems в файл каждую секунду, если были изменения (установлены маркеры на сохранение)

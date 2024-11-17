@@ -55,7 +55,6 @@ void resetSettingsFlashByPanic()
     writeFile(F("/config.json"), "[]");
     writeFile(F("/scenario.txt"), "");
     writeFile(F("/layout.json"), "[]");
-    ESP.restart();
 }
 
 void syncValuesFlashJson()

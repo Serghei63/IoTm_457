@@ -305,7 +305,7 @@ void startWatchDog()
 
 extern "C" bool verifyRollbackLater()
 {
-  Serial.printf("verifyRollbackLater OVERRIDDEN FUNCTION!");
+  ets_printf("[SYSTEM] - verifyRollbackLater OVERRIDDEN FUNCTION!\n");
   return true;
 }
 
@@ -322,25 +322,25 @@ void verifyFirmware()
                            : ota_state == ESP_OTA_IMG_INVALID        ? "ESP_OTA_IMG_INVALID"
                            : ota_state == ESP_OTA_IMG_ABORTED        ? "ESP_OTA_IMG_ABORTED"
                                                                      : "ESP_OTA_IMG_UNDEFINED";
-    Serial.printf("[System] - Ota state: %s\n", otaState);
+    Serial.printf("[SYSTEM] - Ota state: %s\n", otaState);
 
     if (ota_state == ESP_OTA_IMG_PENDING_VERIFY)
     {
       if (esp_ota_mark_app_valid_cancel_rollback() == ESP_OK)
       {
-        Serial.printf("[System] - App is valid, rollback cancelled successfully\n");
+        Serial.printf("[SYSTEM] - App is valid, rollback cancelled successfully\n");
       }
       else
       {
-        Serial.printf("[System] - Failed to cancel rollback\n");
+        Serial.printf("[SYSTEM] - Failed to cancel rollback\n");
       }
     }
   }
   else
   {
-    Serial.printf("[System] - OTA partition has no record in OTA data\n");
+    Serial.printf("[SYSTEM] - OTA partition has no record in OTA data\n");
   }
-}
+} 
 #else //ESP32
 void startWatchDog() {}
 //extern "C" bool verifyRollbackLater() {}

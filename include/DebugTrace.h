@@ -29,5 +29,5 @@ void printDebugTrace();
 void sendDebugTraceAndFreeMemory(bool);
 
 void startWatchDog();
-extern "C" bool verifyRollbackLater();
+//extern "C" bool verifyRollbackLater();
 void verifyFirmware();
