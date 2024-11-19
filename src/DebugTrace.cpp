@@ -295,7 +295,7 @@ extern "C" void __wrap_esp_panic_handler(void *info)
 
 #include <esp_task_wdt.h>
 // 3 seconds WDT, reset in 1 seconds
-#define WDT_TIMEOUT 10
+#define WDT_TIMEOUT 180
 
 void startWatchDog()
 {

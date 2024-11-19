@@ -110,7 +110,7 @@ void setup() {
 #endif // RESTART_DEBUG_INFO
     // Печать или оправка отладочной информации
     printDebugTrace();
-    startWatchDog();
+    //startWatchDog();
     Serial.println();
     Serial.println(F("--------------started----------------"));
 
@@ -236,7 +236,7 @@ void setup() {
         TIMES, 1000, [&](void *) {
             // сброс WDT
 #if defined(ESP32)
-            SerialPrint("i", "Task", "reset wdt");
+            //SerialPrint("i", "Task", "reset wdt");
             esp_task_wdt_reset();
 #endif
             // сохраняем значения IoTItems в файл каждую секунду, если были изменения (установлены маркеры на сохранение)
