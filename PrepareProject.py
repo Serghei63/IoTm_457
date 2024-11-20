@@ -134,7 +134,8 @@ else:
 deviceType = 'esp32*'
 if not 'esp32' in deviceName:
     deviceType = 'esp82*'
-
+if 'bk72' in deviceName:
+    deviceType = 'bk72*'
 # генерируем файлы проекта на основе подготовленного профиля
 # заполняем конфигурационный файл прошивки параметрами из профиля
 with open("data_svelte/settings.json", "r", encoding='utf-8') as read_file:

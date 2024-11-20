@@ -7,6 +7,10 @@ void standWebSocketsInit() {
     standWebSocket.begin();
     standWebSocket.onEvent(webSocketEvent);
     SerialPrint("i", "WS", "WS server initialized");
+    for (size_t i = 0; i < WEBSOCKETS_CLIENT_MAX; i++)
+    {
+        ws_clients[i] = -1;
+    }
 }
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length) {
@@ -17,6 +21,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
 
         case WStype_DISCONNECTED: {
             Serial.printf("[%u] Disconnected!\n", num);
+            standWebSocket.disconnect(num);
         } break;
 
         case WStype_CONNECTED: {
@@ -54,7 +59,11 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
             //----------------------------------------------------------------------//
             // Страница веб интерфейса dashboard
             //----------------------------------------------------------------------//
-
+            if (headerStr == "p|") {
+                standWebSocket.sendTXT(num, "p|");
+                Serial.printf("Ping client: %u\n", num);
+                ws_clients[num]=1;
+            }
             // публикация всех виджетов
             if (headerStr == "/|") {
                 sendFileToWsByFrames("/layout.json", "layout", "", num, WEB_SOCKETS_FRAME_SIZE);
@@ -490,7 +499,14 @@ void sendStringToWs(const String& header, String& payload, int client_id) {
 #endif
 }
 
-void sendDeviceList(uint8_t num) {
+void disconnectWSClient(uint8_t client_id)
+{
+    standWebSocket.disconnect(client_id);
+    Serial.printf("[WS] Client %u -disconnected\n", client_id);
+}
+
+void sendDeviceList(uint8_t num)
+{
     if (jsonReadInt(settingsFlashJson, F("udps")) != 0) {
         // если включен автопоиск то отдаем список из оперативной памяти
         SerialPrint("i", "FS", "heap list");

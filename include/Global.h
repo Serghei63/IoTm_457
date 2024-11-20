@@ -162,6 +162,8 @@ extern Time_t _time_local;
 extern Time_t _time_utc;
 extern bool _time_isTrust;
 
+#define WEBSOCKETS_CLIENT_MAX 5
+extern int8_t ws_clients[WEBSOCKETS_CLIENT_MAX];
 // extern unsigned long loopPeriod;
 
 // extern DynamicJsonDocument settingsFlashJsonDoc;

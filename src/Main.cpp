@@ -110,7 +110,7 @@ void setup() {
 #endif // RESTART_DEBUG_INFO
     // Печать или оправка отладочной информации
     printDebugTrace();
-    //startWatchDog();
+    startWatchDog();
     Serial.println();
     Serial.println(F("--------------started----------------"));
 
@@ -157,6 +157,19 @@ void setup() {
         SerialPrint("i", "i2c", F("i2c pins overriding done"));
     }
 #if defined(RESTART_DEBUG_INFO) && defined(ESP32) && !defined(esp32c3m_4mb)
+  esp_reset_reason_t esp_reason = esp_reset_reason();
+  if (esp_reason == ESP_RST_UNKNOWN || esp_reason == ESP_RST_POWERON) 
+    bootloop_panic_count = 0;
+/*   else if (bootloop_panic_count == 3 || bootloop_panic_count == 0 ) bootloop_panic_count = 1;
+  else if (bootloop_panic_count == 2) bootloop_panic_count = 3;
+  else if (bootloop_panic_count == 1) bootloop_panic_count = 2;
+  else bootloop_panic_count = 0; */
+     Serial.println("bootloop_panic_count     " + String(bootloop_panic_count));
+    if (bootloop_panic_count >3 )
+    {
+        //resetSettingsFlashByPanic();
+        bootloop_panic_count = 0;
+    }      
     if (bootloop_panic_count >= 3)
     {
         resetSettingsFlashByPanic();
@@ -167,7 +180,7 @@ void setup() {
         SerialPrint("E", "CORE", F("CONFIG and SCENARIO reset !!!"));
         bootloop_panic_count = 0;
         ESP.restart();
-    }
+    } 
 #endif // RESTART_DEBUG_INFO
     // настраиваем микроконтроллер
     configure("/config.json");
@@ -250,6 +263,25 @@ void setup() {
                 (*it)->checkIntFromNet();
 
                 // Serial.printf("[ITEM] size: %d, id: %s, int: %d, intnet: %d\n", sizeof(**it), (*it)->getID(), (*it)->getInterval(), (*it)->getIntFromNet());
+            }
+        },
+        nullptr, true);
+
+    // ловим пинги от WS (5сек) и дисконнектим если их нет (20сек)
+    ts.add(
+        PiWS, 6000, [&](void*) {
+            if (isNetworkActive()) {
+                for (size_t i = 0; i < WEBSOCKETS_CLIENT_MAX; i++)
+                {
+                    if (ws_clients[i] == 0) {
+                        disconnectWSClient(i);
+                        ws_clients[i]=-1;
+                    }
+                    if (ws_clients[i] > 0) { 
+                        ws_clients[i]=0;
+                    }
+
+                }
             }
         },
         nullptr, true);

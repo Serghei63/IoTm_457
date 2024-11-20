@@ -103,6 +103,7 @@ enum TimerTask_t {
     TIMES,  // периодические секундные проверки
     PTASK,
     ST,
+    PiWS,
     END
 };
 

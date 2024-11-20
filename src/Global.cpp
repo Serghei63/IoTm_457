@@ -83,7 +83,7 @@ String prevDate = "";
 bool firstTimeInit = true;
 
 // unsigned long loopPeriod;
-
+int8_t ws_clients[WEBSOCKETS_CLIENT_MAX];
 bool isTimeSynch = false;
 Time_t _time_local;
 Time_t _time_utc;
