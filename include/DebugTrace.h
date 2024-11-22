@@ -6,9 +6,10 @@
 // xtensa-esp32-elf-addr2line.exe -pfiaC -e Путь_к_файлу/firmware.elf Стэк_адресов_из_сообщения
 // %%USERPROFILE%/.platformio/packages/toolchain-xtensa-esp32@8.4.0+2021r2-patch5/bin xtensa-esp32-elf-addr2line.exe -pfiaC -e .pio/build/esp32_4mb3f/firmware.elf Стэк_адресов
 #include "Global.h"
-
+#if defined(ESP32) && !defined(esp32c3m_4mb) && !defined(esp32c6_4mb) && !defined(esp32c6_8mb)
 #define RESTART_DEBUG_INFO
-#if defined(RESTART_DEBUG_INFO) && defined(ESP32) && !defined(esp32c3m_4mb)
+#endif
+#if defined(RESTART_DEBUG_INFO)
 #define CONFIG_RESTART_DEBUG_STACK_DEPTH 15
 typedef struct {
   size_t heap_total;

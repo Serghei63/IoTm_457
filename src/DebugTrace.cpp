@@ -1,5 +1,5 @@
 #include "DebugTrace.h"
-#if defined(RESTART_DEBUG_INFO) && defined(ESP32) && !defined(esp32c3m_4mb)
+#if defined(RESTART_DEBUG_INFO)
 // #ifdef RESTART_DEBUG_INFO
 __NOINIT_ATTR static re_restart_debug_t _debug_info;
 
@@ -282,12 +282,14 @@ void sendDebugTraceAndFreeMemory(bool postMsg)
 void printDebugTrace() {}
 void sendDebugTraceAndFreeMemory(bool) {}
 //void IRAM_ATTR debugUpdate() {}
+#if !defined(esp32c6_4mb) && !defined(esp32c6_8mb)
 extern "C" void __wrap_esp_panic_handler(void *info)
 {
   // Call the original panic handler function to finish processing this error (creating a core dump for example...)
   __real_esp_panic_handler(info);
 }
-#endif // RESTART_DEBUG_INFO
+#endif //esp32c6
+#endif // !RESTART_DEBUG_INFO
 
 #if defined(ESP32)
 
@@ -299,8 +301,10 @@ extern "C" void __wrap_esp_panic_handler(void *info)
 
 void startWatchDog()
 {
+#if !defined(esp32c6_4mb) && !defined(esp32c6_8mb) //TODO esp32-c6 переписать esp_task_wdt_init
   esp_task_wdt_init(WDT_TIMEOUT, true); // enable panic so ESP32 restarts
   esp_task_wdt_add(NULL);               // add current thread to WDT watch
+#endif
 }
 
 extern "C" bool verifyRollbackLater()

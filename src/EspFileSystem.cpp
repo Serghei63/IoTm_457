@@ -1,5 +1,8 @@
 #include "EspFileSystem.h"
 #include "Global.h"
+#if defined(esp32c6_4mb) || defined(esp32c6_8mb)
+#include "esp_mac.h"
+#endif
 
 bool fileSystemInit()
 {
@@ -149,7 +152,7 @@ const String getMacAddress()
     char buf[13] = { 0 };
 #if defined(ESP8266)
     WiFi.macAddress(mac);
-    sprintf(buf, MACSTR, MAC2STR(mac));
+    sprintf(buf, MACSTR, MAC2STR(mac));  
 #elif defined(ESP32)
     esp_read_mac(mac, ESP_MAC_WIFI_STA);
     sprintf(buf, MACSTR, mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);

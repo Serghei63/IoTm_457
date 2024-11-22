@@ -17,7 +17,11 @@ IPAddress stringToIp(String strIp)
 void routerConnect()
 {
 #if  !defined LIBRETINY  
+#if defined(esp32c6_4mb) || defined(esp32c6_8mb)
+  WiFi.setAutoReconnect(false);
+#else
   WiFi.setAutoConnect(false);
+#endif
   WiFi.persistent(false);
 #endif
 /*     String s_staip = "192.168.2.62";

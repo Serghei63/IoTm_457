@@ -21,12 +21,12 @@
         "pinSDA": 0,
         "i2cFreq": 100000,
         "wg": "group1",
-        "debugTrace": 1
+        "debugTrace": 1       
     },
     "projectProp": {
         "platformio": {
             "default_envs": "esp32_4mb3f",
-            "comments_default_envs": "choose from: esp8266_4mb, esp32_4mb, esp32_4mb3f, esp8266_16mb, esp32_16mb, esp32cam_4mb, esp32s2_4mb, esp32s3_16mb, esp32c3m_4mb, esp8266_1mb, esp8266_1mb_ota, esp8266_2mb, esp8266_2mb_ota, esp8285_1mb, esp8285_1mb_ota",
+            "comments_default_envs": "choose from: esp8266_4mb, esp32_4mb, esp32_4mb3f, esp8266_16mb, esp32_16mb, esp32cam_4mb, esp32s2_4mb, esp32s3_16mb, esp32c3m_4mb, esp8266_1mb, esp8266_1mb_ota, esp8266_2mb, esp8266_2mb_ota, esp8285_1mb, esp8285_1mb_ota, esp32c6_4mb, esp32c6_8mb, bk7231n",
             "envs": [
                 {
                     "name": "esp8266_4mb",
@@ -123,6 +123,22 @@
                     "firmware": "0x10000",
                     "partitions": "0x8000",
                     "littlefs": "0x910000"
+                },
+                {
+                    "name": "esp32c6_4mb",
+                    "boot_app0": "0xe000",
+                    "bootloader_qio_80m": "0x1000",
+                    "firmware": "0x10000",
+                    "partitions": "0x8000",
+                    "littlefs": "0x310000"
+                },
+                {
+                    "name": "esp32c6_8mb",
+                    "boot_app0": "0xe000",
+                    "bootloader_qio_80m": "0x1000",
+                    "firmware": "0x10000",
+                    "partitions": "0x8000",
+                    "littlefs": "0x670000"
                 }
             ]
         }

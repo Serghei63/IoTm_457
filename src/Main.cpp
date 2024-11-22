@@ -104,7 +104,7 @@ void setup() {
     Serial.begin(115200);
     Serial.flush();
     //----------- Отладка EXCEPTION (функции с заглушками для отключения) ---------
-#if defined(RESTART_DEBUG_INFO) && defined(ESP32) && !defined(esp32c3m_4mb)   
+#if defined(RESTART_DEBUG_INFO)  
     //Привязка коллбэк функции для вызова при перезагрузке
     esp_register_shutdown_handler(debugUpdate);
 #endif // RESTART_DEBUG_INFO
@@ -156,7 +156,7 @@ void setup() {
 #endif
         SerialPrint("i", "i2c", F("i2c pins overriding done"));
     }
-#if defined(RESTART_DEBUG_INFO) && defined(ESP32) && !defined(esp32c3m_4mb)
+#if defined(RESTART_DEBUG_INFO)
   esp_reset_reason_t esp_reason = esp_reset_reason();
   if (esp_reason == ESP_RST_UNKNOWN || esp_reason == ESP_RST_POWERON) 
     bootloop_panic_count = 0;
@@ -291,7 +291,7 @@ void setup() {
     Serial.println("--------test end---------");
 
     stopErrorMarker(SETUPLAST_ERRORMARKER);
-#if defined(RESTART_DEBUG_INFO) && defined(ESP32) && !defined(esp32c3m_4mb)    
+#if defined(RESTART_DEBUG_INFO)    
     bootloop_panic_count = 0;
 #endif // RESTART_DEBUG_INFO
 }

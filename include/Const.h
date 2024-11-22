@@ -52,8 +52,16 @@
 #define FIRMWARE_NAME "esp32s3_16mb"
 #endif
 
-#ifdef LIBRETINY
-#define FIRMWARE_NAME "libretiny"
+#ifdef bk7231n
+#define FIRMWARE_NAME "bk7231n"
+#endif
+
+#ifdef esp32c6_4mb
+#define FIRMWARE_NAME "esp32c6_4mb"
+#endif
+
+#ifdef esp32c6_8mb
+#define FIRMWARE_NAME "esp32c6_8mb"
 #endif
 
 // Размер буфера json
