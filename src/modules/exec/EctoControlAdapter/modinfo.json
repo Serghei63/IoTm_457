@@ -203,6 +203,7 @@
     "defActive": false,
     "usedLibs": {
         "esp32*": [],
+        "esp32c3m_4mb": ["exclude"],
         "esp82*": []
     }
 }

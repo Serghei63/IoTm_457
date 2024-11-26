@@ -1,5 +1,5 @@
 env:
-  BOARDS: '["esp8266_4mb", "esp32_4bm3f", "esp32c3m_4mb", "esp32s2_4mb", "esp32s3_16mb"]'
+  BOARDS: '["esp8266_4mb", "esp32_4mb3f", "esp32c3m_4mb", "esp32s2_4mb", "esp32s3_16mb"]'
   
 name: Build Firmware
 
@@ -39,8 +39,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install platformio
     - name: Run PlatformIO
+      if: always()
       run: platformio run 
     - name: Build FS
+      if: always()
       run: platformio run -t buildfs --disable-auto-clean
     - name: Attach artifact
       uses: actions/upload-artifact@v4
