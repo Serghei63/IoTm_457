@@ -5,8 +5,8 @@ from sys import platform
 
 if platform == "linux" or platform == "linux2":
     # linux
-    devkitm = '/home/rise/.platformio/platforms/espressif32/boards/esp32-c6-devkitm-1.json'
-    devkitc = '/home/rise/.platformio/platforms/espressif32/boards/esp32-c6-devkitc-1.json'    
+    devkitm = '~/.platformio/platforms/espressif32/boards/esp32-c6-devkitm-1.json'
+    devkitc = '~/.platformio/platforms/espressif32/boards/esp32-c6-devkitc-1.json'    
 else:
     # windows
     devkitm = os.environ['USERPROFILE'] + '\\.platformio\\platforms\\espressif32\\boards\\esp32-c6-devkitm-1.json'
