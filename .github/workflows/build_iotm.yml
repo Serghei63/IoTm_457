@@ -1,12 +1,11 @@
 env:
   BOARDS: '["esp8266_4mb", "esp32_4mb3f", "esp32c3m_4mb", "esp32s2_4mb", "esp32s3_16mb"]'
-  
+
 name: Build Firmware
 
 on:
   workflow_dispatch:
-       
-  
+
 jobs:
   generate-matrix:
     runs-on: ubuntu-latest
@@ -19,7 +18,7 @@ jobs:
         with:
           __case: kebab
           board: ${{ env.BOARDS }}
-    
+
   build:
     needs: [ generate-matrix ]
     runs-on: ubuntu-latest
@@ -44,22 +43,13 @@ jobs:
     - name: Build FS
       if: always()
       run: platformio run -t buildfs --disable-auto-clean
+    - name: Rearrange Artifacts
+      run: |
+        mkdir -p artifacts/${{ matrix.board }}
+        mv .pio/build/${{ matrix.board }}/*.bin artifacts/${{ matrix.board }}
+      working-directory: ${{ github.workspace }}
     - name: Attach artifact
       uses: actions/upload-artifact@v4
       with:
         name: firmware
-        path: |
-          .pio/build/esp8266_4mb/firmware.bin
-          .pio/build/esp8266_4mb/littlefs.bin
-          .pio/build/esp32_4mb3f/firmware.bin
-          .pio/build/esp32_4mb3f/littlefs.bin
-          .pio/build/esp32_4mb3f/partitions.bin
-          .pio/build/esp32s2_4mb/firmware.bin
-          .pio/build/esp32s2_4mb/littlefs.bin
-          .pio/build/esp32s2_4mb/partitions.bin
-          .pio/build/esp32s3_16mb/firmware.bin
-          .pio/build/esp32s3_16mb/littlefs.bin
-          .pio/build/esp32s3_16mb/partitions.bin
-          .pio/build/esp32c3m_4mb/firmware.bin
-          .pio/build/esp32c3m_4mb/littlefs.bin
-          .pio/build/esp32c3m_4mb/partitions.bin
+        path: artifacts/${{ matrix.board }}
