@@ -533,7 +533,7 @@
             },
             {
                 "path": "src/modules/display/Smi2_m",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/display/TM16XX",
