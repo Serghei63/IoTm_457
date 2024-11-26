@@ -14,6 +14,7 @@
     "mqttUser": "rise",
     "mqttPass": "3hostel3",
     "serverip": "http://iotmanager.org",
+    "serverlocal": "http://192.168.1.2:5500", 
     "log": 0,
     "mqttin": 0,
     "i2c": 0,

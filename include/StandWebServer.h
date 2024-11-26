@@ -9,6 +9,7 @@ extern bool handleFileRead(String path);
 extern void handleFileUpload();
 extern void handleFileDelete();
 extern void handleFileCreate();
+extern void handleLocalOTA();
 extern void handleFileList();
 //void printDirectory(File dir, String& out);
 extern void handleStatus();

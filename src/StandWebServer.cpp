@@ -89,6 +89,8 @@ void standWebServerInit() {
     // - second callback handles file upload at that location
     HTTP.on("/edit", HTTP_POST, replyOK, handleFileUpload);
 
+    HTTP.on("/localota", HTTP_GET, handleLocalOTA);
+
     // Default handler for all URIs not defined above
     // Use it to read files from filesystem
     HTTP.onNotFound(handleNotFound);
@@ -154,6 +156,10 @@ void handleStatus() {
     json += "\"}";
 
     HTTP.send(200, "application/json", json);
+}
+
+void handleLocalOTA() {
+    upgrade_firmware(3, "local");
 }
 
 #ifdef ESP32

@@ -32,6 +32,10 @@
 #define FIRMWARE_NAME "esp32_4mb"
 #endif
 
+#ifdef esp32_4mb3f
+#define FIRMWARE_NAME "esp32_4mb3f"
+#endif
+
 #ifdef esp32cam_4mb
 #define FIRMWARE_NAME "esp32cam_4mb"
 #endif
