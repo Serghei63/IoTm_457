@@ -46,10 +46,10 @@ jobs:
     - name: Rearrange Artifacts
       run: |
         mkdir -p artifacts/${{ matrix.board }}
-        mv .pio/build/${{ matrix.board }}/*.bin artifacts/${{ matrix.board }}
+        find .pio/build/${{ matrix.board }} -name "*.bin" -exec mv {} artifacts/${{ matrix.board }} \;
       working-directory: ${{ github.workspace }}
     - name: Attach artifact
       uses: actions/upload-artifact@v4
       with:
-        name: firmware
+        name: firmware-${{ matrix.board }}-${{ github.run_number }}
         path: artifacts/${{ matrix.board }}
