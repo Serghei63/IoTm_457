@@ -124,6 +124,7 @@ extern int mqttPort;
 extern String mqttPrefix;
 extern String mqttUser;
 extern String mqttPass;
+extern String nameId;
 
 extern unsigned long mqttUptime;
 extern unsigned long flashWriteNumber;

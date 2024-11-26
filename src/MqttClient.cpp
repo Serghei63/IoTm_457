@@ -62,7 +62,7 @@ boolean mqttConnect() {
         if (mqttUser != "" && mqttPass != "") {
             if (HOMEdDiscovery)
             {
-                connected = mqtt.connect(chipId.c_str(), mqttUser.c_str(), mqttPass.c_str(), (HOMEdDiscovery->HOMEdTopic + "/device/custom/" + chipId).c_str(), 1, true, "{\"status\":\"offline\"}");
+                connected = mqtt.connect(chipId.c_str(), mqttUser.c_str(), mqttPass.c_str(), (HOMEdDiscovery->HOMEdTopic + "/device/custom/" + nameId).c_str(), 1, true, "{\"status\":\"offline\"}");
             }
             else
             {
@@ -72,7 +72,7 @@ boolean mqttConnect() {
         } else if (mqttUser == "" && mqttPass == "") {
             if (HOMEdDiscovery)
             {
-                connected = mqtt.connect(chipId.c_str(), (HOMEdDiscovery->HOMEdTopic + "/device/custom/" + chipId).c_str(), 1, true, "{\"status\":\"offline\"}");
+                connected = mqtt.connect(chipId.c_str(), (HOMEdDiscovery->HOMEdTopic + "/device/custom/" + nameId).c_str(), 1, true, "{\"status\":\"offline\"}");
             }
             else
             {
@@ -120,6 +120,7 @@ void getMqttData() {
     mqttUser = jsonReadStr(settingsFlashJson, F("mqttUser"));
     mqttPass = jsonReadStr(settingsFlashJson, F("mqttPass"));
     mqttPrefix = jsonReadStr(settingsFlashJson, F("mqttPrefix"));
+    nameId = jsonReadStr(settingsFlashJson, F("name"));
     mqttRootDevice = mqttPrefix + "/" + chipId;
 }
 

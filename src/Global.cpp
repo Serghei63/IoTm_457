@@ -62,6 +62,7 @@ int mqttPort = 0;
 String mqttPrefix = "";
 String mqttUser = "";
 String mqttPass = "";
+String nameId = "";
 
 unsigned long mqttUptime = 0;
 unsigned long flashWriteNumber = 0;

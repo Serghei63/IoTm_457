@@ -90,8 +90,8 @@ public:
                 if (mqttIsConnect() && !sendOk && topicOk)
                 {
                     sendOk = true;
-                    publishRetain(_topic + "/device/custom/" + chipId, "{\"status\":\"online\"}");
-                    String HOMEdsubscribeTopic = _topic + "/td/custom/" + chipId;
+                    publishRetain(_topic + "/device/custom/" + nameId, "{\"status\":\"online\"}");
+                    String HOMEdsubscribeTopic = _topic + "/td/custom/" + nameId;
                     // mqtt.subscribe(HOMEdsubscribeTopic.c_str());
                     mqttSubscribeExternal(HOMEdsubscribeTopic);
                 }
@@ -103,7 +103,7 @@ public:
 
     void publishStatusHOMEd(const String &topic, const String &data)
     {
-        String path_h = HOMEdTopic + "/fd/custom/" + chipId;
+        String path_h = HOMEdTopic + "/fd/custom/" + nameId;
         String json_h = "{}";
         if (topic != "onStart")
         {
@@ -133,8 +133,8 @@ public:
         {
             deleteFromHOMEd();
             getlayoutHOMEd();
-            publishRetain(HOMEdTopic + "/device/custom/" + chipId, "{\"status\":\"online\"}");
-            String HOMEdsubscribeTopic = HOMEdTopic + "/td/custom/" + chipId;
+            publishRetain(HOMEdTopic + "/device/custom/" + nameId, "{\"status\":\"online\"}");
+            String HOMEdsubscribeTopic = HOMEdTopic + "/td/custom/" + nameId;
             mqtt.subscribe(HOMEdsubscribeTopic.c_str());
         }
     }
@@ -164,7 +164,7 @@ public:
             JsonArray arr = doc.as<JsonArray>();
             String HOMEdJSON = "";
             HOMEdJSON = "{\"action\":\"updateDevice\",";
-            HOMEdJSON = HOMEdJSON + "\"device\":\"" + chipId + "\",";
+            HOMEdJSON = HOMEdJSON + "\"device\":\"" + nameId + "\",";
             HOMEdJSON = HOMEdJSON + "\"data\":{";
             HOMEdJSON = HOMEdJSON + "\"active\": true,";
             HOMEdJSON = HOMEdJSON + "\"cloud\": false,";
@@ -178,7 +178,7 @@ public:
             {
                 String name = value["descr"];
                 String device = selectToMarkerLast(value["topic"].as<String>(), "/");
-                String id = chipId + "-" + device;
+                //String id = chipId + "-" + device;
                 String expose = value["name"];
                 if (value["name"].as<String>() == "toggle")
                 {
@@ -219,7 +219,7 @@ public:
 
             file.close();
 
-            publishRetain(HOMEdTopic + "/device/custom/" + chipId, "{\"status\":\"online\"}");
+            publishRetain(HOMEdTopic + "/device/custom/" + nameId, "{\"status\":\"online\"}");
 
             for (std::list<IoTItem *>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it)
             {
@@ -243,7 +243,7 @@ public:
                     String HOMEdjson = "";
                     HOMEdjson = "{\"action\":\"removeDevice\",";
                     HOMEdjson = HOMEdjson + "\"device\":\"";
-                    HOMEdjson = HOMEdjson + chipId;
+                    HOMEdjson = HOMEdjson + nameId;
                     HOMEdjson = HOMEdjson + "\"}";
                     String topic = (HOMEdTopic + "/command/custom").c_str();
                     if (!publish(topic, HOMEdjson))
