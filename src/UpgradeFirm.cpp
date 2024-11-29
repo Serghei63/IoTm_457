@@ -67,7 +67,8 @@ bool upgradeFS(String path) {
         saveUpdeteStatus("fs", UPDATE_FAILED);
         if (retFS == HTTP_UPDATE_FAILED) {
             SerialPrint("E", F("Update"), "HTTP_UPDATE_FAILED");
-            HTTP.send(200, "text/plain", "FS UPDATE_FAILED! DELETE /localota !!!");
+            String page = "<html><body>Ошибка обновления FS!<br>FS Update failed!<br><a href='/'>Home</a></body></html>";
+            HTTP.send(200, "text/html; charset=UTF-8", page);
         } else if (retFS == HTTP_UPDATE_NO_UPDATES) {
             SerialPrint("E", F("Update"), "HTTP_UPDATE_NO_UPDATES! DELETE /localota !!!");
             //HTTP.send(200, "text/plain", "NO_UPDATES");
@@ -102,17 +103,20 @@ bool upgradeBuild(String path) {
     // если BUILD обновился успешно
     if (retBuild == HTTP_UPDATE_OK) {
         SerialPrint("!!!", F("Update"), F("BUILD upgrade done!"));
-        HTTP.send(200, "text/plain", "BUILD upgrade done! DELETE /localota !!!");
+        String page = "<html><body>Обновление BUILD выполнено!<br>Build upgrade done!<br><a href='/'>Home</a></body></html>";
+        HTTP.send(200, "text/html; charset=UTF-8", page);
         saveUpdeteStatus("build", UPDATE_COMPLETED);
         ret = true;
     } else {
         saveUpdeteStatus("build", UPDATE_FAILED);
         if (retBuild == HTTP_UPDATE_FAILED) {
             SerialPrint("E", F("Update"), "HTTP_UPDATE_FAILED");
-            HTTP.send(200, "text/plain", "UPDATE_FAILED! DELETE /localota !!!");
+            String page = "<html><body>Ошибка обновления прошивки!<br>Firmware update failed!<br><a href='/'>Home</a></body></html>";
+            HTTP.send(200, "text/html; charset=UTF-8", page);
         } else if (retBuild == HTTP_UPDATE_NO_UPDATES) {
             SerialPrint("E", F("Update"), "HTTP_UPDATE_NO_UPDATES");
-            HTTP.send(200, "text/plain", "NO_UPDATES! DELETE /localota !!!");
+            String page = "<html><body>Нет обновлений!<br>No updates!<br><a href='/'>Home</a></body></html>";
+            HTTP.send(200, "text/html; charset=UTF-8", page);
         }
     }
 #endif    
