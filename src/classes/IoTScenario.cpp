@@ -342,7 +342,8 @@ enum SysOp {
     sysop_getIP,
     sysop_mqttPub,
     sysop_getUptime,
-    sysop_mqttIsConnect
+    sysop_mqttIsConnect,
+    sysop_wifiIsConnect
 };
 
 IoTValue sysExecute(SysOp command, std::vector<IoTValue> &param) {
@@ -446,6 +447,9 @@ IoTValue sysExecute(SysOp command, std::vector<IoTValue> &param) {
         case sysop_mqttIsConnect:
             value.valD = mqttIsConnect();
             break;
+        case sysop_wifiIsConnect:
+            value.valD = isNetworkActive();
+            break;            
     }
 
     return value;
@@ -502,6 +506,8 @@ class SysCallExprAST : public ExprAST {
             operation = sysop_getUptime;
         else if (Callee == F("mqttIsConnect"))
             operation = sysop_mqttIsConnect;
+        else if (Callee == F("wifiIsConnect"))
+            operation = sysop_wifiIsConnect;            
         else
             operation = sysop_notfound;
     }

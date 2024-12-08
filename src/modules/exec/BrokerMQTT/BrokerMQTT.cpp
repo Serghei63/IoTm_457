@@ -121,6 +121,8 @@ bool _global_debug = false;
                 clientMqtt->loop();
             if (picoMqtt)
                 picoMqtt->loop();
+            if (!clientMqtt && !picoMqtt)
+                vTaskDelete(NULL);    
             // picoMqtt.loop();
             // vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(5));
         }
@@ -213,9 +215,11 @@ bool _global_debug = false;
 
         ~BrokerMQTT()
         {
-            vTaskDelete(brokerTask);
-            delete picoMqtt;
-            delete clientMqtt;
+            //vTaskDelete(brokerTask);
+            if (picoMqtt)
+                delete picoMqtt;
+            if (clientMqtt)    
+                delete clientMqtt;
         }
     };
 }
