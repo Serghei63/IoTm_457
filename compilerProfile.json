@@ -1,19 +1,19 @@
 {
     "iotmSettings": {
-        "name": "457_ir",
-        "apssid": "IoTmanager",
+        "name": "457_cansm",
+        "apssid": "IoTm_son2",
         "appass": "",
-        "routerssid": "",
-        "routerpass": "",
-        "timezone": 3,
+        "routerssid": "mega",
+        "routerpass": "11111111",
+        "timezone": 2,
         "ntp": "pool.ntp.org",
         "weblogin": "admin",
         "webpass": "admin",
-        "mqttServer": "",
+        "mqttServer": "live-control.com",
         "mqttPort": 1883,
         "mqttPrefix": "/ver407",
-        "mqttUser": "",
-        "mqttPass": "",
+        "mqttUser": "95:5lZDsy",
+        "mqttPass": "PL6zFb",
         "serverip": "http://iotmanager.org",
         "log": 0,
         "mqttin": 0,
@@ -24,11 +24,11 @@
     },
     "projectProp": {
         "platformio": {
-            "default_envs": "esp32_4mb3f",
+            "default_envs": "esp32_4mb",
             "comments_default_envs": "choose from: esp8266_4mb or esp32_4mb or esp32cam_4mb or esp32s2_4mb or esp32_4mb3f or esp32s3_16mb or esp32c3m_4mb or esp8266_1mb or esp8266_1mb_ota or esp8285_1mb or esp8285_1mb_ota",
             "envs": [
                 {
-                    "name": "esp8266_4mb",
+                    "name": "esp32_4mb",
                     "firmware": "0x00000",
                     "littlefs": "0x300000"
                 },
@@ -173,6 +173,10 @@
                 "active": false
             },
             {
+                "path": "src/modules/virtual/ramWeather",
+                "active": false
+            },
+            {
                 "path": "src/modules/virtual/Timer",
                 "active": true
             },
@@ -191,6 +195,10 @@
         ],
         "sensors": [
             {
+                "path": "src/modules/exec/CanBUSsm",
+                "active": false
+            },
+            {
                 "path": "src/modules/exec/Pcf8591",
                 "active": false
             },
@@ -208,6 +216,10 @@
             },
             {
                 "path": "src/modules/sensors/AhtXX",
+                "active": false
+            },
+            {
+                "path": "src/modules/sensors/Am2302",
                 "active": false
             },
             {
@@ -243,6 +255,10 @@
                 "active": false
             },
             {
+                "path": "src/modules/sensors/CanBUS",
+                "active": false
+            },
+            {
                 "path": "src/modules/sensors/Dht1122",
                 "active": false
             },
@@ -252,6 +268,10 @@
             },
             {
                 "path": "src/modules/sensors/DS2401",
+                "active": false
+            },
+            {
+                "path": "src/modules/sensors/DS2482",
                 "active": false
             },
             {
@@ -292,7 +312,7 @@
             },
             {
                 "path": "src/modules/sensors/Impulse",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Ina219",
@@ -300,6 +320,10 @@
             },
             {
                 "path": "src/modules/sensors/Ina226",
+                "active": false
+            },
+            {
+                "path": "src/modules/sensors/Ina3221",
                 "active": false
             },
             {
@@ -316,6 +340,10 @@
             },
             {
                 "path": "src/modules/sensors/Mhz19",
+                "active": false
+            },
+            {
+                "path": "src/modules/sensors/ModbusRTU",
                 "active": false
             },
             {
@@ -340,7 +368,7 @@
             },
             {
                 "path": "src/modules/sensors/RTC",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/S8",
@@ -360,15 +388,15 @@
             },
             {
                 "path": "src/modules/sensors/Sht20",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Sht30",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Sonar",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/UART",
@@ -457,6 +485,14 @@
                 "active": false
             },
             {
+                "path": "src/modules/exec/ServoPCA9685",
+                "active": false
+            },
+            {
+                "path": "src/modules/exec/ServoSmooth",
+                "active": false
+            },
+            {
                 "path": "src/modules/exec/SIM800",
                 "active": false
             },
@@ -466,6 +502,10 @@
             },
             {
                 "path": "src/modules/exec/SysExt",
+                "active": false
+            },
+            {
+                "path": "src/modules/exec/Tca9555",
                 "active": false
             },
             {
@@ -499,7 +539,15 @@
                 "active": false
             },
             {
+                "path": "src/modules/display/Ili9341",
+                "active": false
+            },
+            {
                 "path": "src/modules/display/Lcd2004",
+                "active": false
+            },
+            {
+                "path": "src/modules/display/Max7219",
                 "active": false
             },
             {
@@ -520,6 +568,18 @@
             },
             {
                 "path": "src/modules/display/Smi2_m",
+                "active": false
+            },
+            {
+                "path": "src/modules/display/St7565",
+                "active": false
+            },
+            {
+                "path": "src/modules/display/St7735",
+                "active": false
+            },
+            {
+                "path": "src/modules/display/St7789",
                 "active": false
             },
             {

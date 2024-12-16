@@ -2,7 +2,8 @@
     "menuSection": "screens",
 
     "configItem": [{
-        "name": "TFT экран Ili9341",
+
+        "name": "TFT экран Ili9341 ESP32",
         "type": "Reading",
         "subtype": "Ili9341",
         "id": "ili",
@@ -10,9 +11,13 @@
         "page": "",
         "descr": "T",
 		"descr1": "C",
-        "int": 15,
-        "coord": "0,10",
-        "id2show": "id датчика"
+        "int": 5,
+        "coord": "250,0",
+        "id2show": "id датчика",
+        "shrift": "2",
+        "scale": "50",
+        "scale1": "240",
+        "rotation": "1"
     }],
     
     "about": {
@@ -22,15 +27,14 @@
         "specialThanks": "Ilya Belyakov",
         "moduleName": "Ili9341",
         "moduleVersion": "1.0",
-        "usedRam": {
-            "esp32_4mb": 15,
-            "esp8266_4mb": 15
-        },
+        "usedRam": 15,
         "moduleDesc": "Позволяет выводить на графический экран с чипом Ili9341 по указанным позициям значения других элементов конфигурации.",
         "propInfo": {
             "int": "Период времени в секундах обновления информации на экране по конкретному элементу.",
             "coord": "Координата позиции для вывода данных элемента конфигурации.",
-            "id2show": "id элемента конфигурации."
+            "id2show": "id элемента конфигурации.",
+            "shrift": "Размер текста 1, ...,5", 
+            "rotation": "Поворот экрана 0,1,2,3"
         },
         "funcInfo": [
 
@@ -62,15 +66,20 @@
         ]
     },
 
-    "defActive": false,
+    "defActive":  false,
 
     "usedLibs": {
         "esp32*": [
-           "Adafruit ILI9341@^1.5.11"
+           "https://github.com/Bodmer/TFT_eSPI",
+           "https://github.com/Bodmer/TJpg_Decoder"
         ],
-        "esp82*": [
-           "Adafruit ILI9341@^1.5.11"
+        "esp32_4mb3f": [
+            "https://github.com/Bodmer/TFT_eSPI",
+            "https://github.com/Bodmer/TJpg_Decoder"
+         ],
+        "esp8266*": [
+           "https://github.com/Bodmer/TFT_eSPI",
+           "https://github.com/Bodmer/TJpg_Decoder"
         ]
     }
-
 }

@@ -5,11 +5,13 @@
 #include <Adafruit_PCF8591.h>
 
 // Make sure that this is set to the value in volts of VCC
-#define ADC_REFERENCE_VOLTAGE 3.3
+//#define ADC_REFERENCE_VOLTAGE 3.3
+#define ADC_REFERENCE_VOLTAGE 5.0
 
 class Pcf8591 : public IoTItem {
     int _pin;
     bool _isRaw;
+    bool _isPress;
     bool _isInited = false;
     Adafruit_PCF8591 pcf = Adafruit_PCF8591();
 
@@ -21,6 +23,9 @@ class Pcf8591 : public IoTItem {
 
         jsonRead(parameters, "mode", tmp);
         _isRaw = tmp == "raw";
+
+        jsonRead(parameters, "mode", tmp);
+        _isRaw = tmp == "press";
 
         if (!pcf.begin()) {
              Serial.println("# Adafruit PCF8591 not found!");
@@ -58,6 +63,14 @@ class Pcf8591 : public IoTItem {
   return (((float)dac_value / ((1 << bits) - 1)) * logic_level);
   
     }
+
+   // float voltage = (float) pcf.analogRead(_pin) * 5.0 / 255.0;     // напряжение на измерительном контакте ардуино
+    //float pressure_kPa = (voltage - 0.5) / 4.0 * 1200.0;          // перевод напряжения в давление
+
+  // float int_to_press(uint16_t dac_value, uint8_t bits, float logic_level) {
+ // return (((float)dac_value / ((1 << bits) - 1)) * logic_level);
+  
+  //  }
 
     ~Pcf8591(){};
 };

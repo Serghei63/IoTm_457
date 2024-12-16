@@ -2,9 +2,9 @@
     "menuSection": "screens",
 
     "configItem": [{
-        "name": "TFT экран ST7735s 1.8",
+        "name": "TFT экран ST7789s 1.14",
         "type": "Reading",
-        "subtype": "St7735",
+        "subtype": "St7789",
         "id": "St",
         "widget": "",
         "page": "",
@@ -18,27 +18,6 @@
         "colour": "BLUE",
         "fon": "BLACK",
         "rotation": "1",
-        "size": "180",
-        "fon_screen" : "BLACK"
-    },
-    {
-        "name": "TFT экран ST7735s 1.44",
-        "type": "Reading",
-        "subtype": "St7735",
-        "id": "St",
-        "widget": "",
-        "page": "",
-        "descr": "T",
-
-		"descr1": "C",
-        "int": 15,
-        "coord": "0,10",
-        "id2show": "id датчика",
-        "shrift": "2",
-        "colour": "BLUE",
-        "fon": "BLACK",
-        "rotation": "1",
-        "size": "144",
         "fon_screen" : "BLACK"
     }],
     
@@ -47,7 +26,7 @@
         "authorContact": "https://t.me/Serghei63",
         "authorGit": "https://github.com/Serghei63",
         "specialThanks": "Ilya Belyakov",
-        "moduleName": "St7735",
+        "moduleName": "St7789",
         "moduleVersion": "1.0",
         "usedRam": {
             "esp32_4mb": 15,
@@ -62,7 +41,6 @@
             "colour": "Цвет текста BLACK,WHITE, GREEN, BLUE, CYAN, MAGENTA,YELLOW,ORANGE",
             "fon": "Фон текста BLACK,WHITE, GREEN, BLUE, CYAN, MAGENTA,YELLOW,ORANGE",
             "rotation": "Поворот экрана 0,1,2,3",
-            "size": "размер экрана 1.8 вводить 180, 1.44 - 144",
             "fon_screen" : "Общий фон экрана BLACK,WHITE, GREEN, BLUE, CYAN, MAGENTA,YELLOW,ORANGE"
         },
         "funcInfo": [
@@ -134,10 +112,10 @@
 
     "usedLibs": {
         "esp32*": [
-           "https://github.com/adafruit/Adafruit-ST7735-Library"
+           "https://github.com/Xinyuan-LilyGO/TTGO-T-Display"
         ],
         "esp82*": [
-           "https://github.com/adafruit/Adafruit-ST7735-Library"
+           "https://github.com/Bodmer/TFT_eSPI"
         ]
     }
 }

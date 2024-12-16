@@ -1,0 +1,50 @@
+{
+    "menuSection": "sensors",
+    "configItem": [
+        {
+            "global": 0,
+            "name": "DS18B20 Температура",
+            "type": "Reading",
+            "subtype": "Ds2482t",
+            "id": "ds",
+            "widget": "anydataTmp",
+            "page": "Сенсоры",
+            "descr": "DS2482 Температура",
+            "int": 15,
+            "index": 0,
+            "addri2c": "0x18",
+            "addr": "",
+            "round": 1
+        }
+    ],
+    "about": {
+        "authorName": "Ilya Belyakov",
+        "authorContact": "https://t.me/Biveraxe",
+        "authorGit": "https://github.com/biveraxe",
+        "specialThanks": "",
+        "moduleName": "DS2482",
+        "moduleVersion": "0.0",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "title": "Cенсор температуры ds18b20",
+        "moduleDesc": "Позволяет получить значения температуры с Ds18b20. О подделках: https://github.com/cpetrich/counterfeit_DS18B20",
+        "propInfo": {
+            "index": "Порядковый номер датчика на шине.",
+            "addr": "Адрес датчика на шине для точной идентификации. Можно скопировать из консоли.",
+            "int": "Количество секунд между опросами датчика."
+        }
+    },
+    "defActive": false,
+    "usedLibs": {
+        "esp32*": [
+           "https://github.com/joeyoung/DS2482"
+            
+        ],
+        "esp82*": [
+            "https://github.com/joeyoung/DS2482",
+            "https://github.com/milesburton/Arduino-Temperature-Control-Library"
+        ]
+    }
+}

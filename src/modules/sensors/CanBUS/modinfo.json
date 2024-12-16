@@ -1,0 +1,56 @@
+{
+    "menuSection": "sensors",
+    "configItem": [
+        {
+            "global": 0,
+            "name": "CanMaster",
+            "type": "Reading",
+            "subtype": "canMaster",
+            "id": "can",
+            "widget": "anydataTmp",
+            "page": "CAN",
+            "descr": "CAN шина",
+            "int": 5
+
+        }
+    ],
+    "about": {
+        "authorName": "Serghei Crasnicov",
+        "authorContact": "https://t.me/Serghei63",
+        "authorGit": "https://github.com/Serghei63",
+        "specialThanks": "Mit4bmw",
+        "moduleName": "CanBUS",
+        "moduleVersion": "0.0",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "subTypes": [
+            "canMaster" 
+        ],
+        "title": "CanBUS",
+        "moduleDesc": "Позволяет управлять оборудованием по протоколу CAN",
+        "propInfo": {
+            "func": "Функция modbus",
+            "addr": "Адрес slav",
+            "reg": "Адрес регистра",
+            "count": "Количество регистров. В ModbusNode 16-разядные регистры можно считать не более 2 в ноде. Для битовых данных не более 16 бит в ноде. Значение поместится в value Ноды",
+            "float": "Тип считываемых данных, если count=2, то данные могут быть long (указать 0) или float (указать 1). Числа Long не рекомендуются (на больших числах не будет точности), так как будет ограничено точность представление в IotManager идет во float",
+            "int": "Количество секунд между опросами датчика.",
+            "DIR_PIN": "connect DR, RE pin of MAX485 to gpio, указать 0 если не нужен",
+            "debug": " 1 - включить вывод дебага , 0 - отключить дебаг"
+        },
+        "funcInfo": [
+
+        ]
+    },
+    "defActive": false,
+    "usedLibs": {
+        "esp32*": [
+            "https://github.com/autowp/arduino-mcp2515"
+        ],
+        "esp82*": [
+            "https://github.com/autowp/arduino-mcp2515"
+        ]
+    }
+}

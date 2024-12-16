@@ -1,0 +1,129 @@
+{
+    "menuSection": "sensors",
+    "configItem": [
+        {
+            "global": 0,
+            "name": "INA3221 Напряжение1",
+            "type": "Reading",
+            "subtype": "Ina3221voltage1",
+            "id": "ina3221_V1",
+            "widget": "anydataVlt",
+            "page": "INA 3221",
+            "descr": "Напряжение 1",
+            "addr": "0x40",
+            "plus": 0,
+            "multiply": 1,
+            "round": 3,
+            "int": 10
+        },
+        {
+            "global": 0,
+            "name": "INA3221 Tок1",
+            "type": "Reading",
+            "subtype": "Ina3221curr1",
+            "id": "ina3221_A1",
+            "widget": "anydataAmp",
+            "page": "INA 3221",
+            "descr": "Сила тока 1",
+            "addr": "0x40",
+            "plus": 0,
+            "multiply": 1,
+            "round": 3,
+            "int": 10
+        },
+		{
+            "global": 0,
+            "name": "INA3221 Tок2",
+            "type": "Reading",
+            "subtype": "Ina3221curr2",
+            "id": "ina3221_A2",
+            "widget": "anydataAmp",
+            "page": "INA 3221",
+            "descr": "Сила тока 2",
+            "addr": "0x40",
+            "plus": 0,
+            "multiply": 1,
+            "round": 3,
+            "int": 10
+        },
+		{
+            "global": 0,
+            "name": "INA3221 Tок3",
+            "type": "Reading",
+            "subtype": "Ina3221curr3",
+            "id": "ina3221_A3",
+            "widget": "anydataAmp",
+            "page": "INA 3221",
+            "descr": "Сила тока 3",
+            "addr": "0x40",
+            "plus": 0,
+            "multiply": 1,
+            "round": 3,
+            "int": 10
+        },
+        {
+            "global": 0,
+            "name": "INA3221 Настройки",
+            "type": "Reading",
+            "subtype": "Ina3221setting",
+            "id": "ina3221_set",
+            "widget": "nil",
+            "page": "",
+            "descr": "",
+            "addr": "0x40",
+            "shunt": 0.1,
+            "maxV": 3.2,
+            "adjClbr": 0,
+            "resol": 4,
+            "btn-getClbr": "nil"
+        }
+    ],
+    "about": {
+        "authorName": "Serghei Crasnicov",
+        "authorContact": "https://t.me/Serghei63",
+        "authorGit": "https://github.com/Serghei63",
+        "specialThanks": "v0.0 - Mitchel @Mit4bmw",
+        "moduleName": "Ina3221",
+        "moduleVersion": "0.0",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "subTypes": [
+            "Ina3221voltage1",
+            "Ina3221curr1",
+            "Ina3221curr2",
+            "Ina3221curr3",
+            "Ina3221setting"
+        ],
+        "title": "Милливатметр постоянного тока",
+        "moduleDesc": "Стандартные значения для модуля INA3221 (Сопротивление шунта - 0.1 Ом, Максимальный ожидаемый ток - 0.8 А, Адрес на шине I2c - 0x40). Модуль INA3221 Настройки - для изменении настроек нужен постоянно в конфигурации, должен стоять перед другими модулями с тем же адресом, без него работает на значенях по умолчанию",
+        "propInfo": {
+            "int": "Количество секунд между опросами датчика.",
+            "addr": "Адрес датчика на шине, обычно 0x40. Если оставить поле пустым, то запуститься сканер I2C и подключение к адресу 0x40",
+            "shunt": "Сопротивление шунта, штатно 0.1Ом. Изменить если его перепаяли",
+            "maxV": "Максимальный ожидаемый ток, штатно 0.8А, для указаного шунта",
+            "adjClbr": "Задать смещение (подкрутить) калибровочное значение на указанное значение. -20  = Уменьшить калибровочное значение на 20",
+            "resol": "Установка режима усреднения (колическва замеров) для измерения напряжения и тока, рекомендуется для повышения стабильности показаний на шумной нагрузке. Пропорционально увеличивает время оцифровки. Варианты 0(без усреднения), от 1 до 7 - соответстввует 4,16,64,128,256,512,1024",
+            "btn-getClbr": "Кнопка запроса текущей калибровки, выводится в лог"
+        },
+        "funcInfo": [
+            {
+                "name": "sleep",
+                "descr": "INA3221 Настройки. Установка / снятие режима сна датчика INA3221",
+                "params": [
+                    "1- вкл сна/ 0-выкл сна"
+                ]
+            }
+        ]
+    },
+    "defActive": false,
+    "usedLibs": {
+        "esp32*": [
+            "https://github.com/Tinyu-Zhao/INA3221"
+        ],
+        "esp82*": [
+            "https://github.com/Tinyu-Zhao/INA3221"
+        ]
+    }
+}

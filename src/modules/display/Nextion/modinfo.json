@@ -16,7 +16,8 @@
       "tx": 17,
       "rx": 16,
       "line": 2,
-      "speed": 9600,
+      "speed": 115200,
+      "debug": 0,
       "uploadTelegram": 1
     }
   ],

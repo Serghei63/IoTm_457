@@ -12,7 +12,8 @@
             "tx": 17,
             "rx": 16,
             "line": 2,
-            "speed": 9600,
+            "speed": 115200,
+            "int": 1,
             "btn-uploadUI": ""
         }
     ],

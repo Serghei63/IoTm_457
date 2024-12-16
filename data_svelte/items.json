@@ -8,7 +8,35 @@
     },
     {
         "global": 0,
-        "name": "1. Будильник (Cron)",
+        "name": "1. Load Processor",
+        "type": "Reading",
+        "subtype": "loadBench",
+        "id": "bench",
+        "needSave": 0,
+        "widget": "nil",
+        "page": "Benchmark",
+        "descr": "Загруженность процессора",
+        "int": 10,
+        "log": 1,
+        "num": 1
+    },
+    {
+        "global": 0,
+        "name": "2. Load Task",
+        "type": "Reading",
+        "subtype": "taskBench",
+        "id": "bench",
+        "needSave": 0,
+        "widget": "nil",
+        "page": "Benchmark",
+        "descr": "Загруженность задач",
+        "int": 10,
+        "log": 1,
+        "num": 2
+    },
+    {
+        "global": 0,
+        "name": "3. Будильник (Cron)",
         "type": "Writing",
         "subtype": "Cron",
         "id": "cron",
@@ -19,34 +47,7 @@
         "val": "*/15 * * * * *",
         "formatNextAlarm": "%H:%M:%S",
         "needSave": 0,
-        "num": 1
-    },
-    {
-        "global": 0,
-        "name": "2. График",
-        "type": "Writing",
-        "subtype": "Loging",
-        "id": "log",
-        "widget": "chart2",
-        "page": "Графики",
-        "descr": "Температура",
-        "num": 2,
-        "int": 5,
-        "logid": "t",
-        "points": 300
-    },
-    {
-        "global": 0,
-        "name": "3. График по событию",
-        "type": "Writing",
-        "subtype": "Loging",
-        "id": "log",
-        "widget": "chart2",
-        "page": "Графики",
-        "descr": "Температура",
-        "int": 0,
-        "num": 3,
-        "points": 300
+        "num": 3
     },
     {
         "global": 0,
@@ -160,50 +161,11 @@
         "header": "sensors"
     },
     {
-        "global": 0,
-        "name": "11. Аналоговый счетчик импульсов",
-        "type": "Writing",
-        "subtype": "Impulse",
-        "id": "impulse",
-        "widget": "anydataDef",
-        "page": "Счетчики",
-        "descr": "Импульсов",
-        "needSave": 0,
-        "int": 1,
-        "pin": 16,
-        "pinMode": "INPUT",
-        "debounceDelay": 3,
-        "multiply": 1,
-        "count": 0,
-        "timeORcount": 0,
-        "num": 11
-    },
-    {
-        "global": 0,
-        "name": "12. Часы реального времени",
-        "type": "Reading",
-        "subtype": "RTC",
-        "id": "rtc",
-        "widget": "anydataDef",
-        "page": "Таймеры",
-        "descr": "Время RTC",
-        "chipCode": 1,
-        "timeFormat": "d-m-Y H:i:s",
-        "RST": -1,
-        "CLK": -1,
-        "DAT": -1,
-        "ticker": 0,
-        "int": 5,
-        "btn-setUTime": "0",
-        "btn-setSysTime": "nil",
-        "num": 12
-    },
-    {
         "header": "executive_devices"
     },
     {
         "global": 0,
-        "name": "13. Кнопка подключенная к пину",
+        "name": "11. Кнопка подключенная к пину",
         "type": "Writing",
         "subtype": "ButtonIn",
         "id": "btn",
@@ -218,11 +180,11 @@
         "debounceDelay": 50,
         "fixState": 0,
         "inv": 0,
-        "num": 13
+        "num": 11
     },
     {
         "global": 0,
-        "name": "14. Управление пином",
+        "name": "12. Управление пином",
         "type": "Writing",
         "subtype": "ButtonOut",
         "needSave": 0,
@@ -233,11 +195,24 @@
         "int": 0,
         "inv": 0,
         "pin": 2,
-        "num": 14
+        "num": 12
     },
     {
         "global": 0,
-        "name": "15. Телеграм-Бот v2",
+        "name": "13. CanMaster",
+        "type": "Reading",
+        "subtype": "canMaster",
+        "id": "cans",
+        "widget": "anydataTmp",
+        "page": "CAN 2",
+        "descr": "CAN шина",
+        "int": 0,
+        "idmes": "0x036",
+        "num": 13
+    },
+    {
+        "global": 0,
+        "name": "14. Телеграм-Бот v2",
         "type": "Writing",
         "subtype": "Telegram_v2",
         "id": "tg",
@@ -251,28 +226,25 @@
         "receiveMsg": 1,
         "textMode": "0",
         "OTA": 0,
-        "num": 15
+        "num": 14
     },
     {
         "header": "screens"
     },
     {
-        "name": "16. TFT экран GC9A",
+        "name": "15. LCD Dwin экран",
         "type": "Reading",
-        "subtype": "Gc9A",
-        "id": "Gc9A",
+        "subtype": "DwinI",
+        "id": "dwin",
         "widget": "",
         "page": "",
-        "descr": "T",
-        "descr1": "C",
-        "int": 5,
-        "coord": "90,200",
-        "id2show": "id датчика",
-        "shrift": "2",
-        "colour": "BLUE",
-        "fon": "BLACK",
-        "rotation": "1",
-        "fon_screen": "BLACK",
-        "num": 16
+        "descr": "",
+        "tx": 17,
+        "rx": 16,
+        "line": 2,
+        "speed": 115200,
+        "int": 1,
+        "btn-uploadUI": "",
+        "num": 15
     }
 ]

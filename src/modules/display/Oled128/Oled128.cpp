@@ -3,13 +3,13 @@
 
 #include <GyverOLED.h>
 
-GyverOLED<SSD1306_128x64, OLED_BUFFER> oled;
+//GyverOLED<SSD1306_128x64, OLED_BUFFER> oled;
 
 // GyverOLED<SSD1306_128x32, OLED_BUFFER> oled;
 // GyverOLED<SSD1306_128x32, OLED_NO_BUFFER> oled;
 // GyverOLED<SSD1306_128x64, OLED_NO_BUFFER> oled;
 // GyverOLED<SSD1306_128x64, OLED_BUFFER, OLED_SPI, 8, 7, 6> oled;
-// GyverOLED<SSH1106_128x64> oled;
+ GyverOLED<SSH1106_128x64> oled;
 
 class Oled128 : public IoTItem {
    private:
@@ -49,7 +49,7 @@ class Oled128 : public IoTItem {
         // jsonRead(parameters, "scale", _k);
         jsonRead(parameters, "shrift", _shrift);
 
-        // Wire.begin(2,0);       // Инициализация шины I2C для модуля E01
+         Wire.begin(2,0);       // Инициализация шины I2C для модуля E01
 
         oled.init();  // инициализация экрана
     }

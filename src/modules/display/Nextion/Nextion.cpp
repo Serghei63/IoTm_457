@@ -8,6 +8,8 @@ bool updated = false;
 class Nextion : public IoTUart
 {
 private:
+
+    bool _debug;
     String _url;
     String _host;
     int _tx, _rx, _speed, _line;
@@ -17,6 +19,9 @@ private:
 
     // Выводим русские буквы на экран Nextion (преобразуем в кодировку ISO-8859-5)
     String convertRUS(String text)
+
+   
+
     {
         const char *in = text.c_str();
         String out;
@@ -137,6 +142,9 @@ public:
 
     void uartPrintFFF(const String& msg) {
         if (_myUART) {
+
+             if (_debug)
+             
             SerialPrint("I", F("Nextion"), "uartPrintFFF -> "+msg+" +FFFFFF");
             _myUART->print(msg);
             _myUART->write(0xff);

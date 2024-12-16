@@ -8,7 +8,7 @@
         "virtual_elments": [
             {
                 "path": "src/modules/virtual/Benchmark",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/virtual/Cron",
@@ -20,7 +20,7 @@
             },
             {
                 "path": "src/modules/virtual/Loging",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/virtual/Loging2",
@@ -48,6 +48,10 @@
             },
             {
                 "path": "src/modules/virtual/Ping",
+                "active": false
+            },
+            {
+                "path": "src/modules/virtual/ramWeather",
                 "active": false
             },
             {
@@ -89,6 +93,10 @@
                 "active": false
             },
             {
+                "path": "src/modules/sensors/Am2302",
+                "active": false
+            },
+            {
                 "path": "src/modules/sensors/AnalogAdc",
                 "active": false
             },
@@ -121,6 +129,10 @@
                 "active": false
             },
             {
+                "path": "src/modules/sensors/CanBUS",
+                "active": false
+            },
+            {
                 "path": "src/modules/sensors/Dht1122",
                 "active": false
             },
@@ -130,6 +142,10 @@
             },
             {
                 "path": "src/modules/sensors/DS2401",
+                "active": false
+            },
+            {
+                "path": "src/modules/sensors/DS2482",
                 "active": false
             },
             {
@@ -170,7 +186,7 @@
             },
             {
                 "path": "src/modules/sensors/Impulse",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Ina219",
@@ -178,6 +194,10 @@
             },
             {
                 "path": "src/modules/sensors/Ina226",
+                "active": false
+            },
+            {
+                "path": "src/modules/sensors/Ina3221",
                 "active": false
             },
             {
@@ -194,6 +214,10 @@
             },
             {
                 "path": "src/modules/sensors/Mhz19",
+                "active": false
+            },
+            {
+                "path": "src/modules/sensors/ModbusRTU",
                 "active": false
             },
             {
@@ -218,7 +242,7 @@
             },
             {
                 "path": "src/modules/sensors/RTC",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/S8",
@@ -273,6 +297,10 @@
             {
                 "path": "src/modules/exec/Buzzer",
                 "active": false
+            },
+            {
+                "path": "src/modules/exec/CanBUSsm",
+                "active": true
             },
             {
                 "path": "src/modules/exec/Enconder",
@@ -335,6 +363,14 @@
                 "active": false
             },
             {
+                "path": "src/modules/exec/ServoPCA9685",
+                "active": false
+            },
+            {
+                "path": "src/modules/exec/ServoSmooth",
+                "active": false
+            },
+            {
                 "path": "src/modules/exec/SIM800",
                 "active": false
             },
@@ -344,6 +380,10 @@
             },
             {
                 "path": "src/modules/exec/SysExt",
+                "active": false
+            },
+            {
+                "path": "src/modules/exec/Tca9555",
                 "active": false
             },
             {
@@ -370,14 +410,22 @@
         "screens": [
             {
                 "path": "src/modules/display/DwinI",
-                "active": false
-            },
-            {
-                "path": "src/modules/display/Gc9A",
                 "active": true
             },
             {
+                "path": "src/modules/display/Gc9A",
+                "active": false
+            },
+            {
+                "path": "src/modules/display/Ili9341",
+                "active": false
+            },
+            {
                 "path": "src/modules/display/Lcd2004",
+                "active": false
+            },
+            {
+                "path": "src/modules/display/Max7219",
                 "active": false
             },
             {
@@ -398,6 +446,18 @@
             },
             {
                 "path": "src/modules/display/Smi2_m",
+                "active": false
+            },
+            {
+                "path": "src/modules/display/St7565",
+                "active": false
+            },
+            {
+                "path": "src/modules/display/St7735",
+                "active": false
+            },
+            {
+                "path": "src/modules/display/St7789",
                 "active": false
             },
             {
