@@ -9,7 +9,7 @@ extern void ntpInit();
 extern time_t getSystemTime();
 extern void synchTime();
 extern bool onDayChange();
-extern const String getTimeLocal_Weekday();//=================
+extern const String getTimeLocal_Weekday();//=
 extern const String getTimeLocal_hhmm();
 extern const String getTimeLocal_hhmmss();
 extern const String getDateTimeDotFormated();
