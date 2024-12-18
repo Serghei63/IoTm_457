@@ -354,7 +354,14 @@
         "widget": "anydata",
         "after": "°",
         "icon": "speedometer"
-    },   
+    },
+    {
+        "name": "anydataBar",
+        "label": "давление Bar",
+        "widget": "anydata",
+        "after": "Kg/cm²",
+        "icon": "speedometer"
+    },  
     {
         "name": "nil",
         "label": "Без виджета"
