@@ -28,25 +28,25 @@ public:
             // mqttSubscribeExternal(_topic);
         }
     }
-/* 
-    void onMqttRecive(String &topic, String &msg)
-    {
-        if (!HA)
-            return;
-
-        if (msg.indexOf("HELLO") == -1)
+    /*
+        void onMqttRecive(String &topic, String &msg)
         {
-            String dev = selectToMarkerLast(topic, "/");
-            dev.toUpperCase();
-            dev.replace(":", "");
-            if (_topic != topic)
-            {
-                //  SerialPrint("i", "ExternalMQTT", _id + " not equal: " + topic + " msg: " + msg);
+            if (!HA)
                 return;
+
+            if (msg.indexOf("HELLO") == -1)
+            {
+                String dev = selectToMarkerLast(topic, "/");
+                dev.toUpperCase();
+                dev.replace(":", "");
+                if (_topic != topic)
+                {
+                    //  SerialPrint("i", "ExternalMQTT", _id + " not equal: " + topic + " msg: " + msg);
+                    return;
+                }
+                // обработка топика, на который подписались
             }
-            // обработка топика, на который подписались
-        }
-    } */
+        } */
 
     void doByInterval()
     {
@@ -96,7 +96,7 @@ public:
                 jsonWriteInt(errorsHeapJson, F("jse3"), 1); // Ошибка чтения json файла с виджетами при отправки в mqtt
             }
             int i = 0;
-            // String path = jsonReadStr(settingsFlashJson, F("HomeAssistant"));
+            // String HATopic = jsonReadStr(settingsFlashJson, F("HomeAssistant"));
             JsonArray arr = doc.as<JsonArray>();
             for (JsonVariant value : arr)
             {
@@ -104,7 +104,7 @@ public:
                 dev.replace(":", "");
                 String HAjson = "";
                 HAjson = "{\"availability\":[{\"topic\": \"" + mqttRootDevice + "/state\",\"value_template\": \"{{ value_json.status }}\"}],\"availability_mode\": \"any\",";
-                HAjson = HAjson + " \"device\": {\"identifiers\": [\"" + value["page"].as<String>() + "\"],";
+                HAjson = HAjson + " \"device\": {\"identifiers\": [\"" + mqttRootDevice + value["page"].as<String>() + "\"],";
                 HAjson = HAjson + " \"name\": \"  " + value["page"].as<String>() + "\"},";
                 HAjson = HAjson + " \"name\": \"" + value["descr"].as<String>() + "\",";
                 HAjson = HAjson + " \"state_topic\": \"" + value["topic"].as<String>() + "/status\",";
@@ -114,22 +114,39 @@ public:
                 if (value["name"].as<String>() == "anydataTmp")
                 {
                     HAjson = HAjson + " \"value_template\": \"{{  float( value_json.status, default = 0) | default }}\",";
-                    HAjson = HAjson + " \"unique_id\": \"" + dev + "\",";
-                    HAjson = HAjson + " \"state_class\": \"measurement\",";
+                    HAjson = HAjson + " \"unique_id\": \"" + mqttRootDevice + dev + "\",";
                     HAjson = HAjson + " \"unit_of_measurement\": \"°C\"";
                 }
                 else if (value["name"].as<String>() == "anydataHum")
                 {
                     HAjson = HAjson + " \"value_template\": \"{{  float( value_json.status, default = 0) | default  }}\",";
-                    HAjson = HAjson + " \"unique_id\": \"" + dev + "\",";
-                    HAjson = HAjson + " \"state_class\": \"measurement\",";
+                    HAjson = HAjson + " \"unique_id\": \"" + mqttRootDevice + dev + "\",";
                     HAjson = HAjson + " \"unit_of_measurement\": \"%\"";
                 }
-                // ввод числа
+                else if (value["name"].as<String>() == "anydataMm")
+                {
+                    HAjson = HAjson + " \"value_template\": \"{{  float( value_json.status, default = 0) | default  }}\",";
+                    HAjson = HAjson + " \"unique_id\": \"" + mqttRootDevice + dev + "\",";
+                    HAjson = HAjson + " \"unit_of_measurement\": \"mm\"";
+                }
+                else if (value["name"].as<String>() == "anydataBar")
+                {
+                    HAjson = HAjson + " \"value_template\": \"{{  float( value_json.status, default = 0) | default  }}\",";
+                    HAjson = HAjson + " \"unique_id\": \"" + mqttRootDevice + dev + "\",";
+                    HAjson = HAjson + " \"unit_of_measurement\": \"Bar\"";
+                }
+                else if (value["name"].as<String>() == "anydataPpm")
+                {
+                    HAjson = HAjson + " \"value_template\": \"{{  float( value_json.status, default = 0) | default  }}\",";
+                    HAjson = HAjson + " \"unique_id\": \"" + mqttRootDevice + dev + "\",";
+                    HAjson = HAjson + " \"unit_of_measurement\": \"ppm\"";
+                }
+
+                // ввод числаФВ
                 else if (value["name"].as<String>() == "inputDgt")
                 {
                     HAjson = HAjson + " \"value_template\": \"{{  float( value_json.status, default = 0) | default }}\",";
-                    HAjson = HAjson + " \"unique_id\": \"" + dev + "\",";
+                    HAjson = HAjson + " \"unique_id\": \"" + mqttRootDevice + dev + "\",";
                     HAjson = HAjson + " \"command_topic\": \"" + value["topic"].as<String>() + "/control\",";
                     HAjson = HAjson + " \"mode\": \"box\",";
                     HAjson = HAjson + " \"min\": " + -1000000 + ",";
@@ -139,14 +156,14 @@ public:
                 else if (value["name"].as<String>() == "inputTxt")
                 {
                     HAjson = HAjson + " \"value_template\": \"{{ value_json.status | default  }}\",";
-                    HAjson = HAjson + " \"unique_id\": \"" + dev + "\",";
+                    HAjson = HAjson + " \"unique_id\": \"" + mqttRootDevice + dev + "\",";
                     HAjson = HAjson + " \"command_topic\": \"" + value["topic"].as<String>() + "/control\"";
                 }
                 // переключатель
                 else if (value["name"].as<String>() == "toggle")
                 {
                     HAjson = HAjson + " \"value_template\": \"{{ value_json.status | default  }}\",";
-                    HAjson = HAjson + " \"unique_id\": \"" + dev + "\",";
+                    HAjson = HAjson + " \"unique_id\": \"" + mqttRootDevice + dev + "\",";
                     HAjson = HAjson + " \"command_topic\": \"" + value["topic"].as<String>() + "/control\",";
                     HAjson = HAjson + " \"device_class\": \"switch\",";
                     HAjson = HAjson + " \"payload_off\": " + 0 + ",";
@@ -157,7 +174,7 @@ public:
                 else
                 {
                     HAjson = HAjson + " \"value_template\": \"{{ value_json.status | default  }}\",";
-                    HAjson = HAjson + " \"unique_id\": \"" + dev + "\"";
+                    HAjson = HAjson + " \"unique_id\": \"" + mqttRootDevice + dev + "\"";
                 }
 
                 HAjson = HAjson + " }";

@@ -64,10 +64,10 @@
   },
   "defActive": false,
   "usedLibs": {
-    "esp32c62_4mb": [
+    "esp32c6_4mb": [
       "https://github.com/h2zero/NimBLE-Arduino#c6-build"      
     ],
-    "esp32c62_8mb": [
+    "esp32c6_8mb": [
       "https://github.com/h2zero/NimBLE-Arduino#c6-build"      
     ],
     "esp32_4mb3f": [
