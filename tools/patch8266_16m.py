@@ -1,21 +1,22 @@
 # правим  %USERPROFILE%\.platformio\platforms\espressif8266\builder\main.py 103-115
 # для добавления возможности прошивки 16мб модуля esp8266
+Import("env")
 
 import os
 import shutil
 from sys import platform
-Import("env")
 
-print(env)
+pio_home = env.subst("$PROJECT_CORE_DIR")
+print(pio_home)
 
 if platform == "linux" or platform == "linux2":
-    # linux '~/.platformio/platforms/espressif8266@4.0.1/builder/main.py'
-    mainPyPath = env.subst("$PLATFORMIO_PLATFORMS_DIR") + '/espressif8266@4.0.1/builder/main.py'
+    #mainPyPath = '/home/rise/.platformio/platforms/espressif8266@4.0.1/builder/main.py'
+    mainPyPath = pio_home + '/platforms/espressif8266@4.0.1/builder/main.py'
 else:
-    # windows os.environ['USERPROFILE'] + '\\.platformio\\platforms\\espressif8266@4.0.1\\builder\\main.py'
-    mainPyPath = env.subst("$PLATFORMIO_PLATFORMS_DIR") +  '\\espressif8266@4.0.1\\builder\\main.py'
+    #mainPyPath = os.environ['USERPROFILE'] + '\\.platformio\\platforms\\espressif8266@4.0.1\\builder\\main.py'
+    mainPyPath = pio_home +  '\\platforms\\espressif8266@4.0.1\\builder\\main.py'
 
-print(mainPyPath)
+print("FIX 16Mb path: " + mainPyPath)
 
 with open(mainPyPath) as fr:
     oldData = fr.read()
