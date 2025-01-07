@@ -9,7 +9,7 @@ import shutil
 from sys import platform
 
 pio_home = env.subst("$PROJECT_CORE_DIR")
-print(pio_home)
+print("PLATFORMIO_DIR" + pio_home)
 
 if platform == "linux" or platform == "linux2":
     # linux
@@ -30,5 +30,6 @@ try:
             newData = newData.replace('#define WIFI_CLIENT_SELECT_TIMEOUT_US    (1000000)', '#define WIFI_CLIENT_SELECT_TIMEOUT_US    (500000)')
             with open(mainPyPath, 'w') as fw:
                 fw.write(newData)
+                print(f"Файл изменён, ОК! {mainPyPath}")
 except FileNotFoundError:
     print("Файл не найден или не удается открыть")

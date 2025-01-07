@@ -5,7 +5,7 @@ import shutil
 from sys import platform
 
 pio_home = env.subst("$PROJECT_CORE_DIR")
-print(pio_home)
+print("PLATFORMIO_DIR" + pio_home)
 
 if platform == "linux" or platform == "linux2":
     # linux
@@ -29,6 +29,7 @@ def add_arduino_to_frameworks(file_name):
                 f.seek(0)
                 json.dump(data, f, indent=4)
                 f.truncate()
+                print(f"Файл изменён, ОК! {file_name}")
             else:
                 print(f"Arduino already exists in {file_name}")
     except FileNotFoundError:
