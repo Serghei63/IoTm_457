@@ -671,7 +671,11 @@ void WebSocketsServer::handleNewClients(void) {
 #endif
 
 // store new connection
-    WEBSOCKETS_NETWORK_CLASS * tcpClient = new WEBSOCKETS_NETWORK_CLASS(_server->accept());
+#if(WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP8266)
+    WEBSOCKETS_NETWORK_CLASS * tcpClient = new WEBSOCKETS_NETWORK_CLASS(_server->available()); //available
+#else
+    WEBSOCKETS_NETWORK_CLASS * tcpClient = new WEBSOCKETS_NETWORK_CLASS(_server->accept()); //available
+#endif
         if(!tcpClient) {
             DEBUG_WEBSOCKETS("[WS-Client] creating Network class failed!");
             return;
