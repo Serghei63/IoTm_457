@@ -6,6 +6,7 @@ import shutil
 from sys import platform
 Import("env")
 
+print(env)
 
 if platform == "linux" or platform == "linux2":
     # linux '~/.platformio/platforms/espressif8266@4.0.1/builder/main.py'
