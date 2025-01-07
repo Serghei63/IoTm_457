@@ -22,7 +22,7 @@
         "pinSDA": 0,
         "i2cFreq": 100000,
         "wg": "group1",
-        "debugTraceMsgTlgrm": 1       
+        "debugTraceMsgTlgrm": 1
     },
     "projectProp": {
         "platformio": {
@@ -175,6 +175,10 @@
                 "active": true
             },
             {
+                "path": "src/modules/virtual/LogingHourly",
+                "active": true
+            },
+            {
                 "path": "src/modules/virtual/Math",
                 "active": true
             },
@@ -188,6 +192,10 @@
             },
             {
                 "path": "src/modules/virtual/Timer",
+                "active": true
+            },
+            {
+                "path": "src/modules/virtual/UpdateServer",
                 "active": true
             },
             {
@@ -234,6 +242,10 @@
             },
             {
                 "path": "src/modules/sensors/BL0937",
+                "active": true
+            },
+            {
+                "path": "src/modules/sensors/BL0942",
                 "active": true
             },
             {
@@ -333,11 +345,19 @@
                 "active": false
             },
             {
+                "path": "src/modules/sensors/ModbusRTUasync",
+                "active": true
+            },
+            {
                 "path": "src/modules/sensors/MQgas",
                 "active": true
             },
             {
                 "path": "src/modules/sensors/Ntc",
+                "active": false
+            },
+            {
+                "path": "src/modules/sensors/Pcf8591",
                 "active": false
             },
             {
@@ -378,7 +398,7 @@
             },
             {
                 "path": "src/modules/sensors/Sht30",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Sonar",
@@ -432,7 +452,7 @@
             },
             {
                 "path": "src/modules/exec/IoTServo",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/IRremote",
@@ -468,7 +488,7 @@
             },
             {
                 "path": "src/modules/exec/Pwm8266",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/SDcard",
@@ -500,7 +520,7 @@
             },
             {
                 "path": "src/modules/exec/Thermostat",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/sensors/Ds2423",
@@ -511,6 +531,10 @@
             {
                 "path": "src/modules/display/DwinI",
                 "active": true
+            },
+            {
+                "path": "src/modules/display/GyverLAMP",
+                "active": false
             },
             {
                 "path": "src/modules/display/Lcd2004",

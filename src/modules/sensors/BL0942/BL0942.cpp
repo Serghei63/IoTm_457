@@ -101,7 +101,8 @@
                         checksum ^= 0xFF;
                         if (in != checksum)
                         {
-                            ESP_LOGE(TAG, "BL0942 invalid checksum! 0x%02X != 0x%02X", checksum, in);
+                            //ESP_LOGE(TAG, "BL0942 invalid checksum! 0x%02X != 0x%02X", checksum, in);
+                            SerialPrint("E", "BL0942cmd", "Invalid checksum!", _id);
                         }
                         else
                         {
@@ -119,7 +120,8 @@
                         }
                         else
                         {
-                            ESP_LOGE(TAG, "Invalid data. Header mismatch: %d", in);
+                            //ESP_LOGE(TAG, "Invalid data. Header mismatch: %d", in);
+                            SerialPrint("E", "BL0942cmd", "Invalid data. Header mismatch", _id);
                         }
                     }
                 }
