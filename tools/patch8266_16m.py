@@ -9,10 +9,10 @@ Import("env")
 
 if platform == "linux" or platform == "linux2":
     # linux '~/.platformio/platforms/espressif8266@4.0.1/builder/main.py'
-    mainPyPath = env.get("PLATFORMIO_PLATFORMS_DIR") + '/espressif8266@4.0.1/builder/main.py'
+    mainPyPath = env.subst("$PLATFORMIO_PLATFORMS_DIR") + '/espressif8266@4.0.1/builder/main.py'
 else:
     # windows os.environ['USERPROFILE'] + '\\.platformio\\platforms\\espressif8266@4.0.1\\builder\\main.py'
-    mainPyPath = env.get("PLATFORMIO_PLATFORMS_DIR") +  '\\espressif8266@4.0.1\\builder\\main.py'
+    mainPyPath = env.subst("$PLATFORMIO_PLATFORMS_DIR") +  '\\espressif8266@4.0.1\\builder\\main.py'
 
 print(mainPyPath)
 
