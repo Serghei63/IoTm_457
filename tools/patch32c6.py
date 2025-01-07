@@ -1,16 +1,22 @@
+Import("env")
 import json
 import os
 import shutil
 from sys import platform
 
+pio_home = env.subst("$PROJECT_CORE_DIR")
+print(pio_home)
+
 if platform == "linux" or platform == "linux2":
     # linux
-    devkitm = '/home/rise/.platformio/platforms/espressif32/boards/esp32-c6-devkitm-1.json'
-    devkitc = '/home/rise/.platformio/platforms/espressif32/boards/esp32-c6-devkitc-1.json'    
+    #devkitm = '/home/rise/.platformio/platforms/espressif32/boards/esp32-c6-devkitm-1.json'
+    #devkitc = '/home/rise/.platformio/platforms/espressif32/boards/esp32-c6-devkitc-1.json'    
+    devkitm = pio_home + '/platforms/espressif32/boards/esp32-c6-devkitm-1.json'
+    devkitc = pio_home + '/platforms/espressif32/boards/esp32-c6-devkitc-1.json'     
 else:
     # windows
-    devkitm = os.environ['USERPROFILE'] + '\\.platformio\\platforms\\espressif32\\boards\\esp32-c6-devkitm-1.json'
-    devkitc = os.environ['USERPROFILE'] + '\\.platformio\\platforms\\espressif32\\boards\\esp32-c6-devkitc-1.json'    
+    devkitm = pio_home + '\\platforms\\espressif32\\boards\\esp32-c6-devkitm-1.json'
+    devkitc = pio_home + '\\platforms\\espressif32\\boards\\esp32-c6-devkitc-1.json'    
 
 def add_arduino_to_frameworks(file_name):
     try:

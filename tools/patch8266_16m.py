@@ -18,10 +18,13 @@ else:
 
 print("FIX 16Mb path: " + mainPyPath)
 
-with open(mainPyPath) as fr:
-    oldData = fr.read()
-    if not 'if _value == -0x6000:' in oldData:
-        shutil.copyfile(mainPyPath, mainPyPath+'.bak')
-        newData = oldData.replace('_value += 0xE00000  # correction', '_value += 0xE00000  # correction\n\n        if _value == -0x6000:\n            _value = env[k]-0x40200000')
-        with open(mainPyPath, 'w') as fw:
-            fw.write(newData)
+try:
+    with open(mainPyPath) as fr:
+        oldData = fr.read()
+        if not 'if _value == -0x6000:' in oldData:
+            shutil.copyfile(mainPyPath, mainPyPath+'.bak')
+            newData = oldData.replace('_value += 0xE00000  # correction', '_value += 0xE00000  # correction\n\n        if _value == -0x6000:\n            _value = env[k]-0x40200000')
+            with open(mainPyPath, 'w') as fw:
+                fw.write(newData)
+except FileNotFoundError:
+    print("Файл не найден или не удается открыть")

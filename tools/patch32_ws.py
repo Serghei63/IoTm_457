@@ -3,17 +3,22 @@
 # #define WIFI_CLIENT_MAX_WRITE_RETRY      (10)
 # #define WIFI_CLIENT_SELECT_TIMEOUT_US    (1000000)
 # Прописать скрипт в platformio.ini  внутри [env:esp32_4mb3f] написать extra_scripts = pre:tools/patch32_ws.py
-
+Import("env")
 import os
 import shutil
 from sys import platform
 
+pio_home = env.subst("$PROJECT_CORE_DIR")
+print(pio_home)
+
 if platform == "linux" or platform == "linux2":
     # linux
-    mainPyPath = '/home/rise/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiClient.cpp'
+    #mainPyPath = '/home/rise/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiClient.cpp'
+    mainPyPath = pio_home + '/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiClient.cpp'
 else:
     # windows
-    mainPyPath = os.environ['USERPROFILE'] + '\\.platformio\\packages\\framework-arduinoespressif32\\libraries\\WiFi\\src\\WiFiClient.cpp'
+    #mainPyPath = os.environ['USERPROFILE'] + '\\.platformio\\packages\\framework-arduinoespressif32\\libraries\\WiFi\\src\\WiFiClient.cpp'
+    mainPyPath = pio_home + '\\packages\\framework-arduinoespressif32\\libraries\\WiFi\\src\\WiFiClient.cpp'
 
 # print(mainPyPath)
 try:
