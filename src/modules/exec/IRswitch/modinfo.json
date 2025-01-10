@@ -1,0 +1,49 @@
+{   
+    "menuSection": "Сенсоры",
+
+    "configItem": [{
+
+        "global": 0,
+        "name": "Сканер IR пультов",
+        "type": "Reading",
+        "subtype": "IRswitch",
+        "id": "isw",
+        "int": 500,
+        "pinRx": 14,
+        "pinTx": -1
+    }],
+    
+    "about": {
+        "authorName": "Serghei Crasnicov",
+        "authorContact": "https://t.me/Serghei63",
+        "authorGit": "https://github.com/Serghei63",
+        "specialThanks": "Valentin Khandriga @Valiuhaaa",
+        "moduleName": "IRswitch",
+        "moduleVersion": "1.0",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "title": "Сканер IR пультов",
+        "moduleDesc": "Позволяет принимать байт-коды от простых IR пультов",
+        "propInfo": {
+            "pinRx": "GPIO номер, к которому подключен инфракрасный приемник. Если < 0, то приемник выключен",
+            "pinTx": " Если < 0, то передатчик выключен",
+            "int": "Количество миллисекунд между опросами датчика. 0 - выключено. (устранение повторений при нажатой кнопке)"
+        }
+    },
+
+    "defActive": true,
+
+    "usedLibs": {
+        "esp32_4mb": [
+            "IRremoteESP8266 @ ^2.8.4"
+        ],
+        "esp8266_1mb": [
+            "IRremote @ ^4.1.2"
+        ],
+        "esp8266_4mb": [
+            "IRremoteESP8266 @ ^2.8.4"
+        ]
+    }
+}
