@@ -341,6 +341,10 @@
                 "active": false
             },
             {
+                "path": "src/modules/sensors/ModbusRTU",
+                "active": false
+            },
+            {
                 "path": "src/modules/sensors/ModbusRTUasync",
                 "active": false
             },
