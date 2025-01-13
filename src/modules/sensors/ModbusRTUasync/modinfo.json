@@ -3,6 +3,22 @@
     "configItem": [
         {
             "global": 0,
+            "name": "ModbusNode",
+            "type": "Reading",
+            "subtype": "mbNode",
+            "id": "mbNode",
+            "widget": "anydataTmp",
+            "page": "Modbus",
+            "descr": "Данные modbus",
+            "int": 5,
+            "func": "0x03",
+            "addr": 1,
+            "reg": "0x0000",
+            "count": 1,
+            "round": 0
+        },
+        {
+            "global": 0,
             "name": "ModbusAsunc",
             "type": "Reading",
             "subtype": "mbClient",
@@ -58,13 +74,13 @@
             },
             {   
                 "name": "readHoldingRegisters",
-                "descr": "Запрос данных регистра. Функция 0х03 протокола. Читает не более двух регистров за раз. Пример: mb.readHoldingRegisters(1, \"0х0000\", 1, 0)",
-                "params": ["Адрес","Регистр","Кличество регистров","1-float, 0-long"]
+                "descr": "Запрос данных регистра. Функция 0х03 протокола. Читает не более двух регистров за раз. Пример: mb.readHoldingRegisters(1, \"0х0000\", 1)",
+                "params": ["Адрес","Регистр","Кличество регистров"]
             },
             {
                 "name": "readInputRegisters",
-                "descr": "Запрос данных регистра. Функция 0х04 протокола. Читает не более двух регистров за раз. Пример: mb.readInputRegisters(1, \"0х0000\", 1, 0)",
-                "params": ["Адрес","Регистр","Кличество регистров","1-float, 0-long"]
+                "descr": "Запрос данных регистра. Функция 0х04 протокола. Читает не более двух регистров за раз. Пример: mb.readInputRegisters(1, \"0х0000\", 1)",
+                "params": ["Адрес","Регистр","Кличество регистров"]
             },
             {
                 "name": "writeSingleCoils",
