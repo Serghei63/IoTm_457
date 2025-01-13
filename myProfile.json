@@ -213,16 +213,12 @@
         ],
         "sensors": [
             {
-                "path": "src/modules/exec/Pcf8591",
+                "path": "src/modules/sensors/A02Distance",
                 "active": false
             },
             {
-                "path": "src/modules/sensors/A02Distance",
-                "active": true
-            },
-            {
                 "path": "src/modules/sensors/Acs712",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Ads1115",
@@ -242,11 +238,11 @@
             },
             {
                 "path": "src/modules/sensors/BL0937",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/BL0942",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Ble",
@@ -346,15 +342,15 @@
             },
             {
                 "path": "src/modules/sensors/ModbusRTUasync",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/MQgas",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Ntc",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/sensors/Pcf8591",
@@ -366,7 +362,7 @@
             },
             {
                 "path": "src/modules/sensors/Pzem004t_v2",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/RCswitch",
@@ -378,7 +374,7 @@
             },
             {
                 "path": "src/modules/sensors/S8",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Scd40",
@@ -394,7 +390,7 @@
             },
             {
                 "path": "src/modules/sensors/Sht20",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/Sht30",
@@ -402,7 +398,7 @@
             },
             {
                 "path": "src/modules/sensors/Sonar",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/UART",
@@ -464,11 +460,11 @@
             },
             {
                 "path": "src/modules/exec/Mcp23017",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Mp3",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Multitouch",
@@ -480,7 +476,7 @@
             },
             {
                 "path": "src/modules/exec/Pcf8574",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Pwm32",
@@ -530,7 +526,7 @@
         "screens": [
             {
                 "path": "src/modules/display/DwinI",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/display/GyverLAMP",
@@ -538,7 +534,7 @@
             },
             {
                 "path": "src/modules/display/Lcd2004",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/display/Nextion",
@@ -554,7 +550,7 @@
             },
             {
                 "path": "src/modules/display/Oled64",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/display/Smi2_m",

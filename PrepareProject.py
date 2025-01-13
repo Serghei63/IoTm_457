@@ -98,10 +98,13 @@ for opt, arg in opts:
         printHelp()
         sys.exit()
     elif opt in ("-p", "--profile"):
+        print('Загрузка профиля из файла:' + arg)
         profile = arg
     elif opt in ("-u", "--update"):
+        print('Создание новой конфигурации по исходным файлам!')
         update = True
     elif opt in ("-b", "--board"):
+        print('Создание профиля для платы:' + arg)
         selectDevice = arg
 
 if Path(profile).is_file():
