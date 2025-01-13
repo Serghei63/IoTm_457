@@ -181,7 +181,7 @@ void scanEndedCB(NimBLEScanResults results)
 //#if defined (esp32c6_4mb) || defined (esp32c6_8mb)
 //class BleScan : public IoTItem, NimBLEScanCallbacks
 //#else
-class BleScan : public IoTItem, BLEAdvertisedDeviceCallbacks
+class BleScan : public IoTItem, BLEAdvertisedDeviceCallbacks //NimBLEScanCallbacks
 //#endif
 {
 private:
@@ -218,13 +218,20 @@ public:
     }
     if (advertisedDevice->haveManufacturerData())
     {
+#if defined (esp32c6_4mb) || defined (esp32c6_8mb)  
       char *manufacturerdata = BLEUtils::buildHexData(NULL, (uint8_t *)advertisedDevice->getManufacturerData().data(), advertisedDevice->getManufacturerData().length());
+#else
+      std::string manufacturerdata = NimBLEUtils::dataToHexString((uint8_t *)advertisedDevice->getManufacturerData().data(), advertisedDevice->getManufacturerData().length());
+#endif       
+
       BLEdata["manufacturerdata"] = manufacturerdata;
+      #if defined (esp32c6_4mb) || defined (esp32c6_8mb) 
       free(manufacturerdata);
+      #endif 
     }
-#if !defined (esp32c6_4mb) && !defined (esp32c6_8mb)
-    if (advertisedDevice->haveRSSI())
-#endif    
+//#if !defined (esp32c6_4mb) && !defined (esp32c6_8mb) //&& !defined (esp32_4mb3f)
+//    if (advertisedDevice->haveRSSI())
+//#endif    
       BLEdata["rssi"] = (int)advertisedDevice->getRSSI();
     if (advertisedDevice->haveTXPower())
       BLEdata["txpower"] = (int8_t)advertisedDevice->getTXPower();
@@ -302,11 +309,11 @@ public:
 
     BLEDevice::init("");
     pBLEScan = BLEDevice::getScan(); // create new scan
-#if defined (esp32c6_4mb) || defined (esp32c6_8mb)
+//#if defined (esp32c6_4mb) || defined (esp32c6_8mb) //|| defined (esp32_4mb3f)
     pBLEScan->setScanCallbacks(this);
-#else
-    pBLEScan->setAdvertisedDeviceCallbacks(this);
-#endif
+//#else
+//    pBLEScan->setAdvertisedDeviceCallbacks(this);
+//#endif
     pBLEScan->setActiveScan(false); // active scan uses more power, but get results faster
     pBLEScan->setInterval(100);
     pBLEScan->setWindow(99);    // less or equal setInterval value
@@ -321,11 +328,11 @@ public:
       if (_scanDuration > 0)
       {
         SerialPrint("i", F("BLE"), "Start Scanning...");
-#if defined (esp32c6_4mb) || defined (esp32c6_8mb)
+//#if defined (esp32c6_4mb) || defined (esp32c6_8mb) //|| defined (esp32_4mb3f)
         pBLEScan->start(_scanDuration, false);
-#else        
-        pBLEScan->start(_scanDuration, scanEndedCB, false);
-#endif
+//#else        
+//        pBLEScan->start(_scanDuration, scanEndedCB, false);
+//#endif
       }
     }
   }
@@ -335,13 +342,13 @@ public:
 
 //=======================================================================================================
 
-void *getAPI_Ble_part1(String subtype, String param)
+void *getAPI_Ble(String subtype, String param)
 {
-  if (subtype == F("BleScan_p1"))
+  if (subtype == F("BleScan"))
   {
     return new BleScan(param);
   }
-  else if (subtype == F("BleSens_p1"))
+  else if (subtype == F("BleSens"))
   {
     return new BleSens(param);
   }
