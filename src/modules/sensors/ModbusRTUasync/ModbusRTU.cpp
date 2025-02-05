@@ -152,7 +152,8 @@ public:
           {
             uint16_t val1, val2;
             response.get(3, val1);
-            response.get(4, val2);
+            response.get(5, val2);
+            Serial.printf("COUNT 2: %02X - %02X\n", (int)val1, (int)val2);
             long val = val1 | val2 << 16;
             regEvent((float)val, "ModbusNode");
           }
