@@ -91,6 +91,8 @@ void standWebServerInit() {
 
     HTTP.on("/localota", HTTP_GET, handleLocalOTA);
 
+    HTTP.on("/localota_handler", HTTP_GET, handleLocalOTA_Handler);
+
     // Default handler for all URIs not defined above
     // Use it to read files from filesystem
     HTTP.onNotFound(handleNotFound);
@@ -159,7 +161,12 @@ void handleStatus() {
 }
 
 void handleLocalOTA() {
-    upgrade_firmware(3,"");
+  String page = "<form action='/localota' method='POST'><label for='server'>Server Address:</label><input type='text' name='server' value='http://192.168.1.2:5500'><input type='submit' value='Update'></form>";
+  HTTP.send(200, "text/html", page);}
+
+void handleLocalOTA_Handler() {
+    String serverValue = HTTP.arg("server");
+    upgrade_firmware(3,serverValue);
 }
 
 #ifdef ESP32

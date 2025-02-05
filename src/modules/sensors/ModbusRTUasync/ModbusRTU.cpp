@@ -66,6 +66,7 @@ public:
     modBus_Token_count++;
     _token = modBus_Token_count;
     MBNoneMap[_token] = this;
+    Serial.printf("Добавлен нода/токен: %s - %d\n", getID(), _token);
   }
 
   void doByInterval()
@@ -129,11 +130,13 @@ public:
       if (_func == 0x02) // coil
       {
         uint16_t val;
-        response.get(3, val);
-        regEvent(val, "ModbusNode");
-        CoilData cd(_countReg);  
+        //response.get(3, val);
+        //regEvent((float)val, "ModbusNode");
+        CoilData cd(_countReg);
         cd.set(0, _countReg, (uint8_t *)response.data() + 3);
         cd.print("Received                          : ", Serial);
+        val = cd[0];
+        regEvent(val, "ModbusNode");
       }
       else
       {
@@ -151,22 +154,24 @@ public:
             response.get(3, val1);
             response.get(4, val2);
             long val = val1 | val2 << 16;
-            regEvent(val, "ModbusNode");
+            regEvent((float)val, "ModbusNode");
           }
           else
           {
             uint16_t val;
             response.get(3, val);
-            regEvent(val, "ModbusNode");
+            regEvent((float)val, "ModbusNode");
           }
         }
       }
     }
   }
 
-  ~ModbusNode() {};
+  ~ModbusNode()
+  {
+    MBNoneMap.erase(_token);
+  };
 };
-
 
 // Define an onData handler function to receive the regular responses
 // Arguments are received response message and the request's token
@@ -188,6 +193,10 @@ void handleModBusData(ModbusMessage response, uint32_t token)
   if (MBNoneMap[token])
   {
     MBNoneMap[token]->parseMB(response);
+  }
+  else
+  {
+    Serial.printf("Токен/Нода не найден: %d\n", token);
   }
   // modBus_data_ready = true;
 }
@@ -214,7 +223,7 @@ private:
   int _addr = 0;       // Адрес слейва от 1 до 247 ( вроде )
   String _regStr = ""; // Адрес регистра который будем дергать ( по коду от 0х0000 до 0х????)
   uint16_t _reg = 0;
-  bool _debug; // Дебаг
+  bool _debug;         // Дебаг
   uint32_t _token = 0; // Токен у главного класса весгда 0
 
 public:
@@ -428,7 +437,17 @@ public:
         // next set a single coil at 8
         Serial.printf("sending request with token %d\n", _token);
         Error err;
-        err = MB->addRequest(_token, _addr, WRITE_COIL, _reg, state);
+        ModbusMessage msg;
+        if (state)
+        {
+          msg.setMessage(_addr, WRITE_COIL, _reg, 0xFF00);
+          err = MB->addRequest(msg, _token);
+        }
+        else
+        {
+          //msg.setMessage(_addr, WRITE_COIL, _reg, 0x0000);
+          err = MB->addRequest(_token, _addr, WRITE_COIL, _reg, 0);
+        }
         if (err != SUCCESS)
         {
           ModbusError e(err);
@@ -453,6 +472,7 @@ public:
         // node.setTransmitBuffer(0, state);
         // result = node.writeMultipleRegisters(_reg, count);
         // node.clearTransmitBuffer();
+        Serial.printf("NOT SUPPORTED!\n");
         if (_debug)
         {
           SerialPrint("I", "ModbusClientAsync", "writeSingleCoil, addr: " + String((uint8_t)_addr, HEX) + ", regStr: " + _regStr + ", reg: " + String(_reg, HEX) + ", state: " + String(state));
@@ -505,8 +525,6 @@ public:
     MBNoneMap.clear();
   };
 };
-
-
 
 void *getAPI_ModbusRTUasync(String subtype, String param)
 {

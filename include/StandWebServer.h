@@ -10,6 +10,7 @@ extern void handleFileUpload();
 extern void handleFileDelete();
 extern void handleFileCreate();
 extern void handleLocalOTA();
+extern void handleLocalOTA_Handler();
 extern void handleFileList();
 //void printDirectory(File dir, String& out);
 extern void handleStatus();
