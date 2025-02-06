@@ -1,0 +1,104 @@
+{
+    "menuSection": "sensors",
+    "configItem": [
+        {
+            "global": 0,
+            "name": "ModbusAsunc",
+            "type": "Reading",
+            "subtype": "mbClient",
+            "id": "mb",
+            "widget": "anydataTmp",
+            "page": "Modbus",
+            "descr": "Настройки modbus",
+            "int": 5,
+            "RX": 18,
+            "TX": 19,
+            "DIR_PIN": 4,
+            "baud": 9600,
+            "protocol": "SERIAL_8N1",
+            "debug": 1
+        },
+        {
+            "global": 0,
+            "name": "ModbusNode",
+            "type": "Reading",
+            "subtype": "mbNode",
+            "id": "mbNode",
+            "widget": "anydataTmp",
+            "page": "Modbus",
+            "descr": "Данные modbus",
+            "int": 5,
+            "func": "0x03",
+            "addr": 1,
+            "reg": "0x0000",
+            "count": 1,
+            "isFloat": 0,
+            "multiply": 1,
+            "round": 0
+        }
+
+    ],
+    "about": {
+        "authorName": "Bubnov Mikhail",
+        "authorContact": "https://t.me/Mit4bmw",
+        "authorGit": "https://github.com/Mit4el",
+        "specialThanks": "Serghei Crasnicov",
+        "moduleName": "ModbusRTUasync",
+        "moduleVersion": "1.0",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "subTypes": [
+            "mbClient"
+        ],
+        "title": "ModbusAsync",
+        "moduleDesc": "Позволяет управлять оборудованием по протоколу modbus. Чтение регситров через Ноды, Запись через функции сценария в ModbusAsunc",
+        "propInfo": {
+            "int": "Количество секунд между опросами датчика.",
+            "RX": "Пин RX",
+            "TX": "Пин TX",
+            "DIR_PIN": "connect DR, RE pin of MAX485 to gpio, указать 0 если не нужен",
+            "baud": "скорость Uart",
+            "protocol": "Протокол Uart: SERIAL_8N1 или SERIAL_8N2",
+            "debug": " 1 - включить вывод дебага , 0 - отключить дебаг",
+            "isFloat": "Тип считываемых данных, если count=2, то данные могут быть long (указать 0) или float (указать 1). Числа Long не рекомендуются (на больших числах не будет точности), так как будет ограничено точность представление в IotManager идет во float",
+            "func": "Функция modbus",
+            "addr": "Адрес slav",
+            "reg": "Адрес регистра",
+            "count": "Количество регистров. В ModbusNode 16-разядные регистры можно считать не более 2 в ноде. Для битовых данных не более 16 бит в ноде. Значение поместится в value Ноды",
+            "multiply": "Значение умножить на число."
+        },
+        "funcInfo": [
+            {
+                "name": "writeSingleCoils",
+                "descr": "Запись в койл (битовое поле) одного бита. Функция 0х05 протокола. Пример: mb.writeSingleCoils(1, \"0х0000\", 1)",
+                "params": ["Адрес","Регистр","Данные"]
+            },
+            {   
+                "name": "writeSingleRegister",
+                "descr": "Запись данных в один регистр. Функция 0х06 протокола. Пример: mb.writeSingleRegister(1, \"0х0000\", 128)",
+                "params": ["Адрес","Регистр","Данные"]
+            }, 
+            {
+                "name": "writeMultipleCoils",
+                "descr": "Запись данных в несколько койлов до 16 (число от 0 до 65535). Функция 0x0F протокола. Пример: mb.writeMultipleCoils(1, \"0х0000\", 4, 3) - будут записаны в четыре бита 0011",
+                "params": ["Адрес","Регистр","Кличество койлов (бит)","Данные"]
+            },
+            {
+                "name": "writeMultipleRegisters",
+                "descr": "Запись данных в несколько регистров. На данный момент записывает 2(два) регистра!!!!! Подходит для записи float?? Функция 0х10 протокола. Пример: mb.writeMultipleRegisters(1, \"0х0000\", 1234.987)",
+                "params": ["Адрес","Регистр","Данные"]
+            }
+        ]
+    },
+    "defActive": false,
+    "usedLibs": {
+        "esp32*": [
+            "https://github.com/eModBus/eModBus"
+        ],
+        "esp82*": [
+            "https://github.com/eModBus/eModBus"
+        ]
+    }
+}
