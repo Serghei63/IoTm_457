@@ -52,6 +52,7 @@ private:
   uint8_t _countReg = 1;
   uint32_t _token = 0;
   bool _isFloat = 0;
+  CoilData _respCoil;
 
 public:
   ModbusNode(String parameters) : IoTItem(parameters)
@@ -127,13 +128,14 @@ public:
   {
     if (MB)
     {
-      if (_func == 0x02) // coil
+      if (_func == 0x02 || _func == 0x01) // coil
       {
         uint16_t val;
-        //response.get(3, val);
-        //regEvent((float)val, "ModbusNode");
+        // response.get(3, val);
+        // regEvent((float)val, "ModbusNode");
         CoilData cd(_countReg);
         cd.set(0, _countReg, (uint8_t *)response.data() + 3);
+        _respCoil = cd;
         cd.print("Received                          : ", Serial);
         val = cd[0];
         regEvent(val, "ModbusNode");
@@ -168,9 +170,33 @@ public:
     }
   }
 
+  // Комманды из сценария
+  IoTValue execute(String command, std::vector<IoTValue> &param)
+  {
+    IoTValue val;
+    // uint8_t result;
+    // uint32_t reading;
+
+    uint16_t _index = 0;
+
+    if (command == "getBits") 
+    {
+      if (param.size())
+      {
+        if (_respCoil.size() > _index)
+        {
+          _index = param[0].valD;
+          val.valD = _respCoil[_index];
+          return val;
+        }
+      }
+    }
+    return {};
+  }
+
   ~ModbusNode()
   {
-    MBNoneMap.erase(_token);
+    //MBNoneMap.erase(_token);
   };
 };
 
@@ -283,109 +309,6 @@ public:
 
     uint16_t _reg = 0;
     uint8_t count = 1;
-    /*
-    if (command == "readInputRegisters") // vout = mb.readInputRegisters(1, "0х0000", 1, 0) - "Адрес","Регистр","Кличество регистров","1-float, 0-long"
-    {
-      if (param.size())
-      {
-        _addr = param[0].valD;
-        _reg = hexStringToUint16(param[1].valS);
-        count = (uint8_t)param[2].valD;
-        count = count > 2 ? 2 : count;
-        count = count < 1 ? 1 : count;
-        // val.valD = readFunctionModBus(0x04, _addr, _reg, count, isFloat);
-        // uint32_t lastMillis = millis();
-        Serial.printf("sending request with token %d\n", _token);
-        Error err;
-        err = MB->addRequest(_token, _addr, READ_INPUT_REGISTER, _reg, count);
-        if (err != SUCCESS)
-        {
-          ModbusError e(err);
-          Serial.printf("Error creating request: %02X - %s\n", (int)e, (const char *)e);
-        }
-      }
-      return val;
-    }
-    else if (command == "readHoldingRegisters") // vout = mb.readHoldingRegisters(1, "0х0000", 2, 1) - "Адрес","Регистр","Кличество регистров","1-float, 0-long"
-    {
-      if (param.size())
-      {
-        _addr = param[0].valD;
-        _reg = hexStringToUint16(param[1].valS);
-        count = (uint8_t)param[2].valD;
-        count = count > 2 ? 2 : count;
-        count = count < 1 ? 1 : count;
-        // val.valD = readFunctionModBus(0x03, _addr, _reg, count, isFloat);
-
-        // Create request for
-        // (Fill in your data here!)
-        // - server ID = 1
-        // - function code = 0x03 (read holding register)
-        // - start address to read = word 10
-        // - number of words to read = 4
-        // - token to match the response with the request. We take the current millis() value for it.
-        //
-        // If something is missing or wrong with the call parameters, we will immediately get an error code
-        // and the request will not be issued
-
-        Serial.printf("sending request with token %d\n", _token);
-        Error err;
-        err = MB->addRequest(_token, _addr, READ_HOLD_REGISTER, _reg, count);
-        if (err != SUCCESS)
-        {
-          ModbusError e(err);
-          Serial.printf("Error creating request: %02X - %s\n", (int)e, (const char *)e);
-        }
-      }
-      return val;
-    }
-    else if (command == "readCoils") // vout = mb.readCoils(1, \"0х0000\", 1) - "Адрес","Регистр","Кличество бит"
-    {
-      if (param.size())
-      {
-        count = (uint8_t)param[2].valD;
-        count = count > 16 ? 16 : count;
-        count = count < 1 ? 1 : count;
-        _addr = param[0].valD;
-        _reg = hexStringToUint16(param[1].valS);
-        // node.begin(_addr, (Stream &)*_modbusUART);
-        // val.valD = readFunctionModBus(0x01, _addr, _reg, count);
-
-        // Read a slice of 12 coils, starting at 13
-        Serial.printf("sending request with token %d\n", _token);
-        Error err;
-        err = MB->addRequest(_token, _addr, READ_COIL, _reg, count);
-        if (err != SUCCESS)
-        {
-          ModbusError e(err);
-          Serial.printf("Error creating request: %02X - %s\n", (int)e, (const char *)e);
-        }
-      }
-      return val;
-    }
-    else if (command == "readDiscreteInputs") // vout = mb.readDiscreteInputs(1, \"0х0000\", 1) - "Адрес","Регистр","Кличество бит"
-    {
-      if (param.size())
-      {
-        count = (uint8_t)param[2].valD;
-        count = count > 16 ? 16 : count;
-        count = count < 1 ? 1 : count;
-        _addr = param[0].valD;
-        _reg = hexStringToUint16(param[1].valS);
-        // node.begin(_addr, (Stream &)*_modbusUART);
-        // val.valD = readFunctionModBus(0x02, _addr, _reg, count);
-        Serial.printf("sending request with token %d\n", _token);
-        Error err;
-        err = MB->addRequest(_token, _addr, READ_DISCR_INPUT, _reg, count);
-        if (err != SUCCESS)
-        {
-          ModbusError e(err);
-          Serial.printf("Error creating request: %02X - %s\n", (int)e, (const char *)e);
-        }
-      }
-      return val;
-    }
-    else */
     if (command == "writeSingleRegister") // vout = mb.writeSingleRegister(1,"0x0003", 1) - addr, register, state
     {
       if (param.size())
@@ -446,7 +369,7 @@ public:
         }
         else
         {
-          //msg.setMessage(_addr, WRITE_COIL, _reg, 0x0000);
+          // msg.setMessage(_addr, WRITE_COIL, _reg, 0x0000);
           err = MB->addRequest(_token, _addr, WRITE_COIL, _reg, 0);
         }
         if (err != SUCCESS)
