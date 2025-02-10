@@ -52,6 +52,7 @@ private:
   uint8_t _countReg = 1;
   uint32_t _token = 0;
   bool _isFloat = 0;
+  CoilData _respCoil;
 
 public:
   ModbusNode(String parameters) : IoTItem(parameters)
@@ -127,13 +128,14 @@ public:
   {
     if (MB)
     {
-      if (_func == 0x02) // coil
+      if (_func == 0x02 || _func == 0x01) // coil
       {
         uint16_t val;
-        //response.get(3, val);
-        //regEvent((float)val, "ModbusNode");
+        // response.get(3, val);
+        // regEvent((float)val, "ModbusNode");
         CoilData cd(_countReg);
         cd.set(0, _countReg, (uint8_t *)response.data() + 3);
+        _respCoil = cd;
         cd.print("Received                          : ", Serial);
         val = cd[0];
         regEvent(val, "ModbusNode");
@@ -168,9 +170,33 @@ public:
     }
   }
 
+  // Комманды из сценария
+  IoTValue execute(String command, std::vector<IoTValue> &param)
+  {
+    IoTValue val;
+    // uint8_t result;
+    // uint32_t reading;
+
+    uint16_t _index = 0;
+
+    if (command == "getBits") 
+    {
+      if (param.size())
+      {
+        if (_respCoil.size() > _index)
+        {
+          _index = param[0].valD;
+          val.valD = _respCoil[_index];
+          return val;
+        }
+      }
+    }
+    return {};
+  }
+
   ~ModbusNode()
   {
-    MBNoneMap.erase(_token);
+    //MBNoneMap.erase(_token);
   };
 };
 
@@ -283,7 +309,6 @@ public:
 
     uint16_t _reg = 0;
     uint8_t count = 1;
-
     if (command == "writeSingleRegister") // vout = mb.writeSingleRegister(1,"0x0003", 1) - addr, register, state
     {
       if (param.size())
@@ -344,7 +369,7 @@ public:
         }
         else
         {
-          //msg.setMessage(_addr, WRITE_COIL, _reg, 0x0000);
+          // msg.setMessage(_addr, WRITE_COIL, _reg, 0x0000);
           err = MB->addRequest(_token, _addr, WRITE_COIL, _reg, 0);
         }
         if (err != SUCCESS)
