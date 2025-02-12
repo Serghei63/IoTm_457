@@ -7,9 +7,10 @@ extern IoTGpio IoTgpio;
 // для добавления сенсора вам нужно скопировать этот файл и заменить в нем текст AnalogAdc на название вашего сенсора
 // Название должно быть уникальным, коротким и отражать суть сенсора.
 
-//ребенок       -       родитель
-class AnalogAdc : public IoTItem {
-   private:
+// ребенок       -       родитель
+class AnalogAdc : public IoTItem
+{
+private:
     //=======================================================================================================
     // Секция переменных.
     // Это секция где Вы можете объявлять переменные и объекты arduino библиотек, что бы
@@ -17,18 +18,21 @@ class AnalogAdc : public IoTItem {
     unsigned int _pin;
     unsigned int _avgSteps, _avgCount;
     unsigned long _avgSumm;
+    float adCresult;
 
-   public:
+public:
     //=======================================================================================================
     // setup()
     // это аналог setup из arduino. Здесь вы можете выполнять методы инициализации сенсора.
     // Такие как ...begin и подставлять в них параметры полученные из web интерфейса.
     // Все параметры хранятся в перемененной parameters, вы можете прочитать любой параметр используя jsonRead функции:
     // jsonReadStr, jsonReadBool, jsonReadInt
-    AnalogAdc(String parameters) : IoTItem(parameters) {
+    AnalogAdc(String parameters) : IoTItem(parameters)
+    {
         _pin = jsonReadInt(parameters, "pin");
         _avgSteps = jsonReadInt(parameters, "avgSteps");
-        if (!_avgSteps) {
+        if (!_avgSteps)
+        {
             jsonRead(parameters, F("int"), _interval, false);
         }
         _avgSumm = 0;
@@ -43,20 +47,31 @@ class AnalogAdc : public IoTItem {
     // если у сенсора несколько величин то делайте несколько regEvent
     // не используйте delay - помните, что данный loop общий для всех модулей. Если у вас планируется длительная операция, постарайтесь разбить ее на порции
     // и выполнить за несколько тактов
-    void doByInterval() {
-        if (_avgSteps <= 1) value.valD = IoTgpio.analogRead(_pin);
-        regEvent(value.valD, "AnalogAdc");  //обязательный вызов хотяб один
+    void doByInterval()
+    {
+        if (_avgSteps <= 1)
+        {
+            value.valD = IoTgpio.analogRead(_pin);
+        }
+        else
+        {
+            value.valD = adCresult;
+        } /// }
+        regEvent(value.valD, "AnalogAdc"); // обязательный вызов хотяб один
     }
-
     //=======================================================================================================
     // loop()
     // полный аналог loop() из arduino. Нужно помнить, что все модули имеют равный поочередный доступ к центральному loop(), поэтому, необходимо следить
     // за задержками в алгоритме и не создавать пауз. Кроме того, данная версия перегружает родительскую, поэтому doByInterval() отключается, если
     // не повторить механизм расчета интервалов.
-    void loop() {
-        if (_avgSteps > 1) {
-            if (_avgCount > _avgSteps) {
-                value.valD = _avgSumm / _avgSteps;
+    void loop()
+    {
+        if (_avgSteps > 1)
+        {
+            if (_avgCount > _avgSteps)
+            {
+                //     value.valD = _avgSumm / (_avgSteps + 1);
+                adCresult = _avgSumm / (_avgSteps + 1);
                 _avgSumm = 0;
                 _avgCount = 0;
             }
@@ -67,16 +82,20 @@ class AnalogAdc : public IoTItem {
         IoTItem::loop();
     }
 
-    ~AnalogAdc(){};
+    ~AnalogAdc() {};
 };
 
 // после замены названия сенсора, на функцию можно не обращать внимания
 // если сенсор предполагает использование общего объекта библиотеки для нескольких экземпляров сенсора, то в данной функции необходимо предусмотреть
 // создание и контроль соответствующих глобальных переменных
-void* getAPI_AnalogAdc(String subtype, String param) {
-    if (subtype == F("AnalogAdc")) {
+void *getAPI_AnalogAdc(String subtype, String param)
+{
+    if (subtype == F("AnalogAdc"))
+    {
         return new AnalogAdc(param);
-    } else {
+    }
+    else
+    {
         return nullptr;
     }
 }
