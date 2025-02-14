@@ -181,7 +181,7 @@ void scanEndedCB(NimBLEScanResults results)
 //#if defined (esp32c6_4mb) || defined (esp32c6_8mb)
 //class BleScan : public IoTItem, NimBLEScanCallbacks
 //#else
-class BleScan : public IoTItem, BLEAdvertisedDeviceCallbacks //NimBLEScanCallbacks
+class BleScan : public IoTItem, NimBLEScanCallbacks //BLEAdvertisedDeviceCallbacks //NimBLEScanCallbacks
 //#endif
 {
 private:
@@ -205,7 +205,7 @@ public:
     return spr;
   }
 
-  void onResult(BLEAdvertisedDevice *advertisedDevice)
+  void onResult(const NimBLEAdvertisedDevice *advertisedDevice) override
   {
     JsonObject BLEdata = doc.to<JsonObject>();
     String mac_adress_ = advertisedDevice->getAddress().toString().c_str();

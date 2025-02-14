@@ -30,7 +30,7 @@ void publishWidgets();
 
 void mqttCallback(char* topic, uint8_t* payload, size_t length);
 //void handleMqttStatus(bool send);
-void handleMqttStatus(bool send, int state == -1);
+void handleMqttStatus(bool send, int state = -1);
 
 const String getStateStr(int e);
 

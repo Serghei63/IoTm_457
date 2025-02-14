@@ -181,7 +181,7 @@ void scanEndedCB(NimBLEScanResults results)
 //#if defined (esp32c6_4mb) || defined (esp32c6_8mb)
 //class BleScan : public IoTItem, NimBLEScanCallbacks
 //#else
-class BleScan : public IoTItem, BLEAdvertisedDeviceCallbacks //NimBLEScanCallbacks
+class BleScan : public IoTItem, NimBLEScanCallbacks//BLEAdvertisedDeviceCallbacks //NimBLEScanCallbacks
 //#endif
 {
 private:
@@ -205,13 +205,13 @@ public:
     return spr;
   }
 
-  void onResult(BLEAdvertisedDevice *advertisedDevice)
+  void onResult(const NimBLEAdvertisedDevice *advertisedDevice) override
   {
     JsonObject BLEdata = doc.to<JsonObject>();
     String mac_adress_ = advertisedDevice->getAddress().toString().c_str();
     mac_adress_.toUpperCase();
     BLEdata["id"] = (char *)mac_adress_.c_str();
-
+    //SerialPrint("i", F("BLE"), "FOUND "+ mac_adress_);
     if (advertisedDevice->haveName())
     {
       BLEdata["name"] = (char *)advertisedDevice->getName().c_str();
@@ -304,6 +304,7 @@ public:
   BleScan(String parameters) : IoTItem(parameters)
   {
     _scanDuration = jsonReadInt(parameters, "scanDuration");
+    _scanDuration = _scanDuration * 1000;
     _filter = jsonReadStr(parameters, "filter");
     jsonRead(parameters, "debug", _debug);
 
@@ -342,13 +343,13 @@ public:
 
 //=======================================================================================================
 
-void *getAPI_Ble(String subtype, String param)
+void *getAPI_Ble_part1(String subtype, String param)
 {
-  if (subtype == F("BleScan"))
+  if (subtype == F("BleScan_p1"))
   {
     return new BleScan(param);
   }
-  else if (subtype == F("BleSens"))
+  else if (subtype == F("BleSens_p1"))
   {
     return new BleSens(param);
   }
