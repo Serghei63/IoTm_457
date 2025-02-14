@@ -61,7 +61,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
             //----------------------------------------------------------------------//
             if (headerStr == "p|") {
                 standWebSocket.sendTXT(num, "p|");
-                Serial.printf("Ping client: %u\n", num);
+                //Serial.printf("Ping client: %u\n", num);
                 ws_clients[num]=1;
             }
             // публикация всех виджетов
@@ -175,7 +175,9 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
             if (headerStr == "/scan|") {
                 std::vector<String> jArray;
                 jsonReadArray(settingsFlashJson, "routerssid", jArray);
+#ifdef ESP8266
                 RouterFind(jArray);
+#endif
                 sendStringToWs("ssidli", ssidListHeapJson, num);
             }
 

@@ -98,9 +98,6 @@
     "usedLibs": {
         "esp32*": [
             "https://github.com/eModBus/eModBus"
-        ],
-        "esp82*": [
-            "https://github.com/eModBus/eModBus"
         ]
     }
 }

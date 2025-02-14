@@ -26,7 +26,7 @@ try:
         oldData = fr.read()
         if not 'if WIFI_CLIENT_MAX_WRITE_RETRY      (10)' in oldData:
             shutil.copyfile(mainPyPath, mainPyPath+'.bak')
-            newData = oldData.replace('#define WIFI_CLIENT_MAX_WRITE_RETRY      (10)', '#define WIFI_CLIENT_MAX_WRITE_RETRY      (2)')
+            newData = oldData.replace('#define WIFI_CLIENT_MAX_WRITE_RETRY      (10)', '#define WIFI_CLIENT_MAX_WRITE_RETRY      (5)')
             newData = newData.replace('#define WIFI_CLIENT_SELECT_TIMEOUT_US    (1000000)', '#define WIFI_CLIENT_SELECT_TIMEOUT_US    (500000)')
             with open(mainPyPath, 'w') as fw:
                 fw.write(newData)

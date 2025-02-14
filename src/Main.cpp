@@ -200,8 +200,11 @@ void setup() {
     initErrorMarker(SETUPINET_ERRORMARKER);
 
 // подключаемся к роутеру
+#ifdef ESP8266
     routerConnect();
-
+#else
+    WiFiUtilsItit();
+#endif
 // инициализация асинхронного веб сервера и веб сокетов
 #ifdef ASYNC_WEB_SERVER
     asyncWebServerInit();

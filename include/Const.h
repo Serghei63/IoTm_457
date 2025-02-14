@@ -108,6 +108,9 @@ WEB_SOCKETS_FRAME_SIZE создан для того что бы не загру�
 enum TimerTask_t {
     WIFI_SCAN,
     WIFI_MQTT_CONNECTION_CHECK,
+#ifndef ESP8266    
+    WIFI_CONN,
+#endif    
     TIME,
     // TIME_SYNC, // не используется
     // UPTIME, // не используется
