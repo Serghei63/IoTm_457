@@ -23,6 +23,7 @@ void configure(String path) {
             jsonArrayElement = "";
         }
         if (jsonArrayElement != "") {
+            IoTItem* myIoTItem;
             String subtype;
             if (!jsonRead(jsonArrayElement, F("subtype"), subtype)) {  //если нет такого ключа в представленном json или он не валидный
                 SerialPrint(F("E"), F("Config"), "json error " + subtype);

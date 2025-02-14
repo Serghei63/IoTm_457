@@ -46,7 +46,7 @@ class AnalogAdc : public IoTItem {
     // и выполнить за несколько тактов
     void doByInterval() {
         if (_avgSteps <= 1) value.valD = IoTgpio.analogRead(_pin);
-        value.valD = adCresult;///
+        else value.valD = adCresult;///
         regEvent(value.valD, "AnalogAdc");  //обязательный вызов хотяб один
     }
 
