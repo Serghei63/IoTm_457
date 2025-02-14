@@ -304,6 +304,7 @@ public:
   BleScan(String parameters) : IoTItem(parameters)
   {
     _scanDuration = jsonReadInt(parameters, "scanDuration");
+    _scanDuration = _scanDuration * 1000;
     _filter = jsonReadStr(parameters, "filter");
     jsonRead(parameters, "debug", _debug);
 
