@@ -17,7 +17,7 @@ class AnalogAdc : public IoTItem {
     unsigned int _pin;
     unsigned int _avgSteps, _avgCount;
     unsigned long _avgSumm;
-    float adCresult;
+    float adCresult = 0;
 
    public:
     //=======================================================================================================
