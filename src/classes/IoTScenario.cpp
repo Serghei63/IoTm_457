@@ -707,7 +707,16 @@ int IoTScenario::gettok() {
         IdentifierStr = "";
         LastChar = getLastChar();
         while (LastChar != '"' && LastChar != EOF) {
-            IdentifierStr += (char)LastChar;
+            if (LastChar == '\\') {     // обработка экранированных символов в строке
+                LastChar = getLastChar();
+                if (LastChar == '"') {
+                    IdentifierStr += '"';
+                } else if (LastChar == 'n') {
+                    IdentifierStr += '\n';
+                } 
+            } else {
+                IdentifierStr += (char)LastChar;
+            }
             LastChar = getLastChar();
         }
         LastChar = getLastChar();
