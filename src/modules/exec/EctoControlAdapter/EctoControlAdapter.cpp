@@ -3,7 +3,7 @@
 #include <map>
 #include <HardwareSerial.h>
 
-#include "rsEctoControl.h"
+#include "lib/rsEctoControl.h"
 
 // class ModbusUart;
 Stream *_mbUART = nullptr;

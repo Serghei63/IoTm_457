@@ -19,7 +19,6 @@ class RsEctoControl //: public ModbusMaster
 {
 private:
     ModbusMaster node;
-    String _license;
     uint8_t _addr;
     uint8_t _debug;
     Stream *_modbusUART;
@@ -45,8 +44,6 @@ private:
     bool enableCH2;
     bool _isNetworkActive;
     bool _mqttIsConnect;
-    int md = 0;
-    int md2 = 0;
 
     uint32_t getFlashChipIdNew();
 
