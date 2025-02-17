@@ -236,12 +236,15 @@ void setup() {
     // инициализация задач переодического выполнения
     periodicTasksInit();
 
+#if defined(ESP8266)
+    // Перенесли после получения IP, так как теперь работа WiFi асинхронная
     // запуск работы udp
     addThisDeviceToList();
     #ifdef UDP_ENABLED
     udpListningInit();
     udpBroadcastInit();
     #endif
+#endif    
     // создаем событие завершения конфигурирования для возможности выполнения блока кода при загрузке
     createItemFromNet("onStart", "1", 1);
 
@@ -302,6 +305,20 @@ void setup() {
 }
 
 void loop() {
+#if !defined(ESP8266)
+    static bool udpFirstFlag = true;
+    // Перенесли после получения IP, так как теперь работа WiFi асинхронная
+    if (isNetworkActive() && udpFirstFlag) {
+        udpFirstFlag = false;
+        // запуск работы udp
+        addThisDeviceToList();
+        #ifdef UDP_ENABLED
+        udpListningInit();
+        udpBroadcastInit();
+        #endif
+    }
+#endif    
+
 #ifdef LOOP_DEBUG
     unsigned long st = millis();
 #endif
