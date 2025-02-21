@@ -18,11 +18,11 @@ Call once class has been instantiated, typically within setup().
 @param &serial reference to serial port object (Serial, Serial1, ... Serial3)
 @ingroup setup
 */
-void ModbusMaster::begin(uint8_t slave, Stream &serial)
+void ModbusMaster::begin(uint8_t slave, Stream *serial)
 {
   //  txBuffer = (uint16_t*) calloc(ku8MaxBufferSize, sizeof(uint16_t));
   _u8MBSlave = slave;
-  _serial = &serial;
+  _serial = serial;
   _u8TransmitBufferIndex = 0;
   u16TransmitBufferLength = 0;
 

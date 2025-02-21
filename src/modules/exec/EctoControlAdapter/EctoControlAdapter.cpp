@@ -3,13 +3,17 @@
 #include <map>
 #include <HardwareSerial.h>
 
-#include "lib/rsEctoControl.h"
+#include "ModbusEC.h"
+#include "AdapterCommon.h"
+// #include "Stream.h"
+#include <vector>
+
 
 // class ModbusUart;
-Stream *_mbUART = nullptr;
+Stream *_modbusUART = nullptr;
 
 #define UART_LINE 2
-
+uint8_t _DIR_PIN = 0;
 // Modbus stuff
 // Данные Modbus по умолчанию
 
@@ -17,25 +21,26 @@ Stream *_mbUART = nullptr;
 #define MODBUS_TX_PIN 19        // Tx pin
 #define MODBUS_SERIAL_BAUD 9600 // Baud rate for esp32 and max485 communication
 
-// void modbusPreTransmission()
-// {
-//   //  delay(500);
-//   if (_DIR_PIN)
-//     digitalWrite(_DIR_PIN, HIGH);
-// }
 
-// // Pin 4 made low for Modbus receive mode
-// // Контакт 4 установлен на низком уровне для режима приема Modbus
-// void modbusPostTransmission()
-// {
-//   if (_DIR_PIN)
-//     digitalWrite(_DIR_PIN, LOW);
-//   //  delay(500);
-// }
+void modbusPreTransmission()
+{
+    //  delay(500);
+    if (_DIR_PIN)
+        digitalWrite(_DIR_PIN, HIGH);
+}
+
+// Pin 4 made low for Modbus receive mode
+// Контакт 4 установлен на низком уровне для режима приема Modbus
+void modbusPostTransmission()
+{
+    if (_DIR_PIN)
+        digitalWrite(_DIR_PIN, LOW);
+    //  delay(500);
+}
 
 // ModbusMaster node;
 
-RsEctoControl *rsEC;
+//RsEctoControl *rsEC;
 
 class EctoControlAdapter : public IoTItem
 {
@@ -48,16 +53,43 @@ private:
   uint8_t _addr = 0xF0; // Адрес слейва от 1 до 247
   uint8_t _type = 0x14; // Тип устройства: 0x14 – адаптер OpenTherm (вторая версия); 0x11 – адаптер OpenTherm (первая версия, снята с производства)
   bool _debugLevel;     // Дебаг
-  //uint8_t _dir_pin;
+
+  ModbusMaster node;
+  uint8_t _debug;
+  //Stream *_modbusUART;
+
+  BoilerInfo info;
+  BoilerStatus status;
+
+  uint16_t code;
+  uint16_t codeExt;
+  uint8_t flagErr;
+  float flow;
+  float maxSetCH;
+  float maxSetDHW;
+  float minSetCH;
+  float minSetDHW;
+  float modLevel;
+  float press;
+  float tCH;
+  float tDHW;
+  float tOut;
+  bool enableCH;
+  bool enableDHW;
+  bool enableCH2;
+  bool _isNetworkActive;
+  bool _mqttIsConnect;
+
+
 
 public:
   EctoControlAdapter(String parameters) : IoTItem(parameters)
   {
-    //_dir_pin = 0;
+    _DIR_PIN = 0;
     _addr = jsonReadInt(parameters, "addr"); // адреса slave прочитаем с веба
     _rx = jsonReadInt(parameters, "RX");     // прочитаем с веба
     _tx = jsonReadInt(parameters, "TX");
-    //_dir_pin = jsonReadInt(parameters, "DIR_PIN");
+    _DIR_PIN = jsonReadInt(parameters, "DIR_PIN");
     _baud = jsonReadInt(parameters, "baud");
     _prot = jsonReadStr(parameters, "protocol");
     jsonRead(parameters, "debug", _debugLevel);
@@ -73,163 +105,200 @@ public:
 
     // Serial2.begin(baud-rate, protocol, RX pin, TX pin);
 
-    _mbUART = new HardwareSerial(UART_LINE);
+    _modbusUART = new HardwareSerial(UART_LINE);
 
     if (_debugLevel > 2)
     {
       SerialPrint("I", "EctoControlAdapter", "baud: " + String(_baud) + ", protocol: " + String(protocol, HEX) + ", RX: " + String(_rx) + ", TX: " + String(_tx));
     }
-    ((HardwareSerial *)_mbUART)->begin(_baud, protocol, _rx, _tx); // выбираем тип протокола, скорость и все пины с веба
-    ((HardwareSerial *)_mbUART)->setTimeout(200);
-    rsEC = new RsEctoControl(parameters);
-    rsEC->begin(_addr, (Stream &)*_mbUART);
+    ((HardwareSerial *)_modbusUART)->begin(_baud, protocol, _rx, _tx); // выбираем тип протокола, скорость и все пины с веба
+    ((HardwareSerial *)_modbusUART)->setTimeout(200);
+    //_modbusUART = &serial;
+    node.begin(_addr, _modbusUART);
+
+    node.preTransmission(modbusPreTransmission);
+    node.postTransmission(modbusPostTransmission);
+
+
+    if (_DIR_PIN)
+    {
+        _DIR_PIN = _DIR_PIN;
+        pinMode(_DIR_PIN, OUTPUT);
+        digitalWrite(_DIR_PIN, LOW);
+    }
+
+    // 0x14 – адаптер OpenTherm (вторая версия)
+    // 0x15 – адаптер eBus
+    // 0x16 – адаптер Navien
+    uint16_t type;
+    readFunctionModBus(0x0000, type);
+    if (0x14 != (uint8_t)type || 0x15 != (uint8_t)type || 0x16 != (uint8_t)type)
+    {
+        SerialPrint("E", "EctoControlAdapter", "Не подходящее устройство, type: " + String(type, HEX));
+    }
+
+    uint8_t addr = node.readAddresEctoControl();
+    SerialPrint("I", "EctoControlAdapter", "readAddresEctoControl, addr: " + String(addr, HEX) + " - Enter to configuration");
+
+    getModelVersion();
+    getBoilerInfo();
+    getBoilerStatus();    
   }
 
   void doByInterval()
   {
-    if (rsEC)
-      rsEC->doByInterval();
+    // readBoilerInfo();
+    getBoilerStatus();
+
+    getCodeError();
+    getCodeErrorExt();
+    if (info.adapterType == 0)
+        getFlagErrorOT();
+    // getFlowRate();
+    // getMaxSetCH();
+    // getMaxSetDHW();
+    // getMinSetCH();
+    // getMinSetDHW();
+    getModLevel();
+    getPressure();
+    getTempCH();
+    getTempDHW();
+    getTempOutside();
   }
 
   void loop()
   {
-    if (rsEC)
-      rsEC->loop(isNetworkActive(), mqttIsConnect());
     // для новых версий IoTManager
     IoTItem::loop();
   }
 
   IoTValue execute(String command, std::vector<IoTValue> &param)
   {
-    if (rsEC)
-      rsEC->execute(command, param);
-    else
-      return {};
     if (command == "getModelVersion")
     {
-      rsEC->getModelVersion();
+      getModelVersion();
     }
     if (command == "getModelVersion")
     {
-      rsEC->getModelVersion();
+      getModelVersion();
     }
     if (command == "getBoilerInfo")
     {
-      rsEC->getBoilerInfo();
+      getBoilerInfo();
     }
     if (command == "getBoilerStatus")
     {
-      rsEC->getBoilerStatus();
+      getBoilerStatus();
     }
     if (command == "getCodeError")
     {
-      rsEC->getCodeError();
+      getCodeError();
     }
     if (command == "getCodeErrorExt")
     {
-      rsEC->getCodeErrorExt();
+      getCodeErrorExt();
     }
     if (command == "getFlagErrorOT")
     {
-      rsEC->getFlagErrorOT();
+      getFlagErrorOT();
     }
     if (command == "getFlowRate")
     {
-      rsEC->getFlowRate();
+      getFlowRate();
     }
     if (command == "getMaxSetCH")
     {
-      rsEC->getMaxSetCH();
+      getMaxSetCH();
     }
     if (command == "getMaxSetDHW")
     {
-      rsEC->getMaxSetDHW();
+      getMaxSetDHW();
     }
     if (command == "getMinSetCH")
     {
-      rsEC->getMinSetCH();
+      getMinSetCH();
     }
     if (command == "getMinSetDHW")
     {
-      rsEC->getMinSetDHW();
+      getMinSetDHW();
     }
     if (command == "getModLevel")
     {
-      rsEC->getModLevel();
+      getModLevel();
     }
     if (command == "getPressure")
     {
-      rsEC->getPressure();
+      getPressure();
     }
     if (command == "getTempCH")
     {
-      rsEC->getTempCH();
+      getTempCH();
     }
     if (command == "getTempDHW")
     {
-      rsEC->getTempDHW();
+      getTempDHW();
     }
     if (command == "getTempOutside")
     {
-      rsEC->getTempOutside();
+      getTempOutside();
     }
 
     if (command == "setTypeConnect")
     {
-      rsEC->setTypeConnect(param[0].valD);
+      setTypeConnect(param[0].valD);
     }
     if (command == "setTCH")
     {
-      rsEC->setTCH(param[0].valD);
+      setTCH(param[0].valD);
     }
     if (command == "setTCHFaultConn")
     {
-      rsEC->setTCHFaultConn(param[0].valD);
+      setTCHFaultConn(param[0].valD);
     }
     if (command == "setMinCH")
     {
-      rsEC->setMinCH(param[0].valD);
+      setMinCH(param[0].valD);
     }
     if (command == "setMaxCH")
     {
-      rsEC->setMaxCH(param[0].valD);
+      setMaxCH(param[0].valD);
     }
     if (command == "setMinDHW")
     {
-      rsEC->setMinDHW(param[0].valD);
+      setMinDHW(param[0].valD);
     }
     if (command == "setMaxDHW")
     {
-      rsEC->setMaxDHW(param[0].valD);
+      setMaxDHW(param[0].valD);
     }
     if (command == "setTDHW")
     {
-      rsEC->setTDHW(param[0].valD);
+      setTDHW(param[0].valD);
     }
     if (command == "setMaxModLevel")
     {
-      rsEC->setMaxModLevel(param[0].valD);
+      setMaxModLevel(param[0].valD);
     }
     if (command == "setStatusCH")
     {
-      rsEC->setStatusCH((bool)param[0].valD);
+      setStatusCH((bool)param[0].valD);
     }
     if (command == "setStatusDHW")
     {
-      rsEC->setStatusDHW((bool)param[0].valD);
+      setStatusDHW((bool)param[0].valD);
     }
     if (command == "setStatusCH2")
     {
-      rsEC->setStatusCH2((bool)param[0].valD);
+      setStatusCH2((bool)param[0].valD);
     }
 
     if (command == "lockOutReset")
     {
-      rsEC->lockOutReset();
+      lockOutReset();
     }
     if (command == "rebootAdapter")
     {
-      rsEC->rebootAdapter();
+      rebootAdapter();
     }
     return {};
   }
@@ -255,9 +324,477 @@ public:
 
   ~EctoControlAdapter()
   {
-    delete rsEC;
-    rsEC = nullptr;
   };
+
+  bool writeFunctionModBus(const uint16_t &reg, uint16_t &data)
+  {
+      // set word 0 of TX buffer to least-significant word of counter (bits 15..0)
+      node.setTransmitBuffer(1, lowWord(data));
+      // set word 1 of TX buffer to most-significant word of counter (bits 31..16)
+      node.setTransmitBuffer(0, highWord(data));
+      // slave: write TX buffer to (2) 16-bit registers starting at register 0
+      uint8_t result = node.writeMultipleRegisters(0, 2);
+      if (_debug > 2)
+      {
+          SerialPrint("I", "EctoControlAdapter", "writeSingleRegister, addr: " + String((uint8_t)_addr, HEX) + ", reg: " + String(reg, HEX) + ", state: " + String(data) + " = result: " + String(result, HEX));
+      }
+      if (result == 0)
+      return true;
+      else
+      return false;
+  }
+  
+  bool readFunctionModBus(const uint16_t &reg, uint16_t &reading)
+  {
+      // float retValue = 0;
+      if (_modbusUART)
+      {
+          // if (!addr)
+          //    addr = _addr;
+          node.begin(_addr, _modbusUART);
+          uint8_t result;
+          // uint32_t reading;
+  
+          if (reg == 0x0000)
+              result = node.readHoldingRegisters(reg, 4);
+          else
+              result = node.readHoldingRegisters(reg, 1);
+          if (_debug > 2)
+              SerialPrint("I", "EctoControlAdapter", "readHoldingRegisters, addr: " + String(_addr, HEX) + ", reg: " + String(reg, HEX) + " = result: " + String(result, HEX));
+          // break;
+          if (result == node.ku8MBSuccess)
+          {
+              if (reg == 0x0000)
+              {
+                  reading = node.getResponseBuffer(0x03);
+                  reading = (uint16_t)((uint8_t)(reading) >> 8);
+                  SerialPrint("I", "EctoControlAdapter", "read info, addr: " + String(_addr, HEX) + ", type: " + String(reading, HEX));
+              }
+              else
+              {
+                  reading = node.getResponseBuffer(0x00);
+                  if (_debug > 2)
+                      SerialPrint("I", "EctoControlAdapter", "Success, Received data, register: " + String(reg) + " = " + String(reading, HEX));
+              }
+              node.clearResponseBuffer();
+          }
+          else
+          {
+              if (_debug > 2)
+                  SerialPrint("E", "EctoControlAdapter", "Failed, Response Code: " + String(result, HEX));
+              return false;
+          }
+  
+          if (reading != 0x7FFF)
+              return true;
+          else
+              return false;
+      }
+      return false;
+  }
+  
+  bool getModelVersion()
+  {
+      uint16_t reqData;
+      info.boilerMemberCode = readFunctionModBus(ReadDataEctoControl::ecR_MemberCode, info.boilerMemberCode);
+      info.boilerModelCode = readFunctionModBus(ReadDataEctoControl::ecR_ModelCode, info.boilerModelCode);
+      bool ret = readFunctionModBus(ReadDataEctoControl::ecR_AdaperVersion, reqData);
+      info.adapterHardVer = highByte(reqData);
+      info.adapterSoftVer = lowByte(reqData);
+      return ret;
+  }
+  
+  bool getBoilerInfo()
+  {
+      uint16_t reqData;
+      bool ret = readFunctionModBus(ReadDataEctoControl::ecR_AdapterInfo, reqData);
+      info.adapterType = highByte(reqData) & 0xF8;
+      info.boilerStatus = (highByte(reqData) >> 3) & 1u;
+      info.rebootStatus = lowByte(reqData);
+      if (ret)
+      {
+          publishData("adapterType", String(info.adapterType));
+          publishData("boilerStatus", String(info.boilerStatus));
+          publishData("rebootStatus", String(info.rebootStatus));
+      }
+      return ret;
+  }
+  bool getBoilerStatus()
+  {
+      uint16_t reqData;
+      bool ret = readFunctionModBus(ReadDataEctoControl::ecR_BoilerStatus, reqData);
+      status.burnStatus = (lowByte(reqData) >> 0) & 1u;
+      status.CHStatus = (lowByte(reqData) >> 1) & 1u;
+      status.DHWStatus = (lowByte(reqData) >> 2) & 1u;
+      if (ret)
+      {
+          publishData("burnStatus", String(status.burnStatus));
+          publishData("CHStatus", String(status.CHStatus));
+          publishData("DHWStatus", String(status.DHWStatus));
+      }
+      return ret;
+  }
+  bool getCodeError()
+  {
+      bool ret = readFunctionModBus(ReadDataEctoControl::ecR_CodeError, code);
+      if (ret)
+      {
+          publishData("codeError", String(code));
+          if (codeExt)
+              sendTelegramm("EctoControlAdapter: код ошибки: " + String((int)codeExt));
+      }
+      return ret;
+  }
+  bool getCodeErrorExt()
+  {
+      bool ret = readFunctionModBus(ReadDataEctoControl::ecR_CodeErrorExt, codeExt);
+      if (ret)
+      {
+          publishData("codeErrorExt", String(codeExt));
+          if (codeExt)
+              sendTelegramm("EctoControlAdapter: код ошибки: " + String((int)codeExt));
+      }
+      return ret;
+  }
+  bool getFlagErrorOT()
+  {
+      uint16_t reqData;
+      bool ret = readFunctionModBus(ReadDataEctoControl::ecR_FlagErrorOT, reqData);
+      flagErr = lowByte(reqData);
+      if (ret)
+      {
+          publishData("flagErr", String(flagErr));
+          switch (flagErr)
+          {
+          case 0:
+              sendTelegramm("EctoControlAdapter: Необходимо обслуживание!");
+              break;
+          case 1:
+              sendTelegramm("EctoControlAdapter: Котёл заблокирован!");
+              break;
+          case 2:
+              sendTelegramm("EctoControlAdapter: Низкое давление в отопительном контуре!");
+              break;
+          case 3:
+              sendTelegramm("EctoControlAdapter: Ошибка розжига!");
+              break;
+          case 4:
+              sendTelegramm("EctoControlAdapter: Низкое давления воздуха!");
+              break;
+          case 5:
+              sendTelegramm("EctoControlAdapter: Перегрев теплоносителя в контуре!");
+              break;
+          default:
+              break;
+          }
+      }
+      return ret;
+  }
+  
+  bool getFlowRate()
+  {
+      uint16_t reqData;
+      bool ret = readFunctionModBus(ReadDataEctoControl::ecR_FlowRate, reqData);
+      flow = lowByte(reqData) / 10.f;
+      if (ret)
+          publishData("flowRate", String(flow));
+      return ret;
+  }
+  bool getMaxSetCH()
+  {
+      uint16_t reqData;
+      bool ret = readFunctionModBus(ReadDataEctoControl::ecR_MaxSetCH, reqData);
+      maxSetCH = (float)lowByte(reqData);
+      if (ret)
+          publishData("maxSetCH", String(maxSetCH));
+      return ret;
+  }
+  bool getMaxSetDHW()
+  {
+      uint16_t reqData;
+      bool ret = readFunctionModBus(ReadDataEctoControl::ecR_MaxSetDHW, reqData);
+      maxSetDHW = (float)lowByte(reqData);
+      if (ret)
+          publishData("maxSetDHW", String(maxSetDHW));
+      return ret;
+  }
+  bool getMinSetCH()
+  {
+      uint16_t reqData;
+      bool ret = readFunctionModBus(ReadDataEctoControl::ecR_MinSetCH, reqData);
+      minSetCH = (float)lowByte(reqData);
+      if (ret)
+          publishData("minSetCH", String(minSetCH));
+      return ret;
+  }
+  bool getMinSetDHW()
+  {
+      uint16_t reqData;
+      bool ret = readFunctionModBus(ReadDataEctoControl::ecR_MinSetDHW, reqData);
+      minSetDHW = (float)lowByte(reqData);
+      if (ret)
+          publishData("minSetDHW", String(minSetDHW));
+      return ret;
+  }
+  bool getModLevel()
+  {
+      uint16_t reqData;
+      bool ret = readFunctionModBus(ReadDataEctoControl::ecR_ModLevel, reqData);
+      modLevel = (float)lowByte(reqData);
+      if (ret)
+          publishData("modLevel", String(modLevel));
+      return ret;
+  }
+  bool getPressure()
+  {
+      uint16_t reqData;
+      bool ret = readFunctionModBus(ReadDataEctoControl::ecR_Pressure, reqData);
+      press = lowByte(reqData) / 10.f;
+      if (ret)
+          publishData("press", String(press));
+      return ret;
+  }
+  bool getTempCH()
+  {
+      uint16_t reqData;
+      bool ret = readFunctionModBus(ReadDataEctoControl::ecR_TempCH, reqData);
+      tCH = reqData / 10.f;
+      if (ret)
+          publishData("tCH", String(tCH));
+      return ret;
+  }
+  bool getTempDHW()
+  {
+      uint16_t reqData;
+      bool ret = readFunctionModBus(ReadDataEctoControl::ecR_TempDHW, reqData);
+      tDHW = reqData / 10.f;
+      if (ret)
+          publishData("tDHW", String(tDHW));
+      return ret;
+  }
+  bool getTempOutside()
+  {
+      uint16_t reqData;
+      bool ret = readFunctionModBus(ReadDataEctoControl::ecR_TempOutside, reqData);
+      tOut = (float)lowByte(reqData);
+      if (ret)
+          publishData("tOut", String(tOut));
+      return ret;
+  }
+  
+  bool setTypeConnect(float &data)
+  {
+      bool ret = false;
+      if (writeFunctionModBus(ecW_SetTypeConnect, (uint16_t &)data))
+      {
+          // TODO запросить результат записи у адаптера
+          ret = true;
+      }
+      else
+      {
+          if (_debug > 1)
+              SerialPrint("E", "EctoControlAdapter", "Failed, setTypeConnect");
+      }
+      return ret;
+  }
+  bool setTCH(float &data)
+  {
+      bool ret = false;
+      uint16_t d16 = data * 10;
+      if (writeFunctionModBus(ecW_TSetCH, d16))
+      {
+          ret = true;
+      }
+      else
+      {
+          if (_debug > 1)
+              SerialPrint("E", "EctoControlAdapter", "Failed, setTCH");
+      }
+  
+      return ret;
+  }
+  bool setTCHFaultConn(float &data)
+  {
+      bool ret = false;
+      uint16_t d16 = data * 10;
+      if (writeFunctionModBus(ecW_TSetCHFaultConn, d16))
+      {
+          ret = true;
+      }
+      else
+      {
+          if (_debug > 1)
+              SerialPrint("E", "EctoControlAdapter", "Failed, setTCHFaultConn");
+      }
+      return ret;
+  }
+  bool setMinCH(float &data)
+  {
+      bool ret = false;
+      if (writeFunctionModBus(ecW_TSetMinCH, (uint16_t &)data))
+      {
+          ret = true;
+      }
+      else
+      {
+          if (_debug > 1)
+              SerialPrint("E", "EctoControlAdapter", "Failed, setMinCH");
+      }
+      return ret;
+  }
+  bool setMaxCH(float &data)
+  {
+      bool ret = false;
+      if (writeFunctionModBus(ecW_TSetMaxCH, (uint16_t &)data))
+      {
+          ret = true;
+      }
+      else
+      {
+          if (_debug > 1)
+              SerialPrint("E", "EctoControlAdapter", "Failed, setMaxCH");
+      }
+      return ret;
+  }
+  bool setMinDHW(float &data)
+  {
+      bool ret = false;
+      if (writeFunctionModBus(ecW_TSetMinDHW, (uint16_t &)data))
+      {
+          ret = true;
+      }
+      else
+      {
+          if (_debug > 1)
+              SerialPrint("E", "EctoControlAdapter", "Failed, setMinDHW");
+      }
+      return ret;
+  }
+  bool setMaxDHW(float &data)
+  {
+      bool ret = false;
+      if (writeFunctionModBus(ecW_TSetMaxDHW, (uint16_t &)data))
+      {
+          ret = true;
+      }
+      else
+      {
+          if (_debug > 1)
+              SerialPrint("E", "EctoControlAdapter", "Failed, setMaxDHW");
+      }
+      return ret;
+  }
+  bool setTDHW(float &data)
+  {
+      bool ret = false;
+      if (writeFunctionModBus(ecW_TSetDHW, (uint16_t &)data))
+      {
+          ret = true;
+      }
+      else
+      {
+          if (_debug > 1)
+              SerialPrint("E", "EctoControlAdapter", "Failed, setTDHW");
+      }
+      return ret;
+  }
+  bool setMaxModLevel(float &data)
+  {
+      bool ret = false;
+      if (writeFunctionModBus(ecW_SetMaxModLevel, (uint16_t &)data))
+      {
+          ret = true;
+      }
+      else
+      {
+          if (_debug > 1)
+              SerialPrint("E", "EctoControlAdapter", "Failed, setMaxModLevel");
+      }
+      return ret;
+  }
+  
+  bool setStatusCH(bool data)
+  {
+      bool ret = false;
+      enableCH = data;
+      uint16_t stat = enableCH | (enableDHW << 1) | (enableCH2 << 2);
+      if (writeFunctionModBus(ecW_SetStatusBoiler, stat))
+      {
+          ret = true;
+      }
+      else
+      {
+          if (_debug > 1)
+              SerialPrint("E", "EctoControlAdapter", "Failed, setStatusCH");
+      }
+      return ret;
+  }
+  bool setStatusDHW(bool data)
+  {
+      bool ret = false;
+      enableDHW = data;
+      uint16_t stat = enableCH | (enableDHW << 1) | (enableCH2 << 2);
+      if (writeFunctionModBus(ecW_SetStatusBoiler, stat))
+      {
+          ret = true;
+      }
+      else
+      {
+          if (_debug > 1)
+              SerialPrint("E", "EctoControlAdapter", "Failed, setStatusDHW");
+      }
+      return ret;
+  }
+  bool setStatusCH2(bool data)
+  {
+      bool ret = false;
+      enableCH2 = data;
+      uint16_t stat = enableCH | (enableDHW << 1) | (enableCH2 << 2);
+      if (writeFunctionModBus(ecW_SetStatusBoiler, stat))
+      {
+          ret = true;
+      }
+      else
+      {
+          if (_debug > 1)
+              SerialPrint("E", "EctoControlAdapter", "Failed, setStatusCH2");
+      }
+      return ret;
+  }
+  
+  bool lockOutReset()
+  {
+      bool ret = false;
+      uint16_t d16 = comm_LockOutReset;
+      if (writeFunctionModBus(ecW_Command, d16))
+      {
+          ret = true;
+      }
+      else
+      {
+          if (_debug > 1)
+              SerialPrint("E", "EctoControlAdapter", "Failed, lockOutReset");
+      }
+      return ret;
+  }
+  bool rebootAdapter()
+  {
+      bool ret = false;
+      uint16_t d16 = comm_RebootAdapter;
+      if (writeFunctionModBus(ecW_Command, d16))
+      {
+          ret = true;
+      }
+      else
+      {
+          if (_debug > 1)
+              SerialPrint("E", "EctoControlAdapter", "Failed, rebootAdapter");
+      }
+      return ret;
+  }
+  
+
+
 };
 
 void *getAPI_EctoControlAdapter(String subtype, String param)
