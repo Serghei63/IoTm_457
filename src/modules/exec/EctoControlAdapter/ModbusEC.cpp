@@ -429,8 +429,12 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
     if (u8ModbusADUSize == 5)
     {
       // verify response is for correct Modbus slave
-      if (u8ModbusADU[0] != _u8MBSlave || u8ModbusADU[0] != 0x00)
+      if (u8ModbusADU[0] != _u8MBSlave)
       {
+        // Serial.print(u8ModbusADU[0], HEX);
+        // Serial.print(" != ");
+        // Serial.println(_u8MBSlave, HEX);
+        
         u8MBStatus = ku8MBInvalidSlaveID;
         break;
       }

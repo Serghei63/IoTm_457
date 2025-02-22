@@ -11,12 +11,12 @@
             "page": "Котёл",
             "descr": "Адаптер",
             "int": 60,
-            "addr": "0xF0",
+            "addr": 240,
             "RX": 18,
             "TX": 19,
             "DIR_PIN": 4,
-            "baud": 9600,
-            "protocol": "SERIAL_8N2",
+            "baud": 19200,
+            "protocol": "SERIAL_8N1",
             "debug": 1
         }
     ],
@@ -37,7 +37,7 @@
         "title": "EctoControlAdapter",
         "moduleDesc": "Управление отопительным котлом через адаптер EctoControl по протоколам OpenTherm, eBUS, Navien. Посредством Modbus RTU. Разъем 4P4C: 1-Желтый(красный)+12V; 2-Белый-GND; 3-Зелёный-A; 4-Коричневый(Синий)-B",
         "propInfo": {
-            "addr": "Адрес slave",
+            "addr": "Адрес slave, что бы узнать адрес - в конфиге адрес 0 и смотреть лог (требуется проверка)",
             "int": "Количество секунд между опросами датчика.",
             "RX": "Пин RX",
             "TX": "Пин TX",
