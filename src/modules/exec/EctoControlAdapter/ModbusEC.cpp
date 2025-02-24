@@ -254,6 +254,28 @@ uint8_t ModbusMaster::readHoldingRegisters(uint16_t u16ReadAddress,
 }
 
 /**
+Modbus function 0x06 Write Single Register.
+
+This function code is used to write a single holding register in a 
+remote device. The request specifies the address of the register to be 
+written. Registers are addressed starting at zero.
+
+@param u16WriteAddress address of the holding register (0x0000..0xFFFF)
+@param u16WriteValue value to be written to holding register (0x0000..0xFFFF)
+@return 0 on success; exception number on failure
+@ingroup register
+*/
+uint8_t ModbusMaster::writeSingleRegister(uint16_t u16WriteAddress,
+  uint16_t u16WriteValue)
+{
+  _u16WriteAddress = u16WriteAddress;
+  _u16WriteQty = 0;
+  _u16TransmitBuffer[0] = u16WriteValue;
+  return ModbusMasterTransaction(ku8MBWriteSingleRegister);
+}
+
+
+/**
 Modbus function 0x10 Write Multiple Registers.
 
 This function code is used to write a block of contiguous registers (1

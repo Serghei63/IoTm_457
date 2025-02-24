@@ -329,11 +329,11 @@ public:
     bool writeFunctionModBus(const uint16_t &reg, uint16_t &data)
     {
         // set word 0 of TX buffer to least-significant word of counter (bits 15..0)
-        node.setTransmitBuffer(1, lowWord(data));
+        //node.setTransmitBuffer(1, lowWord(data));
         // set word 1 of TX buffer to most-significant word of counter (bits 31..16)
-        node.setTransmitBuffer(0, highWord(data));
+        //node.setTransmitBuffer(0, highWord(data));
         // slave: write TX buffer to (2) 16-bit registers starting at register 0
-        uint8_t result = node.writeMultipleRegisters(0, 2);
+        uint8_t result = node.writeSingleRegister(reg, data);
         if (_debug > 2)
         {
             SerialPrint("I", "EctoControlAdapter", "writeSingleRegister, addr: " + String((uint8_t)_addr, HEX) + ", reg: " + String(reg, HEX) + ", state: " + String(data) + " = result: " + String(result, HEX));
@@ -585,7 +585,8 @@ public:
     bool setTypeConnect(float &data)
     {
         bool ret = false;
-        if (writeFunctionModBus(ecW_SetTypeConnect, (uint16_t &)data))
+        uint16_t data16 = data;
+        if (writeFunctionModBus(ecW_SetTypeConnect, data16))
         {
             // TODO запросить результат записи у адаптера
             ret = true;
@@ -631,7 +632,8 @@ public:
     bool setMinCH(float &data)
     {
         bool ret = false;
-        if (writeFunctionModBus(ecW_TSetMinCH, (uint16_t &)data))
+        uint16_t data16 = data;
+        if (writeFunctionModBus(ecW_TSetMinCH, data16))
         {
             ret = true;
         }
@@ -645,7 +647,8 @@ public:
     bool setMaxCH(float &data)
     {
         bool ret = false;
-        if (writeFunctionModBus(ecW_TSetMaxCH, (uint16_t &)data))
+        uint16_t data16 = data;
+        if (writeFunctionModBus(ecW_TSetMaxCH, data16))
         {
             ret = true;
         }
@@ -659,7 +662,8 @@ public:
     bool setMinDHW(float &data)
     {
         bool ret = false;
-        if (writeFunctionModBus(ecW_TSetMinDHW, (uint16_t &)data))
+        uint16_t data16 = data;
+        if (writeFunctionModBus(ecW_TSetMinDHW, data16))
         {
             ret = true;
         }
@@ -673,7 +677,8 @@ public:
     bool setMaxDHW(float &data)
     {
         bool ret = false;
-        if (writeFunctionModBus(ecW_TSetMaxDHW, (uint16_t &)data))
+        uint16_t data16 = data;
+        if (writeFunctionModBus(ecW_TSetMaxDHW, data16))
         {
             ret = true;
         }
@@ -687,7 +692,8 @@ public:
     bool setTDHW(float &data)
     {
         bool ret = false;
-        if (writeFunctionModBus(ecW_TSetDHW, (uint16_t &)data))
+        uint16_t data16 = data;
+        if (writeFunctionModBus(ecW_TSetDHW, data16))
         {
             ret = true;
         }
@@ -701,7 +707,8 @@ public:
     bool setMaxModLevel(float &data)
     {
         bool ret = false;
-        if (writeFunctionModBus(ecW_SetMaxModLevel, (uint16_t &)data))
+        uint16_t data16 = data;
+        if (writeFunctionModBus(ecW_SetMaxModLevel, data16))
         {
             ret = true;
         }

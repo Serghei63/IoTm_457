@@ -52,7 +52,7 @@ public:
   uint8_t readHoldingRegisters(uint16_t, uint16_t);
   uint8_t writeMultipleRegisters(uint16_t, uint16_t);
   uint8_t writeMultipleRegisters();
-
+  uint8_t  writeSingleRegister(uint16_t, uint16_t);
   uint8_t readAddresEctoControl();
   uint8_t writeAddresEctoControl(uint8_t);
 
@@ -76,7 +76,7 @@ private:
   // Modbus function codes for 16 bit access
   static const uint8_t ku8MBReadHoldingRegisters = 0x03;   ///< Modbus function 0x03 Read Holding Registers
   static const uint8_t ku8MBWriteMultipleRegisters = 0x10; ///< Modbus function 0x10 Write Multiple Registers
-
+  static const uint8_t ku8MBWriteSingleRegister        = 0x06; ///< Modbus function 0x06 Write Single Register
   static const uint8_t ku8MBProgRead46 = 0x46;  ///< EctoControl function 0x46 Устройство возвращает в ответе свой текущий адрес ADDR
   static const uint8_t ku8MBProgWrite47 = 0x47; ///< EctoControl function 0x47 высылается ведущим устройством ведомому с указанием сменить свой имеющийся адрес на заданный
                                                 // высылается ведущим устройством единственному устройству на шине с неизвестным адресом
