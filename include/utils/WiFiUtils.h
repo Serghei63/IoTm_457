@@ -4,6 +4,7 @@
 #include "MqttClient.h"
 boolean isNetworkActive();
 uint8_t getNumAPClients();
+bool startAPMode();
 #ifdef ESP8266
 void routerConnect();
 boolean RouterFind(std::vector<String> jArray);
@@ -13,7 +14,7 @@ void WiFiUtilsItit();
 void connectToNextNetwork();
 void checkConnection();
 void ScanAsync();
-bool startAPMode();
+
 #endif
 uint8_t RSSIquality();
 //extern void wifiSignalInit();
