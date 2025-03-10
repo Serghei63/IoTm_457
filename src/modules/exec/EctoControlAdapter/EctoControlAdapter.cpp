@@ -130,8 +130,9 @@ public:
         if (_addr > 0)
         {
             uint16_t type;
-            readFunctionModBus(0x0000, type);
-            if (0x14 != (uint8_t)type || 0x15 != (uint8_t)type || 0x16 != (uint8_t)type)
+            readFunctionModBus(0x0003, type);
+            type = type >> 8;
+            if (0x14 != type && 0x15 != type && 0x16 != type)
             {
                 SerialPrint("E", "EctoControlAdapter", "Не подходящее устройство, type: " + String(type, HEX));
             }
@@ -331,12 +332,13 @@ public:
         // set word 0 of TX buffer to least-significant word of counter (bits 15..0)
         //node.setTransmitBuffer(1, lowWord(data));
         // set word 1 of TX buffer to most-significant word of counter (bits 31..16)
-        //node.setTransmitBuffer(0, highWord(data));
+        node.setTransmitBuffer(0, data);
         // slave: write TX buffer to (2) 16-bit registers starting at register 0
-        uint8_t result = node.writeSingleRegister(reg, data);
+        uint8_t result = node.writeMultipleRegisters(reg, 1);
+        node.clearTransmitBuffer();
         if (_debug > 2)
         {
-            SerialPrint("I", "EctoControlAdapter", "writeSingleRegister, addr: " + String((uint8_t)_addr, HEX) + ", reg: " + String(reg, HEX) + ", state: " + String(data) + " = result: " + String(result, HEX));
+            SerialPrint("I", "EctoControlAdapter", "writeSingleRegister, addr: " + String((uint8_t)_addr, HEX) + ", reg: 0x" + String(reg, HEX) + ", state: " + String(data) + " = result: " + String(result, HEX));
         }
         if (result == 0)
             return true;
@@ -360,7 +362,7 @@ public:
             else
                 result = node.readHoldingRegisters(reg, 1);
             if (_debug > 2)
-                SerialPrint("I", "EctoControlAdapter", "readHoldingRegisters, addr: " + String(_addr, HEX) + ", reg: " + String(reg, HEX) + " = result: " + String(result, HEX));
+                SerialPrint("I", "EctoControlAdapter", "readHoldingRegisters, addr: " + String(_addr, HEX) + ", reg: 0x" + String(reg, HEX) + " = result: " + String(result, HEX));
             // break;
             if (result == node.ku8MBSuccess)
             {
@@ -396,9 +398,10 @@ public:
     bool getModelVersion()
     {
         uint16_t reqData;
-        info.boilerMemberCode = readFunctionModBus(ReadDataEctoControl::ecR_MemberCode, info.boilerMemberCode);
-        info.boilerModelCode = readFunctionModBus(ReadDataEctoControl::ecR_ModelCode, info.boilerModelCode);
-        bool ret = readFunctionModBus(ReadDataEctoControl::ecR_AdaperVersion, reqData);
+        bool ret;
+        ret = readFunctionModBus(ReadDataEctoControl::ecR_MemberCode, info.boilerMemberCode);
+        ret = readFunctionModBus(ReadDataEctoControl::ecR_ModelCode, info.boilerModelCode);
+        ret = readFunctionModBus(ReadDataEctoControl::ecR_AdaperVersion, reqData);
         info.adapterHardVer = highByte(reqData);
         info.adapterSoftVer = lowByte(reqData);
         return ret;
@@ -440,8 +443,8 @@ public:
         if (ret)
         {
             publishData("codeError", String(code));
-            if (codeExt)
-                sendTelegramm("EctoControlAdapter: код ошибки: " + String((int)codeExt));
+            if (code)
+                sendTelegramm("EctoControlAdapter: код ошибки: " + String((int)code));
         }
         return ret;
     }

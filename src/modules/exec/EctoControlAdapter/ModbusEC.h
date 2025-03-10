@@ -82,7 +82,7 @@ private:
                                                 // высылается ведущим устройством единственному устройству на шине с неизвестным адресом
 
   // Modbus timeout [milliseconds]
-  static const uint16_t ku16MBResponseTimeout = 2000; ///< Modbus timeout [milliseconds]
+  static const uint16_t ku16MBResponseTimeout = 500; ///< Modbus timeout [milliseconds]
 
   // master function that conducts Modbus transactions
   uint8_t ModbusMasterTransaction(uint8_t u8MBFunction);
