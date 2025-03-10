@@ -342,7 +342,8 @@ enum SysOp {
     sysop_getIP,
     sysop_mqttPub,
     sysop_getUptime,
-    sysop_mqttIsConnect
+    sysop_mqttIsConnect,
+    sysop_wifiIsConnect
 };
 
 IoTValue sysExecute(SysOp command, std::vector<IoTValue> &param) {
@@ -414,11 +415,11 @@ IoTValue sysExecute(SysOp command, std::vector<IoTValue> &param) {
         case sysop_deepSleep:
             if (param.size()) {
                 Serial.printf("Ушел спать на %d сек...", (int)param[0].valD);
-#ifdef ESP32
+#if defined(ESP32)
                 esp_sleep_enable_timer_wakeup(param[0].valD * 1000000);
                 delay(1000);
                 esp_deep_sleep_start();
-#else
+#elif defined(ESP8266)
                 ESP.deepSleep(param[0].valD * 1000000);
 #endif
             }
@@ -435,7 +436,7 @@ IoTValue sysExecute(SysOp command, std::vector<IoTValue> &param) {
             if (param.size() == 2) {
                 // Serial.printf("Call from  sysExecute %s %s\n", param[0].valS.c_str(), param[1].valS.c_str());
                 String tmpStr = param[1].valS;
-                if (param[1].isDecimal) tmpStr = param[1].valD;
+                if (param[1].isDecimal) tmpStr = String(param[1].valD);
                 value.valD = mqtt.publish(param[0].valS.c_str(),  tmpStr.c_str(), false);
             }
             break;
@@ -446,6 +447,9 @@ IoTValue sysExecute(SysOp command, std::vector<IoTValue> &param) {
         case sysop_mqttIsConnect:
             value.valD = mqttIsConnect();
             break;
+        case sysop_wifiIsConnect:
+            value.valD = isNetworkActive();
+            break;            
     }
 
     return value;
@@ -502,6 +506,8 @@ class SysCallExprAST : public ExprAST {
             operation = sysop_getUptime;
         else if (Callee == F("mqttIsConnect"))
             operation = sysop_mqttIsConnect;
+        else if (Callee == F("wifiIsConnect"))
+            operation = sysop_wifiIsConnect;            
         else
             operation = sysop_notfound;
     }
@@ -658,7 +664,7 @@ int IoTScenario::gettok() {
         LastChar = getLastChar();
 
     if (isalpha(LastChar) || LastChar == '_') {  // идентификатор: [a-zA-Z][a-zA-Z0-9]*
-        IdentifierStr = (char)LastChar;
+        IdentifierStr = String((char)LastChar);
         while (isalnum((LastChar = getLastChar())) || LastChar == '_') {
             IdentifierStr += (char)LastChar;
         }
@@ -701,7 +707,16 @@ int IoTScenario::gettok() {
         IdentifierStr = "";
         LastChar = getLastChar();
         while (LastChar != '"' && LastChar != EOF) {
-            IdentifierStr += (char)LastChar;
+            if (LastChar == '\\') {     // обработка экранированных символов в строке
+                LastChar = getLastChar();
+                if (LastChar == '"') {
+                    IdentifierStr += '"';
+                } else if (LastChar == 'n') {
+                    IdentifierStr += '\n';
+                } 
+            } else {
+                IdentifierStr += (char)LastChar;
+            }
             LastChar = getLastChar();
         }
         LastChar = getLastChar();

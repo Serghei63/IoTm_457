@@ -9,6 +9,15 @@
 #include <PubSubClient.h>
 #include <list>
 
+#ifdef LIBRETINY
+#include <vector>
+#include <typedef.h>
+#ifdef STANDARD_WEB_SERVER
+#include <WebServer.h>
+#endif 
+#include <HTTPClient.h>
+#endif
+
 #ifdef ESP32
 #include "WiFi.h"
 #include <HTTPClient.h>
@@ -22,6 +31,7 @@
 
 #ifdef ASYNC_WEB_SERVER
 #include <ESPAsyncWebServer.h>
+#include "AsyncWebServer.h"
 #endif
 
 #ifdef STANDARD_WEB_SERVER
@@ -50,7 +60,7 @@
 #include "utils/StringUtils.h"
 #include "PeriodicTasks.h"
 #include "classes/IoTGpio.h"
-
+#include "classes/IoTDiscovery.h"   
 /*********************************************************************************************************************
 *****************************************глобальные объекты классов***************************************************
 **********************************************************************************************************************/
@@ -60,6 +70,9 @@ extern IoTItem* rtcItem;
 extern IoTItem* tlgrmItem;
 extern IoTBench* benchLoadItem;
 extern IoTBench* benchTaskItem;
+extern IoTDiscovery* HADiscovery;
+extern IoTDiscovery* HOMEdDiscovery;
+
 
 extern TickerScheduler ts;
 extern WiFiClient espClient;
@@ -75,6 +88,9 @@ extern ESP8266WebServer HTTP;
 extern ESP8266HTTPUpdateServer httpUpdater;
 #endif
 #ifdef ESP32
+extern WebServer HTTP;
+#endif
+#ifdef LIBRETINY
 extern WebServer HTTP;
 #endif
 #endif
@@ -108,6 +124,7 @@ extern int mqttPort;
 extern String mqttPrefix;
 extern String mqttUser;
 extern String mqttPass;
+extern String nameId;
 
 extern unsigned long mqttUptime;
 extern unsigned long flashWriteNumber;
@@ -146,6 +163,8 @@ extern Time_t _time_local;
 extern Time_t _time_utc;
 extern bool _time_isTrust;
 
+#define WEBSOCKETS_CLIENT_MAX 5
+extern int8_t ws_clients[WEBSOCKETS_CLIENT_MAX];
 // extern unsigned long loopPeriod;
 
 // extern DynamicJsonDocument settingsFlashJsonDoc;

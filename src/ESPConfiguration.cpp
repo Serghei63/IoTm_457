@@ -1,5 +1,6 @@
 #include "ESPConfiguration.h"
 #include "classes/IoTGpio.h"
+//#include "classes/IoTDiscovery.h"
 
 extern IoTGpio IoTgpio;
 
@@ -8,6 +9,10 @@ void* getAPI(String subtype, String params);
 
 void configure(String path) {
     File file = seekFile(path);
+    if (!file) {
+        SerialPrint(F("E"), F("FS"), F("configure file open error"));
+        return;
+    }
     file.find("[");
     while (file.available()) {
         String jsonArrayElement = file.readStringUntil('}') + "}";
@@ -18,6 +23,7 @@ void configure(String path) {
             jsonArrayElement = "";
         }
         if (jsonArrayElement != "") {
+            IoTItem* myIoTItem;
             String subtype;
             if (!jsonRead(jsonArrayElement, F("subtype"), subtype)) {  //если нет такого ключа в представленном json или он не валидный
                 SerialPrint(F("E"), F("Config"), "json error " + subtype);
@@ -36,6 +42,9 @@ void configure(String path) {
                     // пробуем спросить драйвер Benchmark
                     if (driver = myIoTItem->getBenchmarkTask()) benchTaskItem = ((IoTBench*)driver);
                     if (driver = myIoTItem->getBenchmarkLoad()) benchLoadItem = ((IoTBench*)driver);
+                    // пробуем спросить драйвер для интеграций
+                    if (driver = myIoTItem->getHOMEdDiscovery()) HOMEdDiscovery = ((IoTDiscovery*)driver);
+                    if (driver = myIoTItem->getHADiscovery()) HADiscovery = ((IoTDiscovery*)driver);
                     // пробуем спросить драйвер Telegram_v2
                     if (driver = myIoTItem->getTlgrmDriver()) tlgrmItem = (IoTItem*)driver;
                     IoTItems.push_back(myIoTItem);
@@ -45,6 +54,26 @@ void configure(String path) {
     }
     file.close();
     SerialPrint("i", "Config", "Configured");
+/*      
+#ifdef ESP32
+  if(HOMEdDiscovery)
+        HOMEdDiscovery->mqttSubscribeDiscovery();
+    if(HADiscovery)
+        HADiscovery->mqttSubscribeDiscovery();
+        // оттправляем все статусы
+    if(HOMEdDiscovery || HADiscovery)
+    {
+        for (std::list<IoTItem *>::iterator it = IoTItems.begin(); it != IoTItems.end(); ++it)
+        {
+            if ((*it)->iAmLocal)
+            {
+                publishStatusMqtt((*it)->getID(), (*it)->getValue());
+                (*it)->onMqttWsAppConnectEvent();
+            }
+        }
+    }
+#endif
+*/
 }
 
 void clearConfigure() {
@@ -59,8 +88,13 @@ void clearConfigure() {
         if (*it) delete *it;
     }
     IoTItems.clear();
-
+#ifdef LIBRETINY
+    valuesFlashJson.remove(0, valuesFlashJson.length());
+#else
     valuesFlashJson.clear();
+#endif
     benchTaskItem = nullptr; 
     benchLoadItem = nullptr; 
+    HOMEdDiscovery = nullptr;
+    HADiscovery = nullptr;
 }

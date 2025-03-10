@@ -32,6 +32,10 @@
 #define FIRMWARE_NAME "esp32_4mb"
 #endif
 
+#ifdef esp32_4mb3f
+#define FIRMWARE_NAME "esp32_4mb3f"
+#endif
+
 #ifdef esp32cam_4mb
 #define FIRMWARE_NAME "esp32cam_4mb"
 #endif
@@ -50,6 +54,18 @@
 
 #ifdef esp32s3_16mb
 #define FIRMWARE_NAME "esp32s3_16mb"
+#endif
+
+#ifdef bk7231n
+#define FIRMWARE_NAME "bk7231n"
+#endif
+
+#ifdef esp32c6_4mb
+#define FIRMWARE_NAME "esp32c6_4mb"
+#endif
+
+#ifdef esp32c6_8mb
+#define FIRMWARE_NAME "esp32c6_8mb"
 #endif
 
 // Размер буфера json
@@ -72,8 +88,9 @@ WEB_SOCKETS_FRAME_SIZE создан для того что бы не загру�
 #define STANDARD_WEB_SERVER
 #define STANDARD_WEB_SOCKETS
 
+//#ifndef LIBRETINY
 #define UDP_ENABLED
-
+//#endif
 // #define REST_FILE_OPERATIONS
 
 #define MQTT_RECONNECT_INTERVAL 20000
@@ -91,22 +108,26 @@ WEB_SOCKETS_FRAME_SIZE создан для того что бы не загру�
 enum TimerTask_t {
     WIFI_SCAN,
     WIFI_MQTT_CONNECTION_CHECK,
+#ifndef ESP8266    
+    WIFI_CONN,
+#endif    
     TIME,
-    TIME_SYNC,
-    UPTIME,
-    UDP,    // UDPP
+    // TIME_SYNC, // не используется
+    // UPTIME, // не используется
+    UDPt,    // UDPP
     TIMES,  // периодические секундные проверки
     PTASK,
     ST,
+    PiWS,
     END
 };
 
-// задачи которые надо протащить через loop
-enum NotAsyncActions {
-    do_ZERO,
-    do_MQTTPARAMSCHANGED,
-    do_LAST,
-};
+// задачи которые надо протащить через loop // не используется
+// enum NotAsyncActions {
+//     do_ZERO,
+//     do_MQTTPARAMSCHANGED,
+//     do_LAST,
+// };
 
 // состояния обновления
 enum UpdateStates { UPDATE_COMPLETED, UPDATE_FAILED, PATH_ERROR };
@@ -114,7 +135,7 @@ enum UpdateStates { UPDATE_COMPLETED, UPDATE_FAILED, PATH_ERROR };
 enum distination {
     TO_MQTT,
     TO_WS,
-    TO_MQTT_WS,
+    TO_MQTT_WS
 };
 
-#define WS_BROADCAST -1
+// #define WS_BROADCAST -1 // не используется

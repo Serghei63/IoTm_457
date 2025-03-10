@@ -258,6 +258,14 @@ IoTBench *IoTItem::getBenchmarkLoad()
 {
     return nullptr;
 }
+IoTDiscovery *IoTItem::getHOMEdDiscovery()
+{
+    return nullptr;
+}
+IoTDiscovery *IoTItem::getHADiscovery()
+{
+    return nullptr;
+}
 unsigned long IoTItem::getRtcUnixTime()
 {
     return 0;
@@ -281,7 +289,7 @@ unsigned long IoTItem::getRtcUnixTime()
 
 //=========================================================================================================================================
 
-IoTItem* myIoTItem;
+// IoTItem* myIoTItem; // экономим память, используется в одном месте
 
 // поиск элемента модуля в существующей конфигурации
 IoTItem* findIoTItem(const String& name) {
