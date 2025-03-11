@@ -1,0 +1,64 @@
+{
+  "menuSection": "Виртуальные элементы",
+
+  "configItem": [
+    {
+      "global": 0,
+      "name": "Погода OWM",
+      "type": "Reading",
+      "subtype": "Wea",
+      "id": "Wea",
+      "needSave": 0,
+      "widget": "anydataTmp",
+      "page": "Погода OWM",
+      "descr": "Температура на улице",
+      "int": 1,
+      "API_key": "6a4ba421859c9f4166697758b68d889b",
+      "ID_sity": "618196",
+      "param": "temp",
+      "round": 1,
+      "val": "..."
+    }
+  ],
+
+  "about": {
+    "authorName": "Serghei Crasnicov",
+    "authorContact": "https://t.me/Serghei63",
+    "authorGit": "https://github.com/Serghei63",
+    "specialThanks": "AVAKS",
+    "moduleName": "Wea",
+    "moduleVersion": "1.0",
+    "usedRam": {
+      "esp32_4mb": 15,
+      "esp8266_4mb": 15
+    },
+    "subTypes": [
+      "temp",
+      "humidity",
+      "pressure",
+      "speed",
+      "deg",
+      "all",
+      "main",
+      "description",
+      "icon",
+      "sunrise",
+      "sunset"
+    ],
+    "title": "Погода",
+    "moduleDesc": "Получение погоды из интернет",
+    "propInfo": {
+      "param": "temp - температура, humidity - влажность, pressure - давление, speed - скорость ветра, deg - направление ветра, all - погодный код, sunrise - рассвет, sunset - закат, description - наличие облаков, icon - код иконки",
+      "int": "Интервал запроса погоды в часах",
+      "API_key": "API ключ",
+      "ID_sity": "ID города (с сайта OWM)"
+    }
+  },
+
+  "defActive": false,
+
+  "usedLibs": {
+    "esp32*": [],
+    "esp82*": []
+  }
+}

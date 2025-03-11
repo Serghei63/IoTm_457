@@ -333,8 +333,9 @@ enum SysOp {
     sysop_getHours,       //
     sysop_getMinutes,     //
     sysop_getSeconds,     //
-    sysop_getMonth,       //
+    sysop_getMonth,       //getTimeLocal_Weekday()
     sysop_getDay,
+    sysop_getWeekday,
     sysop_gethhmm,
     sysop_gethhmmss,
     sysop_getTime,

@@ -1,6 +1,6 @@
 {
-    "name": "457_canm",
-    "apssid": "IoTm_canm",
+    "name": "457_mb",
+    "apssid": "IoTm_mb2",
     "appass": "",
     "routerssid": "mega",
     "routerpass": "11111111",
@@ -20,7 +20,7 @@
     "pinSCL": 0,
     "pinSDA": 0,
     "i2cFreq": 100000,
-    "wg": "group2",
+    "wg": "mb",
     "udps": 1,
     "settings_": ""
 }

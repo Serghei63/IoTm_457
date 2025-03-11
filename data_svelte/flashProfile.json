@@ -67,6 +67,14 @@
                 "active": true
             },
             {
+                "path": "src/modules/virtual/UpdateServer",
+                "active": true
+            },
+            {
+                "path": "src/modules/virtual/Wea",
+                "active": false
+            },
+            {
                 "path": "src/modules/virtual/Weather",
                 "active": false
             }
@@ -221,6 +229,10 @@
                 "active": false
             },
             {
+                "path": "src/modules/sensors/ModbusRTUasync",
+                "active": true
+            },
+            {
                 "path": "src/modules/sensors/MQgas",
                 "active": false
             },
@@ -242,7 +254,7 @@
             },
             {
                 "path": "src/modules/sensors/RTC",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/sensors/S8",
@@ -288,11 +300,11 @@
             },
             {
                 "path": "src/modules/exec/ButtonIn",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/ButtonOut",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Buzzer",
@@ -300,7 +312,7 @@
             },
             {
                 "path": "src/modules/exec/CanBUSsm",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/Enconder",
@@ -324,6 +336,10 @@
             },
             {
                 "path": "src/modules/exec/IRremote",
+                "active": false
+            },
+            {
+                "path": "src/modules/sensors/IRswitch",
                 "active": false
             },
             {
@@ -410,7 +426,7 @@
         "screens": [
             {
                 "path": "src/modules/display/DwinI",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/display/Gc9A",

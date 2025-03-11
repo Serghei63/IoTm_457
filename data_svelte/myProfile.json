@@ -1,7 +1,7 @@
 {
     "iotmSettings": {
-        "name": "457_mb",
-        "apssid": "IoTm_mb2",
+        "name": "457_dwin50",
+        "apssid": "IoTm_dwin50",
         "appass": "",
         "routerssid": "mega",
         "routerpass": "11111111",
@@ -20,7 +20,7 @@
         "pinSCL": 0,
         "pinSDA": 0,
         "i2cFreq": 100000,
-        "wg": "mb"
+        "wg": "group2"
     },
     "projectProp": {
         "platformio": {
@@ -130,7 +130,7 @@
         "virtual_elments": [
             {
                 "path": "src/modules/virtual/Benchmark",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/virtual/Cron",
@@ -187,15 +187,6 @@
             {
                 "path": "src/modules/virtual/VButton",
                 "active": true
-            },
-            {
-                "path": "src/modules/virtual/UpdateServer",
-                "active": true
-            },
-            
-            {
-                "path": "src/modules/virtual/Wea",
-                "active": false
             },
             {
                 "path": "src/modules/virtual/Weather",
@@ -352,10 +343,6 @@
                 "active": false
             },
             {
-                "path": "src/modules/sensors/ModbusRTUasync",
-                "active": true
-            },
-            {
                 "path": "src/modules/sensors/MQgas",
                 "active": false
             },
@@ -377,7 +364,7 @@
             },
             {
                 "path": "src/modules/sensors/RTC",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/sensors/S8",
@@ -459,10 +446,6 @@
             },
             {
                 "path": "src/modules/exec/IRremote",
-                "active": false
-            },
-            {
-                "path": "src/modules/sensors/IRswitch",
                 "active": false
             },
             {
@@ -549,7 +532,7 @@
         "screens": [
             {
                 "path": "src/modules/display/DwinI",
-                "active": false
+                "active": true
             },
             {
                 "path": "src/modules/display/Gc9A",
