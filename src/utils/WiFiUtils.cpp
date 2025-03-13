@@ -46,6 +46,7 @@ void WiFiEvent(arduino_event_t *event)
     SerialPrint("i", "WIFI", "http://" + WiFi.localIP().toString());
     jsonWriteStr(settingsFlashJson, "ip", WiFi.localIP().toString());
 #endif
+    createItemFromNet("onWifi", "1", 1);
     // запускаем MQTT
     mqttInit();
     SerialPrint("i", F("WIFI"), F("Network Init"));
@@ -380,7 +381,7 @@ void routerConnect()
     SerialPrint("i", "WIFI", "http://" + WiFi.localIP().toString());
     jsonWriteStr(settingsFlashJson, "ip", WiFi.localIP().toString());
 #endif
-
+    createItemFromNet("onWifi", "1", 1);
     mqttInit();
   }
   SerialPrint("i", F("WIFI"), F("Network Init"));
