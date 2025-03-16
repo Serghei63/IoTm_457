@@ -120,7 +120,7 @@ void handleScanResults()
           connectNumNet = i;
       }
     }
-
+    sendStringToWs("ssidli", ssidListHeapJson, -1);
     // if
   }
   SerialPrint("i", "WIFI", "Scan Found: " + ssidListHeapJson);
