@@ -177,8 +177,15 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
                 jsonReadArray(settingsFlashJson, "routerssid", jArray);
 #ifdef ESP8266
                 RouterFind(jArray);
-#endif
                 sendStringToWs("ssidli", ssidListHeapJson, num);
+#else
+                //String ssidScan = "{Scaning...}";
+                ssidListHeapJson = "{}";
+                jsonWriteStr_(ssidListHeapJson, "0", "Scaning...");
+                sendStringToWs("ssidli", ssidListHeapJson, num);
+                ScanAsync();
+#endif
+
             }
 
             //----------------------------------------------------------------------//
