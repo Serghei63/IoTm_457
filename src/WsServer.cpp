@@ -59,9 +59,9 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
             //----------------------------------------------------------------------//
             // Страница веб интерфейса dashboard
             //----------------------------------------------------------------------//
-            if (headerStr == "p|") {
-                standWebSocket.sendTXT(num, "p|");
-                //Serial.printf("Ping client: %u\n", num);
+            if (headerStr == "/pi|") {
+                standWebSocket.sendTXT(num, "/po|");
+                Serial.printf("Ping client: %u\n", num);
                 ws_clients[num]=1;
             }
             // публикация всех виджетов
