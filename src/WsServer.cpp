@@ -233,6 +233,40 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
                 sendStringToWs("settin", settingsFlashJson, num);
             }
 
+            if (headerStr == "/localt|") {
+                String timeStr = String((char*)payload + 8);
+                Serial.println("Время с фронта: /localt|" + timeStr);
+            
+                // Обрезаем дробную часть, если есть
+                int dotIndex = timeStr.indexOf('.');
+                if (dotIndex != -1) {
+                    timeStr = timeStr.substring(0, dotIndex);
+                }
+            
+                // Парсим UNIX-время в секундах
+                time_t unixTime = (time_t)timeStr.toInt();
+            
+                // Создаём структуру timeval
+                timeval tv;
+                tv.tv_sec = unixTime;  // Секунды эпохи
+                tv.tv_usec = 0;        // Микросекунды
+            
+                // Устанавливаем время
+                if (settimeofday(&tv, NULL) == 0) {
+                    Serial.printf("Время установлено: %ld\n", unixTime);
+                } else {
+                    Serial.printf("Ошибка установки времени: %ld\n", unixTime);
+                }
+                // timeval tv2{0, 0};
+                // timezone tz = timezone{0, 0};
+                // time_t epoch = 0;
+                // if (gettimeofday(&tv2, &tz) != -1) {
+                //     epoch = tv2.tv_sec;
+                // }
+                // unixTime = epoch;
+                // SerialPrint("I", F("NTP"), "TIME " + String(unixTime));
+            }
+
             //----------------------------------------------------------------------//
             // Страница веб интерфейса dev
             //----------------------------------------------------------------------//

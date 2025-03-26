@@ -92,6 +92,11 @@ void standWebServerInit() {
     HTTP.on("/localota", HTTP_GET, handleLocalOTA);
 
     HTTP.on("/localota_handler", HTTP_GET, handleLocalOTA_Handler);
+    HTTP.on("/update", HTTP_POST, []() {
+        HTTP.send(200); // Для CORS
+      }, handleUpdateOTA);
+    
+      HTTP.on("/update", HTTP_OPTIONS, handleCors);
 
     // Default handler for all URIs not defined above
     // Use it to read files from filesystem
@@ -164,6 +169,42 @@ void handleLocalOTA() {
   String page = "<form action='/localota' method='POST'><label for='server'>Server Address:</label><input type='text' name='server' value='http://192.168.1.2:5500'><input type='submit' value='Update'></form>";
   HTTP.send(200, "text/html", page);}
 
+
+void handleCors() {
+    HTTP.sendHeader("Access-Control-Allow-Origin", "*");
+    HTTP.send(200);
+  }
+  
+  void handleUpdateOTA() {
+    HTTPUpload& upload = HTTP.upload();
+    
+    if (upload.status == UPLOAD_FILE_START) {
+      Serial.print("Начало загрузки: ");
+      Serial.println(upload.filename);
+      if (!Update.begin(UPDATE_SIZE_UNKNOWN)) {
+        Update.end();
+        HTTP.send(500, "text/plain", "Ошибка: Недостаточно памяти");
+        return;
+      }
+    }
+    else if (upload.status == UPLOAD_FILE_WRITE) {
+      if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
+        Update.end();
+        HTTP.send(500, "text/plain", "Ошибка записи данных");
+        return;
+      }
+    }
+    else if (upload.status == UPLOAD_FILE_END) {
+      if (Update.end(true)) { // true - перезагрузка после обновления
+        HTTP.send(200, "text/plain", "Обновление успешно");
+        Serial.println("Обновление завершено");
+        ESP.restart();
+      } else {
+        Update.end();
+        HTTP.send(500, "text/plain", "Ошибка завершения обновления");
+      }
+    }
+  }
 void handleLocalOTA_Handler() {
     String serverValue = HTTP.arg("server");
     upgrade_firmware(3,serverValue);
