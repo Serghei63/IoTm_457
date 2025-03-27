@@ -2,7 +2,7 @@
 #include "BuildTime.h"
 
 // Версия прошивки
-#define FIRMWARE_VERSION 457
+#define FIRMWARE_VERSION 460
 
 #ifdef esp8266_1mb_ota
 #define FIRMWARE_NAME "esp8266_1mb_ota"
