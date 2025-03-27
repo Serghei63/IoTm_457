@@ -6,7 +6,7 @@
 #define TRIESONE 20 // количество секунд ожидания подключения к одной сети из несколких
 #define TRIES 30    // количество секунд ожидания подключения сети если она одна
 
-#ifndef ESP8266
+#ifdef WIFI_ASYNC
 std::vector<String> _ssidList;
 std::vector<String> _passwordList;
 // номер сети, для перебирания в момент подключения к сетям из массива
@@ -397,7 +397,7 @@ void routerConnect()
 #endif
 bool startAPMode()
 {
-#ifndef ESP8266
+#ifdef WIFI_ASYNC
   wifiConnecting = false;
   currentNetwork = 0;
   connectionAttempts = 0;
@@ -427,7 +427,7 @@ bool startAPMode()
         WIFI_SCAN, 30 * 1000,
         [&](void *)
         {
-#ifdef ESP8266
+#ifndef WIFI_ASYNC
           std::vector<String> jArray;
           jsonReadArray(settingsFlashJson, "routerssid", jArray);
           for (int8_t i = 0; i < jArray.size(); i++)
@@ -449,7 +449,7 @@ bool startAPMode()
   return true;
 }
 
-#if defined(ESP8266)
+#ifndef WIFI_ASYNC
 boolean RouterFind(std::vector<String> jArray)
 {
   bool res = false;

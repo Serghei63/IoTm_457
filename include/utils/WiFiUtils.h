@@ -5,7 +5,7 @@
 boolean isNetworkActive();
 uint8_t getNumAPClients();
 bool startAPMode();
-#ifdef ESP8266
+#ifndef WIFI_ASYNC
 void routerConnect();
 boolean RouterFind(std::vector<String> jArray);
 #else
