@@ -2,7 +2,7 @@
 #include "BuildTime.h"
 
 // Версия прошивки
-#define FIRMWARE_VERSION 457
+#define FIRMWARE_VERSION 460
 
 #ifdef esp8266_1mb_ota
 #define FIRMWARE_NAME "esp8266_1mb_ota"
@@ -104,11 +104,19 @@ WEB_SOCKETS_FRAME_SIZE создан для того что бы не загру�
 #define MIN_DATETIME 1575158400
 #define LEAP_YEAR(Y) (((1970 + Y) > 0) && !((1970 + Y) % 4) && (((1970 + Y) % 100) || !((1970 + Y) % 400)))
 
+#ifdef LIBRETINY
+//#define WIFI_ASYNC
+#endif
+
+#ifdef ESP32
+#define WIFI_ASYNC
+#endif
+
 // задачи таскера
 enum TimerTask_t {
     WIFI_SCAN,
     WIFI_MQTT_CONNECTION_CHECK,
-#ifndef ESP8266    
+#ifdef WIFI_ASYNC    
     WIFI_CONN,
 #endif    
     TIME,
