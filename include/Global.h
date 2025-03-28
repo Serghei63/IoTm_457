@@ -10,6 +10,7 @@
 #include <list>
 
 #ifdef LIBRETINY
+#include <Update.h>
 #include <vector>
 #include <typedef.h>
 #ifdef STANDARD_WEB_SERVER

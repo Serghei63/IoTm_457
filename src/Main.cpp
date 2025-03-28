@@ -224,9 +224,9 @@ void setup() {
 
     stopErrorMarker(SETUPINET_ERRORMARKER);
 
-    bool postMsgTelegram;
-    if (!jsonRead(settingsFlashJson, "debugTraceMsgTlgrm", postMsgTelegram, false)) postMsgTelegram = 1;
-    sendDebugTraceAndFreeMemory(postMsgTelegram);
+    // bool postMsgTelegram;
+    // if (!jsonRead(settingsFlashJson, "debugTraceMsgTlgrm", postMsgTelegram, false)) postMsgTelegram = 1;
+    // sendDebugTraceAndFreeMemory(postMsgTelegram);
     
     initErrorMarker(SETUPLAST_ERRORMARKER);
 

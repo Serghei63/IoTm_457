@@ -9,6 +9,12 @@ static const char FS_INIT_ERROR[] PROGMEM = "FS INIT ERROR";
 static const char FILE_NOT_FOUND[] PROGMEM = "FileNotFound";
 // static bool fsOK;
 // const char* fsName = "LittleFS";
+// Типы обновлений
+enum UpdateType {
+    FIRMWARE,
+    FILESYSTEM
+  };
+
 
 void standWebServerInit() {
     //  Кэшировать файлы для быстрой работы
@@ -88,10 +94,12 @@ void standWebServerInit() {
     // - first callback is called after the request has ended with all parsed arguments
     // - second callback handles file upload at that location
     HTTP.on("/edit", HTTP_POST, replyOK, handleFileUpload);
-
+    // отображение страницы с полем ввода для сервера обновления
     HTTP.on("/localota", HTTP_GET, handleLocalOTA);
-
+    // непосредственно ОТА обновление со стороннего сервера 
     HTTP.on("/localota_handler", HTTP_GET, handleLocalOTA_Handler);
+
+    // Обработка обновления от WS drag&drop
     HTTP.on("/update", HTTP_POST, []() {
         HTTP.send(200); // Для CORS
       }, handleUpdateOTA);
@@ -176,13 +184,28 @@ void handleCors() {
   }
   
   void handleUpdateOTA() {
+    UpdateType typeOTAfile = FIRMWARE;
     HTTPUpload& upload = HTTP.upload();
-    
+    if (upload.filename != "firmware.bin"  && upload.filename != "littlefs.bin")
+    {
+        SerialPrint("E", F("OTA"), "Неверное имя файла: " + upload.filename);
+        return;
+    }
+    if (upload.filename == "firmware.bin")
+    {
+        typeOTAfile = FIRMWARE;
+    } else     if (upload.filename == "littlefs.bin")
+    {
+        typeOTAfile = FILESYSTEM;
+    }
+    int updatePartition = (typeOTAfile == FIRMWARE)? U_FLASH : U_SPIFFS;
     if (upload.status == UPLOAD_FILE_START) {
-      Serial.print("Начало загрузки: ");
-      Serial.println(upload.filename);
-      if (!Update.begin(UPDATE_SIZE_UNKNOWN)) {
+      //Serial.print("Начало загрузки: ");
+      //Serial.println(upload.filename);
+      SerialPrint("i", F("OTA"), "Начало загрузки файла: " + upload.filename);
+      if (!Update.begin(UPDATE_SIZE_UNKNOWN, updatePartition)) {
         Update.end();
+        SerialPrint("E", F("OTA"), "Ошибка: Недостаточно памяти");
         HTTP.send(500, "text/plain", "Ошибка: Недостаточно памяти");
         return;
       }
@@ -190,17 +213,19 @@ void handleCors() {
     else if (upload.status == UPLOAD_FILE_WRITE) {
       if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
         Update.end();
+        SerialPrint("E", F("OTA"), "Ошибка записи данных");
         HTTP.send(500, "text/plain", "Ошибка записи данных");
         return;
       }
     }
     else if (upload.status == UPLOAD_FILE_END) {
       if (Update.end(true)) { // true - перезагрузка после обновления
+        SerialPrint("i", F("OTA"), "Обновление завершено");
         HTTP.send(200, "text/plain", "Обновление успешно");
-        Serial.println("Обновление завершено");
         ESP.restart();
       } else {
         Update.end();
+        SerialPrint("E", F("OTA"), "Ошибка завершения обновления");
         HTTP.send(500, "text/plain", "Ошибка завершения обновления");
       }
     }

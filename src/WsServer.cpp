@@ -235,7 +235,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
 
             if (headerStr == "/localt|") {
                 String timeStr = String((char*)payload + 8);
-                Serial.println("Время с фронта: /localt|" + timeStr);
+                //Serial.println("Время с фронта: /localt|" + timeStr);
             
                 // Обрезаем дробную часть, если есть
                 int dotIndex = timeStr.indexOf('.');
@@ -253,9 +253,11 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
             
                 // Устанавливаем время
                 if (settimeofday(&tv, NULL) == 0) {
-                    Serial.printf("Время установлено: %ld\n", unixTime);
+                    //Serial.printf("Время установлено: %ld\n", unixTime);
+                    SerialPrint("i", F("Time"), "Время установлено из браузера: " + String(unixTime));                
                 } else {
-                    Serial.printf("Ошибка установки времени: %ld\n", unixTime);
+                    //Serial.printf("Ошибка установки времени: %ld\n", unixTime);
+                    SerialPrint("i", F("=>WS"), "Ошибка установки времени: " + String(unixTime));
                 }
                 // timeval tv2{0, 0};
                 // timezone tz = timezone{0, 0};
