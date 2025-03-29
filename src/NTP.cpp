@@ -64,6 +64,10 @@ void synchTime() {
   if (sntp_enabled()) {
     sntp_stop();
     }
+    sntp_setoperatingmode(SNTP_OPMODE_POLL);
+    sntp_setservername(0, jsonReadStr(settingsFlashJson, F("ntp")).c_str());
+    sntp_setservername(1, "pool.ntp.org");
+    sntp_setservername(2, "ru.pool.ntp.org");
     sntp_init();
 
 #else
