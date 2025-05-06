@@ -325,5 +325,12 @@
     {
         "name": "nil",
         "label": "Без виджета"
+    },
+    {
+        "name": "anydataBar",
+        "label": "давление Bar",
+        "widget": "anydata",
+        "after": "Kg/cm²",
+        "icon": "speedometer"
     }
 ]

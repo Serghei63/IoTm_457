@@ -7,6 +7,10 @@ void standWebSocketsInit() {
     standWebSocket.begin();
     standWebSocket.onEvent(webSocketEvent);
     SerialPrint("i", "WS", "WS server initialized");
+    for (size_t i = 0; i < WEBSOCKETS_CLIENT_MAX; i++)
+    {
+        ws_clients[i] = -1;
+    }
 }
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length) {
@@ -17,6 +21,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
 
         case WStype_DISCONNECTED: {
             Serial.printf("[%u] Disconnected!\n", num);
+            standWebSocket.disconnect(num);
         } break;
 
         case WStype_CONNECTED: {
@@ -54,7 +59,11 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
             //----------------------------------------------------------------------//
             // Страница веб интерфейса dashboard
             //----------------------------------------------------------------------//
-
+            if (headerStr == "p|") {
+                standWebSocket.sendTXT(num, "p|");
+                //Serial.printf("Ping client: %u\n", num);
+                ws_clients[num]=1;
+            }
             // публикация всех виджетов
             if (headerStr == "/|") {
                 sendFileToWsByFrames("/layout.json", "layout", "", num, WEB_SOCKETS_FRAME_SIZE);
@@ -134,6 +143,10 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
                 sendFileToWsByFrames("/widgets.json", "widget", "", num, WEB_SOCKETS_FRAME_SIZE);
                 sendFileToWsByFrames("/config.json", "config", "", num, WEB_SOCKETS_FRAME_SIZE);
                 sendStringToWs("settin", settingsFlashJson, num);
+#ifdef WIFI_ASYNC                
+                ssidListHeapJson = "{}";
+                jsonWriteStr_(ssidListHeapJson, "0", "Scanning...");
+#endif
                 sendStringToWs("ssidli", ssidListHeapJson, num);
                 sendStringToWs("errors", errorsHeapJson, num);
                 // запуск асинхронного сканирования wifi сетей при переходе на страницу
@@ -148,6 +161,12 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
                 sendStringToWs("errors", errorsHeapJson, num);
                 // если не было создано приема данных по udp - то создадим его
                 addThisDeviceToList();
+#ifdef WIFI_ASYNC                
+                settingsFlashJson = readFile(F("settings.json"), 4096);
+                settingsFlashJson.replace("\r\n", "");
+                Serial.println(settingsFlashJson);
+                WiFiUtilsItit();
+#endif                
             }
 
             // обработка кнопки сохранить настройки mqtt
@@ -164,10 +183,21 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
             // запуск асинхронного сканирования wifi сетей при нажатии выпадающего
             // списка
             if (headerStr == "/scan|") {
+#ifndef WIFI_ASYNC
                 std::vector<String> jArray;
                 jsonReadArray(settingsFlashJson, "routerssid", jArray);
                 RouterFind(jArray);
                 sendStringToWs("ssidli", ssidListHeapJson, num);
+#else
+                //String ssidScan = "{Scaning...}";
+                //ssidListHeapJson = "{}";
+                //jsonWriteStr_(ssidListHeapJson, "0", "Scanning...");
+                //Serial.println("Async scan:" + String(ssidListHeapJson));
+                sendStringToWs("ssidli", ssidListHeapJson, num);
+                if (ssidListHeapJson == "{\"0\":\"Scanning...\"}")
+                    ScanAsync();
+#endif
+
             }
 
             //----------------------------------------------------------------------//
@@ -378,6 +408,7 @@ void sendFileToWsByFrames(const String& filename, const String& header, const St
 
     auto path = filepath(filename);
     auto file = FileFS.open(path, "r");
+    //SerialPrint("I", "sendFileToWsByFrames", ("reed file: ")+ path);
     if (!file) {
         SerialPrint("E", "FS", F("reed file error"));
         return;
@@ -425,16 +456,25 @@ void sendFileToWsByFrames(const String& filename, const String& header, const St
                 continuation = true;
             }
 
-            // Serial.println(String(i) + ") " + "ws: " + String(client_id) + " fr sz:
-            // " + String(size) + " fin: " + String(fin) + " cnt: " +
-            // String(continuation));
-
+//             Serial.println(String(i) + ") " + "ws: " + String(client_id) + " fr sz: " 
+//             + String(size) + " fin: " + String(fin) + " cnt: " +
+//             String(continuation));
+#ifdef ASYNC_WEB_SOCKETS
+            if (client_id == -1) {
+                //ws.broadcastBIN(frameBuf, size, fin, continuation);
+                ws.binaryAll(frameBuf, size);
+            } else {
+                //ws.sendBIN(client_id, frameBuf, size, fin, continuation);
+                ws.binary(client_id,frameBuf, size);
+            }
+#elif defined (STANDARD_WEB_SOCKETS)
             if (client_id == -1) {
                 standWebSocket.broadcastBIN(frameBuf, size, fin, continuation);
 
             } else {
                 standWebSocket.sendBIN(client_id, frameBuf, size, fin, continuation);
             }
+#endif
         }
         i++;
     }
@@ -444,7 +484,12 @@ void sendFileToWsByFrames(const String& filename, const String& header, const St
 }
 
 void sendStringToWs(const String& header, String& payload, int client_id) {
-    if ((!getNumAPClients() && !isNetworkActive()) || !getNumWSClients()) {
+#ifdef LIBRETINY    
+    if (/* (!getNumAPClients() && !isNetworkActive())  || */ !getNumWSClients()) {
+#else
+    if ( (!getNumAPClients() && !isNetworkActive())  ||  !getNumWSClients()) {
+#endif        
+      //  SerialPrint("E", "sendStringToWs", "getNumAPClients: " + String(getNumAPClients()) + "isNetworkActive: " + String(isNetworkActive() + "getNumWSClients: " + String(getNumWSClients())));
         // standWebSocket.disconnect(); // это и ниже надо сделать при -
         // standWebSocket.close();      // - отключении AP И WiFi(STA), надо менять ядро WiFi. Сейчас не закрывается сессия клиента при пропаже AP И WiFi(STA)
         return;
@@ -457,17 +502,32 @@ void sendStringToWs(const String& header, String& payload, int client_id) {
 
     String msg = header + "|0012|" + payload;
     size_t totalSize = msg.length();
-
+   // SerialPrint("E", "sendStringToWs", msg);
     char dataArray[totalSize];
     msg.toCharArray(dataArray, totalSize + 1);
+#ifdef ASYNC_WEB_SOCKETS
+    if (client_id == -1) {
+        ws.binaryAll((uint8_t*)dataArray, totalSize);
+    } else {
+        ws.binary(client_id, (uint8_t*)dataArray, totalSize);
+    }
+#elif defined (STANDARD_WEB_SOCKETS)
     if (client_id == -1) {
         standWebSocket.broadcastBIN((uint8_t*)dataArray, totalSize);
     } else {
         standWebSocket.sendBIN(client_id, (uint8_t*)dataArray, totalSize);
     }
+#endif
 }
 
-void sendDeviceList(uint8_t num) {
+void disconnectWSClient(uint8_t client_id)
+{
+    standWebSocket.disconnect(client_id);
+    Serial.printf("[WS] Client %u -disconnected\n", client_id);
+}
+
+void sendDeviceList(uint8_t num)
+{
     if (jsonReadInt(settingsFlashJson, F("udps")) != 0) {
         // если включен автопоиск то отдаем список из оперативной памяти
         SerialPrint("i", "FS", "heap list");
@@ -478,5 +538,8 @@ void sendDeviceList(uint8_t num) {
         SerialPrint("i", "FS", "flash list");
     }
 }
-
+#ifdef ASYNC_WEB_SOCKETS
+int getNumWSClients() { return ws.count(); }
+#elif defined (STANDARD_WEB_SOCKETS)
 int getNumWSClients() { return standWebSocket.connectedClients(false); }
+#endif
