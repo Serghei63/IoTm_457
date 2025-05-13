@@ -103,6 +103,7 @@ uint8_t hexStringToUint8(const String& hex) {
     if (tmp >= 0x00 && tmp <= 0xFF) {
         return tmp;
     }
+    return 0;
 }
 
 uint16_t hexStringToUint16(const String& hex) {
@@ -110,6 +111,15 @@ uint16_t hexStringToUint16(const String& hex) {
     if (tmp >= 0x0000 && tmp <= 0xFFFF) {
         return tmp;
     }
+    return 0;
+}
+
+uint32_t hexStringToUint32(const String& hex) {
+    uint32_t tmp = strtol(hex.c_str(), NULL, 0);
+    if (tmp >= 0x0000 && tmp <= 0xFFFFFF) {
+        return tmp;
+    }
+    return 0;
 }
 
 size_t itemsCount2(String str, const String& separator) {
