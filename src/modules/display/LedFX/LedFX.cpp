@@ -166,7 +166,7 @@ public:
         
         } else if (command == "setEffect") {
             if (param.size() == 1) {
-                if (param[0].valD < 0 | param[0].valD > 79) 
+                if (param[0].valD < 0 || param[0].valD > 79) 
                     _effectsMode = random(0, 79);
                 else
                     _effectsMode = param[0].valD;
