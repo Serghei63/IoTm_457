@@ -13,6 +13,8 @@
 # python PrepareProject.py --profile <ИмяФайла>
 # python PrepareProject.py -p <ИмяФайла>
 # 
+# Используя параметры -b или --board <board_name> можно уточнить для какой платы нужно подготовить проект
+# 
 # поддерживаемые контроллеры (профили):
 # esp8266_4mb
 # esp8266_16mb

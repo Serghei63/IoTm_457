@@ -8,6 +8,7 @@
 # где default_envs - это параметр default_envs из myProfile.json
 # 
 # Если указан параметр -p или --profile <ИмяФайла>, то выполняется первая команда PrepareProject.py -p <ИмяФайла>
+# Если указан параметр -b или --board <board_name>, то выполняется первая команда PrepareProject.py -b <board_name>
 # Если указан парамтер -l или --lite, то пропускаются команды 1, 2 и 5 с предварительной компиляцией
 # Если указан параметр -d или --debug, то выполняется только команда 4 с предварительной компиляцией
 
@@ -74,8 +75,9 @@ def run_platformio():
     profile_index = next((i for i, arg in enumerate(args) if arg in ('-p', '--profile')), None)
     profile_file = args[profile_index + 1] if profile_index is not None and len(args) > profile_index + 1 else "myProfile.json"
     
-    # Загружаем default_envs из myProfile.json
-    default_envs = load_default_envs(profile_path=profile_file)
+    # Загружаем default_envs из myProfile.json, если не указан параметр -b, который имеет больший приоритет
+    board_index = next((i for i, arg in enumerate(args) if arg in ('-b', '--board')), None)
+    default_envs = args[board_index + 1] if board_index is not None and len(args) > board_index + 1 else load_default_envs(profile_path=profile_file)
 
     print(f"Используем default_envs: {default_envs}")
     print(f"Режим Lite: {lite_mode}, Режим отладки: {debug_mode}")
