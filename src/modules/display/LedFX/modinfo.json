@@ -152,7 +152,7 @@
     "defActive": false,
     "usedLibs": {
         "esp32*": [
-            "aadafruit/Adafruit NeoPixel @ ^1.12.5",
+            "adafruit/Adafruit NeoPixel @ ^1.12.5",
             "kitesurfer1404/WS2812FX @ ^1.4.5"
         ],
         "esp82*": [
