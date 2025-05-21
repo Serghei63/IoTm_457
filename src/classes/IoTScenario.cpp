@@ -293,6 +293,13 @@ class CallExprAST : public ExprAST {
             return &ret;
         }
 
+        // вызываем системную функцию периодического выполнения вне таймера
+        if (Cmd == F("doByInterval")) {
+            Item->doByInterval();
+            ret = Item->value;
+            return &ret;
+        }
+
         // если все же все ок, то готовим параметры для передачи в модуль
         std::vector<IoTValue> ArgsAsIoTValue;
         for (unsigned int i = 0; i < Args.size(); i++) {
