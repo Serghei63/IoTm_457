@@ -291,6 +291,11 @@ class CallExprAST : public ExprAST {
             ret.valD = Item->getIntFromNet();
             ret.isDecimal = true;
             return &ret;
+        
+        } else if (Cmd == F("doByInterval")) {  // вызываем системную функцию периодического выполнения вне таймера
+            Item->doByInterval();
+            ret = Item->value;
+            return &ret;
         }
 
         // если все же все ок, то готовим параметры для передачи в модуль
@@ -302,6 +307,15 @@ class CallExprAST : public ExprAST {
                 ArgsAsIoTValue.push_back(*tmp);
             else
                 return nullptr;  // ArgsAsIoTValue.push_back(zeroIotVal);
+        }
+
+        if (Cmd == F("setInterval")) {  // меняем интервал выполнения задач модуля налету 
+            if (ArgsAsIoTValue.size() == 1) {
+                Item->setInterval(ArgsAsIoTValue[0].valD);
+                ret.valD = Item->getInterval();
+                ret.isDecimal = true;
+                return &ret;
+            }
         }
 
         ret = Item->execute(Cmd, ArgsAsIoTValue);  // вызываем команду из модуля напрямую с передачей всех аргументов
@@ -343,7 +357,8 @@ enum SysOp {
     sysop_mqttPub,
     sysop_getUptime,
     sysop_mqttIsConnect,
-    sysop_wifiIsConnect
+    sysop_wifiIsConnect,
+    sysop_setInterval
 };
 
 IoTValue sysExecute(SysOp command, std::vector<IoTValue> &param) {
@@ -449,7 +464,12 @@ IoTValue sysExecute(SysOp command, std::vector<IoTValue> &param) {
             break;
         case sysop_wifiIsConnect:
             value.valD = isNetworkActive();
-            break;            
+            break;
+        case sysop_setInterval:
+            if (param.size() == 1) {
+                
+            }
+            break;
     }
 
     return value;
@@ -508,6 +528,8 @@ class SysCallExprAST : public ExprAST {
             operation = sysop_mqttIsConnect;
         else if (Callee == F("wifiIsConnect"))
             operation = sysop_wifiIsConnect;            
+        else if (Callee == F("setInterval"))
+            operation = sysop_setInterval;
         else
             operation = sysop_notfound;
     }
