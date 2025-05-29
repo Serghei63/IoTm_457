@@ -234,3 +234,28 @@ bool strInVector(const String& str, const std::vector<String>& vec) {
     }
     return false;
 }
+
+String getUtf8CharByIndex(const String& utf8str, int index) {
+    if (index < 0) index = 0;
+    
+    int len = utf8str.length();
+    int charCount = 0;
+    int i = 0;
+    while (i < len) {
+        int charLen = 1;
+        unsigned char c = utf8str[i];
+        if ((c & 0x80) == 0x00) charLen = 1;           // 0xxxxxxx
+        else if ((c & 0xE0) == 0xC0) charLen = 2;      // 110xxxxx
+        else if ((c & 0xF0) == 0xE0) charLen = 3;      // 1110xxxx
+        else if ((c & 0xF8) == 0xF0) charLen = 4;      // 11110xxx
+
+        if (charCount == index) {
+            return utf8str.substring(i, i + charLen);
+        }
+
+        if (i + charLen >= len) return utf8str.substring(i, i + charLen);
+        i += charLen;
+        charCount++;
+    }
+    return "";
+}
