@@ -1,6 +1,9 @@
 
 #include "ModbusEC.h"
 
+#define COUNT_BIT_AVAIL 5
+#define COUNT_BIT_AVAIL_46F 4
+
 ModbusMaster::ModbusMaster(void)
 {
   _idle = 0;
@@ -256,8 +259,8 @@ uint8_t ModbusMaster::readHoldingRegisters(uint16_t u16ReadAddress,
 /**
 Modbus function 0x06 Write Single Register.
 
-This function code is used to write a single holding register in a 
-remote device. The request specifies the address of the register to be 
+This function code is used to write a single holding register in a
+remote device. The request specifies the address of the register to be
 written. Registers are addressed starting at zero.
 
 @param u16WriteAddress address of the holding register (0x0000..0xFFFF)
@@ -266,14 +269,13 @@ written. Registers are addressed starting at zero.
 @ingroup register
 */
 uint8_t ModbusMaster::writeSingleRegister(uint16_t u16WriteAddress,
-  uint16_t u16WriteValue)
+                                          uint16_t u16WriteValue)
 {
   _u16WriteAddress = u16WriteAddress;
   _u16WriteQty = 0;
   _u16TransmitBuffer[0] = u16WriteValue;
   return ModbusMasterTransaction(ku8MBWriteSingleRegister);
 }
-
 
 /**
 Modbus function 0x10 Write Multiple Registers.
@@ -308,7 +310,8 @@ uint8_t ModbusMaster::readAddresEctoControl()
 {
   _u16ReadAddress = 0x00;
   _u16ReadQty = 1;
-  return ModbusMasterTransaction(ku8MBProgRead46);
+  ModbusMasterTransaction(ku8MBProgRead46);
+  return getResponseBuffer(0x00);
 }
 uint8_t ModbusMaster::writeAddresEctoControl(uint8_t addr)
 {
@@ -393,8 +396,17 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   {
     u16CRC = crc16_update(u16CRC, u8ModbusADU[i]);
   }
+  // if (u8MBFunction == ku8MBProgRead46 || u8MBFunction == ku8MBProgWrite47)
+  // {
+  //   u8ModbusADU[u8ModbusADUSize++] = highByte(u16CRC);
+  //   u8ModbusADU[u8ModbusADUSize++] = lowByte(u16CRC);
+  // }
+  // else
+  // {
   u8ModbusADU[u8ModbusADUSize++] = lowByte(u16CRC);
   u8ModbusADU[u8ModbusADUSize++] = highByte(u16CRC);
+  // }
+
   u8ModbusADU[u8ModbusADUSize] = 0;
 
   // flush receive buffer before transmitting request
@@ -427,7 +439,9 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
 #if __MODBUSMASTER_DEBUG__
       digitalWrite(__MODBUSMASTER_DEBUG_PIN_A__, true);
 #endif
-      u8ModbusADU[u8ModbusADUSize++] = _serial->read();
+      uint8_t req = _serial->read();
+      u8ModbusADU[u8ModbusADUSize++] = req;
+      Serial.print(req, HEX);
       u8BytesLeft--;
 #if __MODBUSMASTER_DEBUG__
       digitalWrite(__MODBUSMASTER_DEBUG_PIN_A__, false);
@@ -448,26 +462,34 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
     }
 
     // evaluate slave ID, function code once enough bytes have been read
-    if (u8ModbusADUSize == 5)
+    uint8_t count;
+    if (u8MBFunction == ku8MBProgRead46 || u8MBFunction == ku8MBProgWrite47)
+      count = COUNT_BIT_AVAIL_46F;
+    else
+      count = COUNT_BIT_AVAIL;
+
+    if (u8ModbusADUSize == count)
     {
-      // verify response is for correct Modbus slave
-      if (u8ModbusADU[0] != _u8MBSlave)
+      if (u8MBFunction != ku8MBProgRead46 && u8MBFunction != ku8MBProgWrite47)
       {
-        // Serial.print(u8ModbusADU[0], HEX);
-        // Serial.print(" != ");
-        // Serial.println(_u8MBSlave, HEX);
-        
-        u8MBStatus = ku8MBInvalidSlaveID;
-        break;
-      }
+        // verify response is for correct Modbus slave
+        if (u8ModbusADU[0] != _u8MBSlave)
+        {
+          // Serial.print(u8ModbusADU[0], HEX);
+          // Serial.print(" != ");
+          // Serial.println(_u8MBSlave, HEX);
 
-      // verify response is for correct Modbus function code (mask exception bit 7)
-      if ((u8ModbusADU[1] & 0x7F) != u8MBFunction)
-      {
-        u8MBStatus = ku8MBInvalidFunction;
-        break;
-      }
+          u8MBStatus = ku8MBInvalidSlaveID;
+          break;
+        }
 
+        // verify response is for correct Modbus function code (mask exception bit 7)
+        if ((u8ModbusADU[1] & 0x7F) != u8MBFunction)
+        {
+          u8MBStatus = ku8MBInvalidFunction;
+          break;
+        }
+      }
       // check whether Modbus exception occurred; return Modbus Exception Code
       if (bitRead(u8ModbusADU[1], 7))
       {
@@ -485,6 +507,16 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
       case ku8MBWriteMultipleRegisters:
         u8BytesLeft = 3;
         break;
+
+      case ku8MBProgRead46:
+        u8BytesLeft = 1;
+        break;
+
+      case ku8MBProgWrite47:
+        u8BytesLeft = 1;
+        break;
+
+      default:
       }
     }
     if ((millis() - u32StartTime) > ku16MBResponseTimeout)
@@ -493,24 +525,26 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
     }
   }
 
-  // verify response is large enough to inspect further
-  if (!u8MBStatus && u8ModbusADUSize >= 5)
+  if (u8MBFunction != ku8MBProgRead46 && u8MBFunction != ku8MBProgWrite47)
   {
-    // calculate CRC
-    u16CRC = 0xFFFF;
-    for (i = 0; i < (u8ModbusADUSize - 2); i++)
+    // verify response is large enough to inspect further
+    if (!u8MBStatus && u8ModbusADUSize >= COUNT_BIT_AVAIL)
     {
-      u16CRC = crc16_update(u16CRC, u8ModbusADU[i]);
-    }
+      // calculate CRC
+      u16CRC = 0xFFFF;
+      for (i = 0; i < (u8ModbusADUSize - 2); i++)
+      {
+        u16CRC = crc16_update(u16CRC, u8ModbusADU[i]);
+      }
 
-    // verify CRC
-    if (!u8MBStatus && (lowByte(u16CRC) != u8ModbusADU[u8ModbusADUSize - 2] ||
-                        highByte(u16CRC) != u8ModbusADU[u8ModbusADUSize - 1]))
-    {
-      u8MBStatus = ku8MBInvalidCRC;
+      // verify CRC
+      if (!u8MBStatus && (lowByte(u16CRC) != u8ModbusADU[u8ModbusADUSize - 2] ||
+                          highByte(u16CRC) != u8ModbusADU[u8ModbusADUSize - 1]))
+      {
+        u8MBStatus = ku8MBInvalidCRC;
+      }
     }
   }
-
   // disassemble ADU into words
   if (!u8MBStatus)
   {
@@ -530,6 +564,12 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
       }
       break;
     case ku8MBProgRead46:
+      Serial.print("ku8MBProgRead46");
+      for (i = 0; i < (u8ModbusADUSize); i++)
+      {
+        Serial.println(u8ModbusADU[i], HEX);
+      }
+
       _u16ResponseBuffer[0] = (uint16_t)u8ModbusADU[2];
       _u8ResponseBufferLength = 1;
       break;

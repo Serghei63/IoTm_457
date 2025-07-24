@@ -8,7 +8,6 @@
 // #include "Stream.h"
 #include <vector>
 
-
 // class ModbusUart;
 Stream *_modbusUART = nullptr;
 
@@ -20,7 +19,6 @@ uint8_t _DIR_PIN = 0;
 #define MODBUS_RX_PIN 18        // Rx pin
 #define MODBUS_TX_PIN 19        // Tx pin
 #define MODBUS_SERIAL_BAUD 9600 // Baud rate for esp32 and max485 communication
-
 
 void modbusPreTransmission()
 {
@@ -52,7 +50,7 @@ private:
     int protocol = SERIAL_8N1;
     uint8_t _addr = 0xF0; // Адрес слейва от 1 до 247
     uint8_t _type = 0x14; // Тип устройства: 0x14 – адаптер OpenTherm (вторая версия); 0x11 – адаптер OpenTherm (первая версия, снята с производства)
-    bool _debugLevel;     // Дебаг
+    uint8_t _debugLevel;  // Дебаг
 
     ModbusMaster node;
     uint8_t _debug;
@@ -136,36 +134,39 @@ public:
             {
                 SerialPrint("E", "EctoControlAdapter", "Не подходящее устройство, type: " + String(type, HEX));
             }
+            getModelVersion();
+            getBoilerInfo();
+            getBoilerStatus();
         }
         else if (_addr == 0)
         { // если адреса нет, то шлем широковещательный запрос адреса
             uint8_t addr = node.readAddresEctoControl();
             SerialPrint("I", "EctoControlAdapter", "readAddresEctoControl, addr: " + String(addr, HEX) + " - Enter to configuration");
         }
-        getModelVersion();
-        getBoilerInfo();
-        getBoilerStatus();
     }
 
     void doByInterval()
     {
-        // readBoilerInfo();
-        getBoilerStatus();
+        if (_addr > 0)
+        {
+            // readBoilerInfo();
+            getBoilerStatus();
 
-        getCodeError();
-        getCodeErrorExt();
-        if (info.adapterType == 0)
-            getFlagErrorOT();
-        // getFlowRate();
-        // getMaxSetCH();
-        // getMaxSetDHW();
-        // getMinSetCH();
-        // getMinSetDHW();
-        getModLevel();
-        getPressure();
-        getTempCH();
-        getTempDHW();
-        getTempOutside();
+            getCodeError();
+            getCodeErrorExt();
+            if (info.adapterType == 0)
+                getFlagErrorOT();
+            // getFlowRate();
+            // getMaxSetCH();
+            // getMaxSetDHW();
+            // getMinSetCH();
+            // getMinSetDHW();
+            getModLevel();
+            getPressure();
+            getTempCH();
+            getTempDHW();
+            getTempOutside();
+        }
     }
 
     void loop()
@@ -176,10 +177,6 @@ public:
 
     IoTValue execute(String command, std::vector<IoTValue> &param)
     {
-        if (command == "getModelVersion")
-        {
-            getModelVersion();
-        }
         if (command == "getModelVersion")
         {
             getModelVersion();
@@ -324,13 +321,12 @@ public:
             tlgrmItem->sendTelegramMsg(false, msg);
     }
 
-    ~EctoControlAdapter() {
-    };
+    ~EctoControlAdapter(){};
 
     bool writeFunctionModBus(const uint16_t &reg, uint16_t &data)
     {
         // set word 0 of TX buffer to least-significant word of counter (bits 15..0)
-        //node.setTransmitBuffer(1, lowWord(data));
+        // node.setTransmitBuffer(1, lowWord(data));
         // set word 1 of TX buffer to most-significant word of counter (bits 31..16)
         node.setTransmitBuffer(0, data);
         // slave: write TX buffer to (2) 16-bit registers starting at register 0
@@ -348,6 +344,7 @@ public:
 
     bool readFunctionModBus(const uint16_t &reg, uint16_t &reading)
     {
+        if (_addr == 0) return false;
         // float retValue = 0;
         if (_modbusUART)
         {

@@ -3,6 +3,7 @@
 #if defined(ESP32)
 #include <esp_task_wdt.h>
 #endif
+#include "DebugTrace.h"
 #define TRIESONE 20 // количество секунд ожидания подключения к одной сети из несколких
 #define TRIES 30    // количество секунд ожидания подключения сети если она одна
 
@@ -50,6 +51,10 @@ void WiFiEvent(arduino_event_t *event)
     mqttInit();
     SerialPrint("i", F("WIFI"), F("Network Init"));
 
+    bool postMsgTelegram;
+    if (!jsonRead(settingsFlashJson, "debugTraceMsgTlgrm", postMsgTelegram, false)) postMsgTelegram = 1;
+    sendDebugTraceAndFreeMemory(postMsgTelegram);
+
     // Отключаем AP при успешном подключении
     WiFi.softAPdisconnect(true);
     break;
@@ -70,6 +75,7 @@ void WiFiEvent(arduino_event_t *event)
     }
     else
     { // если попытки подключения исчерпаны, то переходим в AP
+      sendDebugTraceAndFreeMemory(false);
       startAPMode();
     }
     break;
