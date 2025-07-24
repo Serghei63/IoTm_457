@@ -2,6 +2,7 @@
 #include "classes/IoTItem.h"
 #include "classes/IoTScenario.h"
 #include "utils/FileUtils.h"
+#include "utils/WiFiUtils.h"
 #include "NTP.h"
 
 
@@ -343,7 +344,8 @@ enum SysOp {
     sysop_mqttPub,
     sysop_getUptime,
     sysop_mqttIsConnect,
-    sysop_wifiIsConnect
+    sysop_wifiIsConnect,
+    sysop_addPortMap
 };
 
 IoTValue sysExecute(SysOp command, std::vector<IoTValue> &param) {
@@ -449,7 +451,12 @@ IoTValue sysExecute(SysOp command, std::vector<IoTValue> &param) {
             break;
         case sysop_wifiIsConnect:
             value.valD = isNetworkActive();
-            break;            
+            break;
+        case sysop_addPortMap:
+            if (param.size() == 5) {
+                addPortMap(param[0].valS,  param[1].valS, param[2].valD, param[3].valS, param[4].valD);
+            }
+            break;           
     }
 
     return value;
@@ -507,7 +514,9 @@ class SysCallExprAST : public ExprAST {
         else if (Callee == F("mqttIsConnect"))
             operation = sysop_mqttIsConnect;
         else if (Callee == F("wifiIsConnect"))
-            operation = sysop_wifiIsConnect;            
+            operation = sysop_wifiIsConnect;  
+        else if (Callee == F("addPortMap"))
+            operation = sysop_addPortMap;              
         else
             operation = sysop_notfound;
     }

@@ -69,6 +69,9 @@
 #define FIRMWARE_NAME "esp32c6_8mb"
 #endif
 
+#ifdef esp32_wifirep
+#define FIRMWARE_NAME "esp32_wifirep"
+#endif
 // Размер буфера json
 #define JSON_BUFFER_SIZE 4096  // держим 2 кб не меняем
 
@@ -109,7 +112,7 @@ WEB_SOCKETS_FRAME_SIZE создан для того что бы не загру�
 //#define WIFI_ASYNC
 #endif
 
-#ifdef ESP32
+#if defined(ESP32) && !defined(esp32_wifirep)
 #define WIFI_ASYNC
 #endif
 
