@@ -171,6 +171,14 @@
                 "active": true
             },
             {
+                "path": "src/modules/virtual/Loging2",
+                "active": false
+            },
+            {
+                "path": "src/modules/virtual/Loging3",
+                "active": false
+            },
+            {
                 "path": "src/modules/virtual/LogingDaily",
                 "active": true
             },
@@ -428,7 +436,7 @@
             },
             {
                 "path": "src/modules/exec/Buzzer",
-                "active": true
+                "active": false
             },
             {
                 "path": "src/modules/exec/EctoControlAdapter",
@@ -504,6 +512,10 @@
             },
             {
                 "path": "src/modules/exec/SysExt",
+                "active": false
+            },
+            {
+                "path": "src/modules/exec/Tca9555",
                 "active": false
             },
             {

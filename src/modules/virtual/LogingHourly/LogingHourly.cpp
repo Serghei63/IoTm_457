@@ -160,7 +160,11 @@ public:
             SerialPrint("E", F("LogingHourly"), "'" + id + "' db file writing error, return");
             return;
         }
+        #ifdef LIBRETINY
+        SerialPrint("i", F("LogingHourly"), "'" + id + "' file created http://" + ipToString(WiFi.localIP()) + path);
+        #else
         SerialPrint("i", F("LogingHourly"), "'" + id + "' file created http://" + WiFi.localIP().toString() + path);
+        #endif
     }
 
     void addNewDataToExistingFile(String &path, String &logData)
@@ -171,7 +175,11 @@ public:
             SerialPrint("i", F("LogingHourly"), "'" + id + "' file writing error, return");
             return;
         };
+        #ifdef LIBRETINY
+        SerialPrint("i", F("LogingHourly"), "'" + id + "' LogingHourly in file http://" + ipToString(WiFi.localIP()) + path);
+        #else
         SerialPrint("i", F("LogingHourly"), "'" + id + "' LogingHourly in file http://" + WiFi.localIP().toString() + path);
+        #endif
     }
     const String getTimeLocal_hh()
     {

@@ -254,10 +254,18 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
                 // Устанавливаем время
                 if (settimeofday(&tv, NULL) == 0) {
                     //Serial.printf("Время установлено: %ld\n", unixTime);
-                    SerialPrint("i", F("Time"), "Время установлено из браузера: " + String(unixTime));                
+                    #ifdef LIBRETINY
+                    SerialPrint("i", F("Time"), "Время установлено из браузера: ");     
+                    #else 
+                    SerialPrint("i", F("Time"), "Время установлено из браузера: " + String(unixTime));  
+                    #endif          
                 } else {
+                    #ifdef LIBRETINY
                     //Serial.printf("Ошибка установки времени: %ld\n", unixTime);
+                    SerialPrint("i", F("=>WS"), "Ошибка установки времени: ");
+                    #else
                     SerialPrint("i", F("=>WS"), "Ошибка установки времени: " + String(unixTime));
+                    #endif
                 }
                 // timeval tv2{0, 0};
                 // timezone tz = timezone{0, 0};

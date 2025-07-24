@@ -198,12 +198,19 @@ void handleCors() {
     {
         typeOTAfile = FILESYSTEM;
     }
-    int updatePartition = (typeOTAfile == FIRMWARE)? U_FLASH : U_SPIFFS;
+    #ifdef ESP8266
+    size_t size = upload.totalSize;
+    int updatePartition = (typeOTAfile == FIRMWARE)? U_FLASH : U_FS; //U_FS
+    //#endif
+    #else //ESP32
+    size_t size = UPDATE_SIZE_UNKNOWN;
+    int updatePartition = (typeOTAfile == FIRMWARE)? U_FLASH : U_SPIFFS; //U_FS
+    #endif
     if (upload.status == UPLOAD_FILE_START) {
       //Serial.print("Начало загрузки: ");
       //Serial.println(upload.filename);
       SerialPrint("i", F("OTA"), "Начало загрузки файла: " + upload.filename);
-      if (!Update.begin(UPDATE_SIZE_UNKNOWN, updatePartition)) {
+      if (!Update.begin(size, updatePartition)) { // UPDATE_SIZE_UNKNOWN 0xFFFFFFFF
         Update.end();
         SerialPrint("E", F("OTA"), "Ошибка: Недостаточно памяти");
         HTTP.send(500, "text/plain", "Ошибка: Недостаточно памяти");
