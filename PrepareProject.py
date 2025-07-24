@@ -201,6 +201,7 @@ for section, modules in profJson['modules'].items():
                             configItemsJson['num'] = itemsCount
                             configItemsJson['name'] = str(itemsCount) + ". " + configItemsJson['name']
                             itemsCount = itemsCount + 1
+                            configItemsJson['moduleName'] = moduleJson['about']['moduleName']
                             itemsJson.append(configItemsJson)    
                 else: # В первую очередь ищем по имени deviceName, чтобы для данной платы можно было уточнить либы. Если не нашли плату по имени в usedLibs пробуем найти её по типу deviceType
                     if deviceType in moduleJson['usedLibs']:   # проверяем поддерживает ли модуль текущее устройство
@@ -210,9 +211,10 @@ for section, modules in profJson['modules'].items():
                             allLibs = allLibs + "\n" + libPath       
                         for configItemsJson in moduleJson['configItem']:
                             configItemsJson['num'] = itemsCount
-                            configItemsJson['name'] = str(itemsCount) + ". " + configItemsJson['name']
-                            itemsCount = itemsCount + 1
-                            itemsJson.append(configItemsJson)    
+                            configItemsJson['name'] = str(itemsCount) + ". " + configItemsJson['name'] 
+                            itemsCount = itemsCount + 1 
+                            itemsJson.append(configItemsJson)
+                            configItemsJson['moduleName'] = moduleJson['about']['moduleName']     
 
 with open("data_svelte/items.json", "w", encoding='utf-8') as write_file:
     json.dump(itemsJson, write_file, ensure_ascii=False, indent=4, sort_keys=False)

@@ -224,9 +224,9 @@ void setup() {
 
     stopErrorMarker(SETUPINET_ERRORMARKER);
 
-    bool postMsgTelegram;
-    if (!jsonRead(settingsFlashJson, "debugTraceMsgTlgrm", postMsgTelegram, false)) postMsgTelegram = 1;
-    sendDebugTraceAndFreeMemory(postMsgTelegram);
+    // bool postMsgTelegram;
+    // if (!jsonRead(settingsFlashJson, "debugTraceMsgTlgrm", postMsgTelegram, false)) postMsgTelegram = 1;
+    // sendDebugTraceAndFreeMemory(postMsgTelegram);
     
     initErrorMarker(SETUPLAST_ERRORMARKER);
 
@@ -276,9 +276,9 @@ void setup() {
         },
         nullptr, true);
 
-    // ловим пинги от WS (5сек) и дисконнектим если их нет (20сек)
+    // ловим пинги от WS (2сек) и дисконнектим если их нет 3 раза 3сек*2прохода = 6сек
     ts.add(
-        PiWS, 6000, [&](void*) {
+        PiWS, 3000, [&](void*) {
             if (isNetworkActive()) {
                 for (size_t i = 0; i < WEBSOCKETS_CLIENT_MAX; i++)
                 {

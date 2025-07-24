@@ -59,9 +59,9 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
             //----------------------------------------------------------------------//
             // Страница веб интерфейса dashboard
             //----------------------------------------------------------------------//
-            if (headerStr == "p|") {
-                standWebSocket.sendTXT(num, "p|");
-                //Serial.printf("Ping client: %u\n", num);
+            if (headerStr == "/pi|") {
+                standWebSocket.sendTXT(num, "/po|");
+                Serial.printf("Ping client: %u\n", num);
                 ws_clients[num]=1;
             }
             // публикация всех виджетов
@@ -231,6 +231,50 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
             if (headerStr == "/system|") {
                 sendStringToWs("errors", errorsHeapJson, num);
                 sendStringToWs("settin", settingsFlashJson, num);
+            }
+
+            if (headerStr == "/localt|") {
+                String timeStr = String((char*)payload + 8);
+                //Serial.println("Время с фронта: /localt|" + timeStr);
+            
+                // Обрезаем дробную часть, если есть
+                int dotIndex = timeStr.indexOf('.');
+                if (dotIndex != -1) {
+                    timeStr = timeStr.substring(0, dotIndex);
+                }
+            
+                // Парсим UNIX-время в секундах
+                time_t unixTime = (time_t)timeStr.toInt();
+            
+                // Создаём структуру timeval
+                timeval tv;
+                tv.tv_sec = unixTime;  // Секунды эпохи
+                tv.tv_usec = 0;        // Микросекунды
+            
+                // Устанавливаем время
+                if (settimeofday(&tv, NULL) == 0) {
+                    //Serial.printf("Время установлено: %ld\n", unixTime);
+                    #ifdef LIBRETINY
+                    SerialPrint("i", F("Time"), "Время установлено из браузера: ");     
+                    #else 
+                    SerialPrint("i", F("Time"), "Время установлено из браузера: " + String(unixTime));  
+                    #endif          
+                } else {
+                    #ifdef LIBRETINY
+                    //Serial.printf("Ошибка установки времени: %ld\n", unixTime);
+                    SerialPrint("i", F("=>WS"), "Ошибка установки времени: ");
+                    #else
+                    SerialPrint("i", F("=>WS"), "Ошибка установки времени: " + String(unixTime));
+                    #endif
+                }
+                // timeval tv2{0, 0};
+                // timezone tz = timezone{0, 0};
+                // time_t epoch = 0;
+                // if (gettimeofday(&tv2, &tz) != -1) {
+                //     epoch = tv2.tv_sec;
+                // }
+                // unixTime = epoch;
+                // SerialPrint("I", F("NTP"), "TIME " + String(unixTime));
             }
 
             //----------------------------------------------------------------------//
