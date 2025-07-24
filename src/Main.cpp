@@ -201,7 +201,7 @@ void setup() {
     initErrorMarker(SETUPINET_ERRORMARKER);
 
 // подключаемся к роутеру
-#ifdef ESP8266
+#ifndef WIFI_ASYNC
     routerConnect();
 #else
     WiFiUtilsItit();
@@ -237,7 +237,7 @@ void setup() {
     // инициализация задач переодического выполнения
     periodicTasksInit();
 
-#if defined(ESP8266)
+#if !defined(WIFI_ASYNC)
     // Перенесли после получения IP, так как теперь работа WiFi асинхронная
     // запуск работы udp
     addThisDeviceToList();
@@ -306,7 +306,7 @@ void setup() {
 }
 
 void loop() {
-#if !defined(ESP8266)
+#if defined(WIFI_ASYNC)
     static bool udpFirstFlag = true;
     // Перенесли после получения IP, так как теперь работа WiFi асинхронная
     if (isNetworkActive() && udpFirstFlag) {

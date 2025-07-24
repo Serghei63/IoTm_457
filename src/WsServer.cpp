@@ -143,7 +143,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
                 sendFileToWsByFrames("/widgets.json", "widget", "", num, WEB_SOCKETS_FRAME_SIZE);
                 sendFileToWsByFrames("/config.json", "config", "", num, WEB_SOCKETS_FRAME_SIZE);
                 sendStringToWs("settin", settingsFlashJson, num);
-#ifndef ESP8266                
+#ifdef WIFI_ASYNC                
                 ssidListHeapJson = "{}";
                 jsonWriteStr_(ssidListHeapJson, "0", "Scanning...");
 #endif
@@ -161,7 +161,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
                 sendStringToWs("errors", errorsHeapJson, num);
                 // если не было создано приема данных по udp - то создадим его
                 addThisDeviceToList();
-#ifndef ESP8266                
+#ifdef WIFI_ASYNC                
                 settingsFlashJson = readFile(F("settings.json"), 4096);
                 settingsFlashJson.replace("\r\n", "");
                 Serial.println(settingsFlashJson);
@@ -183,7 +183,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
             // запуск асинхронного сканирования wifi сетей при нажатии выпадающего
             // списка
             if (headerStr == "/scan|") {
-#ifdef ESP8266
+#ifndef WIFI_ASYNC
                 std::vector<String> jArray;
                 jsonReadArray(settingsFlashJson, "routerssid", jArray);
                 RouterFind(jArray);
