@@ -310,7 +310,7 @@
         "name": "anydatamAmp",
         "label": "миллиАмперы",
         "widget": "anydata",
-        "after": "mAmp",
+        "after": "mA",
         "icon": "speedometer"
     },
     {
@@ -325,6 +325,20 @@
         "label": "миллиВатты",
         "widget": "anydata",
         "after": "mWt",
+        "icon": "speedometer"
+    },
+        {
+        "name": "anydataKm",
+        "label": "Километры",
+        "widget": "anydata",
+        "after": "km",
+        "icon": "speedometer"
+    },
+    {
+        "name": "anydataM",
+        "label": "Метры",
+        "widget": "anydata",
+        "after": "m",
         "icon": "speedometer"
     },
     {
