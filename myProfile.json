@@ -1,7 +1,7 @@
 {
     "iotmSettings": {
-        "name": "IoTmanagerVer4",
-        "apssid": "IoTmanager",
+        "name": "462_test",
+        "apssid": "462_test",
         "appass": "",
         "wifirep_apchanel": 7,
         "wifirep_apip": "192.168.4.1",
