@@ -170,6 +170,33 @@ const String getTimeLocal_hhmmss() {
     return String(buf);
 }
 
+
+// Локальное дата время "день недели"
+
+const String getTimeLocal_Weekday() {
+       char buf[32];
+       sprintf(buf, "%d", _time_local.day_of_week);
+       switch (_time_local.day_of_week) {
+ 
+  // case 1: return "Воскресенье"; break;
+  // case 2: return "Понедельник"; break;
+  // case 3: return "Вторник"; break;
+  // case 4: return "Среда"; break;
+  // case 5: return "Четверг"; break;
+  // case 6: return "Пятница"; break;
+  // case 7: return "Суббота"; break;
+   case 1: return "7"; break;
+   case 2: return "1"; break;
+   case 3: return "2"; break;
+   case 4: return "3"; break;
+   case 5: return "4"; break;
+   case 6: return "5"; break;
+   case 7: return "6"; break;
+    default: return ""; break;         
+    }
+    return String(buf);
+   }
+
 const String getDateTimeDotFormated() {
     char buf[32];
     sprintf(buf, "%02d.%02d.%02d %02d:%02d:%02d", _time_local.day_of_month, _time_local.month, _time_local.year, _time_local.hour, _time_local.minute, _time_local.second);

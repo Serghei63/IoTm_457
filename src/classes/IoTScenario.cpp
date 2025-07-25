@@ -350,6 +350,7 @@ enum SysOp {
     sysop_getSeconds,     //
     sysop_getMonth,       //
     sysop_getDay,
+    sysop_getWeekday,
     sysop_gethhmm,
     sysop_gethhmmss,
     sysop_getTime,
@@ -383,6 +384,10 @@ IoTValue sysExecute(SysOp command, std::vector<IoTValue> &param) {
             case sysop_getDay:
                 value.valD = _time_local.day_of_month;
                 break;
+            case sysop_getWeekday:
+               // value.isDecimal = false;
+                value.valD = _time_local.day_of_week;
+                break; 
             case sysop_gethhmm:
                 value.isDecimal = false;
                 value.valS = getTimeLocal_hhmm();
@@ -514,9 +519,11 @@ class SysCallExprAST : public ExprAST {
         else if (Callee == F("getSeconds"))
             operation = sysop_getSeconds;
         else if (Callee == F("getMonth"))
-            operation = sysop_getMonth;
+            operation = sysop_getMonth;  
         else if (Callee == F("getDay"))
             operation = sysop_getDay;
+        else if (Callee == F("getWeekday"))
+            operation = sysop_getWeekday;
         else if (Callee == F("getRSSI"))
             operation = sysop_getRSSI;
         else if (Callee == F("getIP"))
