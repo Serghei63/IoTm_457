@@ -416,6 +416,7 @@ public:
       }
       return {};
     }
+    /*
     // На данный момент записывает 2(два) регистра!!!!! Подходит для записи float?? Функция 0х10 протокола.
     else if (command == "writeMultipleRegisters") // mb.writeMultipleRegisters(1, \"0х0000\",  1234.987)
     {
@@ -436,6 +437,51 @@ public:
         {
           SerialPrint("I", "ModbusClientAsync", "writeMultipleRegisters, addr: " + String((uint8_t)_addr, HEX) + ", reg: " + String(_reg, HEX) + ", state: " + String(state) + " (" + String(state, HEX) + ")");
         }
+      }
+      return {};
+    }
+    */
+    // На данный момент записывает 2(два) регистра!!!!! Подходит для записи float?? Функция 0х10 протокола.
+    else if (command == "writeMultipleRegisters") // mb.writeMultipleRegisters(1, \"0х0000\",  1234.987)
+    {
+      if (param.size())
+      {
+        _addr = param[0].valD;
+        _reg = hexStringToUint16(param[1].valS);
+              
+//| 1 | uint32_t | Токен (соответствие запрос-ответ) | Токен++ |
+//| 2 | uint8_t  | Идентификатор сервера/ведомого | 1 |
+//| 3 | uint8_t  | Код функции (запись нескольких регистров) | 0x10 или 16 |
+//| 4 | uint16_t | Адрес первого регистра (начиная с нуля) | 33 |
+//| 5 | uint16_t | Количество регистров для записи | 6 |
+//| 6 | uint16_t | Количество байтов (регистры × 2) | 12 |
+//| 7 | uint16_t | Указатель на массив данных | wData |
+        
+        float state = param[2].valD;
+
+        Error err;
+
+uint16_t wData[] = { param[2].valD, param[3].valD };
+
+
+        err = MB->addRequest(_token, _addr, WRITE_MULT_REGISTERS, _reg, sizeof(wData), sizeof(wData) * 2, wData);
+        if (err != SUCCESS)
+        {
+          ModbusError e(err);
+          Serial.printf("Error creating request: %02X - %s\n", (int)e, (const char *)e);
+        }
+
+          if (err!=SUCCESS) {
+             ModbusError e(err);
+           Serial.printf("Error creating request: %02X - %s\n", (int)e, (const char *)e);
+         }
+
+        Serial.printf("NOT SUPPORTED!\n");
+        if (_debug)
+        {
+          SerialPrint("I", "ModbusClientAsync", "writeMultipleRegisters, addr: " + String((uint8_t)_addr, HEX) + ", reg: " + String(_reg, HEX) + ", state: " + String(state) + " (" + String(state, HEX) + ")");
+        }
+
       }
       return {};
     }
