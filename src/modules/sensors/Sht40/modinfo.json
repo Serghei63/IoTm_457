@@ -1,0 +1,61 @@
+{
+    "menuSection": "sensors",
+    "configItem": [
+        {
+            "global": 0,
+            "name": "Sht40 Температура",
+            "type": "Reading",
+            "subtype": "Sht40t",
+            "id": "tmp40",
+            "widget": "anydataTmp",
+            "page": "Сенсоры",
+            "descr": "SHT40 Температура",
+            "addr": "",
+            "int": 15,
+            "round": 1
+        },
+        {
+            "global": 0,
+            "name": "Sht40 Влажность",
+            "type": "Reading",
+            "subtype": "Sht40h",
+            "id": "Hum40",
+            "widget": "anydataHum",
+            "page": "Сенсоры",
+            "descr": "SHT40 Влажность",
+            "addr": "",
+            "int": 15,
+            "round": 1
+        }
+    ],
+    "about": {
+        "authorName": "Gyliver Lilipytov",
+        "authorContact": "",
+        "authorGit": "",
+        "specialThanks": "",
+        "moduleName": "Sht40",
+        "moduleVersion": "1.0",
+        "usedRam": {
+            "esp32_4mb": 15,
+            "esp8266_4mb": 15
+        },
+        "subTypes": [
+            "Sht40t",
+            "Sht40h"
+        ],
+        "title": "Сенсор температуры и влажности с Sht40",
+        "moduleDesc": "Позволяет получить температуру и влажность с датчика Sht40.",
+        "propInfo": {
+            "int": "Количество секунд между опросами датчика."
+        }
+    },
+    "defActive": true,
+    "usedLibs": {
+        "esp32*": [
+            "https://github.com/stm32duino/SHT40-AD1B"
+        ],
+        "esp82*": [
+            "https://github.com/stm32duino/SHT40-AD1B"
+        ]
+    }
+}
