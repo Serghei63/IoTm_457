@@ -2,16 +2,16 @@
 # Необходимо вызвать при изменении персональных настроек или состава модулей.
 # 
 # При отсутствии файла с персональными настройками, myProfile.json будет создан автоматически
-# python PrepareProject.py
+# py PrepareProject.py
 # 
 # Если myProfile.json уже существует, можно запустить PrepareProject.py с параметром -u или --update для обновления списка модулей. 
 # Данная функция будет полезна для разработчиков при добавлении модуля в папку src/modules
-# python PrepareProject.py --update 
-# python PrepareProject.py -u 
+# py PrepareProject.py --update 
+# py PrepareProject.py -u 
 # 
 # Возможно использовать несколько вариантов персональных настроек и уточнять имя файла при запуске с использованием параметра -p или -profile
-# python PrepareProject.py --profile <ИмяФайла>
-# python PrepareProject.py -p <ИмяФайла>
+# py PrepareProject.py --profile <ИмяФайла>
+# py PrepareProject.py -p <ИмяФайла>
 # 
 # Используя параметры -b или --board <board_name> можно уточнить для какой платы нужно подготовить проект
 # 
