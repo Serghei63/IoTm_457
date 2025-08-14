@@ -751,6 +751,8 @@ int IoTScenario::gettok() {
                     IdentifierStr += '"';
                 } else if (LastChar == 'n') {
                     IdentifierStr += '\n';
+                } else if (LastChar == '\\') {
+                    IdentifierStr += '\\';
                 } 
             } else {
                 IdentifierStr += (char)LastChar;
