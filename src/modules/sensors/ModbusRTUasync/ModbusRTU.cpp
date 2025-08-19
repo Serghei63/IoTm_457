@@ -17,7 +17,6 @@ int8_t MODBUS_DIR_PIN = 0;
 #define MODBUS_TX_PIN 19        // Tx pin
 #define MODBUS_SERIAL_BAUD 9600 // Baud rate for esp32 and max485 communication
 
-// bool modBus_data_ready = false;
 uint32_t modBus_Token_count = 0; // Счетчик токенов для Нод, 0 - всегду у главного класса, дальше по порядку
 class ModbusNode;
 std::map<uint32_t, ModbusNode *> MBNoneMap;
