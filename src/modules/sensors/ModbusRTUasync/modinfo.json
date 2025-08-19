@@ -3,23 +3,6 @@
     "configItem": [
         {
             "global": 0,
-            "name": "ModbusNode",
-            "type": "Reading",
-            "subtype": "mbNode",
-            "id": "mbNode",
-            "widget": "anydataTmp",
-            "page": "Modbus",
-            "descr": "Чтение данных modbus",
-            "int": 5,
-            "func": "0x03",
-            "addr": 1,
-            "reg": "0x0000",
-            "count": 1,
-            "isFloat": 0,
-            "round": 0
-        },
-        {
-            "global": 0,
             "name": "ModbusAsunc",
             "type": "Reading",
             "subtype": "mbClient",
@@ -34,7 +17,25 @@
             "baud": 9600,
             "protocol": "SERIAL_8N2",
             "debug": 1
+        },
+        {
+            "global": 0,
+            "name": "ModbusNode",
+            "type": "Reading",
+            "subtype": "mbNode",
+            "id": "mbNode",
+            "widget": "anydataTmp",
+            "page": "Modbus",
+            "descr": "Чтение данных modbus",
+            "int": 5,
+            "func": "0x03",
+            "addr": 1,
+            "reg": "0x0000",
+            "count": 1,
+            "isFloat": 0,
+            "round": 0
         }
+
     ],
     "about": {
         "authorName": "Bubnov Mikhail",
@@ -84,8 +85,8 @@
             },
             {
                 "name": "writeMultipleRegisters",
-                "descr": "В разработке! Запись данных в несколько регистров, вызывать из ModbusAsunc. Записывает 2(два) регистра!!!!! Подходит для записи float?? Функция 0х10 протокола. Пример: mb.writeMultipleRegisters(1, \"0х0000\", 1234.987)",
-                "params": ["Адрес","Регистр","Данные"]
+                "descr": "Запись данных в несколько регистров, вызывать из ModbusAsunc. Записывает 2(два) регистра!!!!! Подходит для записи float?? Функция 0х10 протокола. Пример: mb.writeMultipleRegisters(1, \"0х0000\", 1234.987)",
+                "params": ["Адрес","Регистр","Данные1 ","Данные2 "]
             },
             {
                 "name": "getBits",
