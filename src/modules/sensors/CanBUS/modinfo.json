@@ -16,6 +16,22 @@
             "addr": 0,
             "debug": 1
 
+        },
+                {
+            "global": 0,
+            "name": "CanSlave",
+            "type": "Reading",
+            "subtype": "canSlave",
+            "id": "cans",
+            "widget": "anydataTmp",
+            "page": "CAN slave",
+            "descr": "Чтение данных CAN",
+            "int": 2,
+            "cans_id": "0x036",
+            "dlc" : 1,
+            "adr": 0,
+            "debug": 1
+
         }
     ],
     "about": {
