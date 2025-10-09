@@ -416,19 +416,22 @@ class DwinI : public IoTUart {
         else if (command == "scr4")
            _myUART->write(x4 , 10);
 
-         else if (command == "scr5")
+        else if (command == "scr5")
            _myUART->write(x5 , 10);
-/*
-        else if (command == "scr1")
-           _myUART->write(x1 , 10);
 
-                   else if (command == "scr1")
-           _myUART->write(x1 , 10);
+        else if (command == "scr6")
+           _myUART->write(x6 , 10);
 
-                   else if (command == "scr1")
-           _myUART->write(x1 , 10);
+        else if (command == "scr7")
+           _myUART->write(x7 , 10);
 
-*/
+        else if (command == "scr8")
+           _myUART->write(x8 , 10);
+
+        else if (command == "scr9")
+           _myUART->write(x9 , 10);
+
+
         doByInterval();
         return {};
     }
